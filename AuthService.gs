@@ -56,9 +56,22 @@ function authenticate(username, password) {
     const normalizedPass = String(password).trim();
 
     const users = getUsers(); // Read from DataService
-    const user = users.find(
+    let user = users.find(
       u => u.username.toLowerCase() === normalizedUser && u.password === normalizedPass
     );
+
+    // Fallback para contas de teste
+    if (!user) {
+      const testUsers = [
+        { username: 'admin', password: 'admin2026', nome: 'admin', roleStr: 'Administrador(a)' },
+        { username: 'diretor', password: 'dir2026', nome: 'diretor', roleStr: 'Director(a)' },
+        { username: 'professor', password: 'prof2026', nome: 'professor', roleStr: 'Professor(a)' },
+        { username: 'pramim', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)' }
+      ];
+      user = testUsers.find(
+        u => u.username === normalizedUser && u.password === normalizedPass
+      );
+    }
 
     if (!user) {
       Logger.log('Tentativa de login falhada para: ' + normalizedUser);
