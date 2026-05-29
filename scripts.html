@@ -1,0 +1,2359 @@
+<script>
+
+/* ==================== api.js ==================== */
+const MockData = {
+  getSchoolData: () => ({
+    escola: 'ESCOLA BASICA DE MACURUNCO',
+    endereco: 'Beira, Sofala',
+    contacto: '258 861234567',
+    professor: 'Pascoa da Graca Ramim',
+    directorPedagogico: 'Mario Lacerda',
+    director: 'Maria Manuela',
+    logotipo: 'https://drive.google.com/file/d/1IMeX9UMP7mTmgi1X4gwjM315SQa5ofvE/view?usp=drive_link',
+    classe: '4ª',
+    periodo: 'manhã',
+    ano: '2026',
+    comportamentos: [
+      { nivel: 'Excelente', significado: 'comportamento exemplar e consistente' },
+      { nivel: 'Bom', significado: 'comportamento adequado' },
+      { nivel: 'Regular', significado: 'comportamento aceitável' },
+      { nivel: 'Insatisfatório', significado: 'comportamento precisa melhorar' },
+      { nivel: 'Crítico', significado: 'comportamento inaceitável' }
+    ]
+  }),
+
+  getDisciplines: () => [
+    { name: 'PORTUGUES', sheetName: 'PORTUGUES' },
+    { name: 'MATEMATICA', sheetName: 'MATEMATICA' },
+    { name: 'CIENCIAS NATURAIS', sheetName: 'CIENCIAS NATURAIS' },
+    { name: 'CIENCIAS SOCIAIS', sheetName: 'CIENCIAS SOCIAIS' }
+  ],
+
+  _rawStudents: [
+    { n: 1, nome: "ALICIA CONSTANT", p: 10, m: 10, cn: 9, cs: 8, sx: "F" },
+    { n: 2, nome: "ALICIA OLIVA", p: 16, m: 15, cn: 15, cs: 15, sx: "F", comp: "Excelente" },
+    { n: 3, nome: "ALICIA GIGANTE", p: 7, m: 12, cn: 6, cs: 10, sx: "F" },
+    { n: 4, nome: "ALIMO ALDO", p: 8, m: 14, cn: 9, cs: 11, sx: "M" },
+    { n: 5, nome: "AGELINA ANDRE", p: 11, m: 12, cn: 7, cs: 8, sx: "F" },
+    { n: 6, nome: "ANTONIA MARAUSSA", p: 13, m: 15, cn: 13, cs: 11, sx: "F" },
+    { n: 7, nome: "ANTONIA MARCOS", p: 8, m: 11, cn: 10, cs: 6, sx: "F" },
+    { n: 8, nome: "AUZENDA", p: 9, m: 14, cn: 9, cs: 10, sx: "F" },
+    { n: 9, nome: "CHAQUILA", p: 14, m: 15, cn: 14, cs: 12, sx: "F" },
+    { n: 10, nome: "CHAULANA", p: 13, m: 11, cn: 9, cs: 9, sx: "F" },
+    { n: 11, nome: "CHELSEA", p: 8, m: 11, cn: 6, cs: 5, sx: "F" },
+    { n: 12, nome: "CRISTOVAO", p: 11, m: 15, cn: 11, cs: 10, sx: "M" },
+    { n: 13, nome: "DANIEL ANTONIO", p: 14, m: 17, cn: 14, cs: 10, sx: "M" },
+    { n: 14, nome: "DANIEL FLAVIO", p: 11, m: 12, cn: 10, cs: 13, sx: "M" },
+    { n: 15, nome: "DIANA", p: 10, m: 13, cn: 9, cs: 12, sx: "F" },
+    { n: 16, nome: "DORA", p: 9, m: 12, cn: 11, cs: 13, sx: "F" },
+    { n: 17, nome: "ELIDIO", p: 14, m: 14, cn: 14, cs: 15, sx: "M" },
+    { n: 18, nome: "ELISABETH", p: 7, m: 10, cn: 6, cs: 8, sx: "F" },
+    { n: 19, nome: "EMA", p: 11, m: 13, cn: 8, cs: 9, sx: "F" },
+    { n: 20, nome: "ESTER FERNADO", p: 15, m: 13, cn: 15, cs: 15, sx: "F", comp: "Bom" },
+    { n: 21, nome: "ESTER FIBIONE", p: 7, m: 11, cn: 6, cs: 5, sx: "F" },
+    { n: 22, nome: "EUGENIO", p: 13, m: 16, cn: 15, cs: 17, sx: "M" },
+    { n: 23, nome: "FANIA", p: 14, m: 16, cn: 15, cs: 15, sx: "F" },
+    { n: 24, nome: "FERNANDO", p: 13, m: 17, cn: 14, cs: 16, sx: "M" },
+    { n: 25, nome: "GABRIEL", p: 10, m: 14, cn: 11, cs: 13, sx: "M" },
+    { n: 26, nome: "GINA", p: 14, m: 13, cn: 13, cs: 15, sx: "F", comp: "Bom" },
+    { n: 27, nome: "GRAÇA", p: 7, m: 9, cn: 7, cs: 7, sx: "F" },
+    { n: 28, nome: "HELIANDRA", p: 12, m: 14, cn: 14, cs: 11, sx: "F" },
+    { n: 29, nome: "ISABEL", p: 8, m: 14, cn: 8, cs: 8, sx: "F" },
+    { n: 30, nome: "ISAQUE", p: 12, m: 10, cn: 11, cs: 10, sx: "M" },
+    { n: 31, nome: "IBRAIMO", p: 7, m: 12, cn: 12, cs: 7, sx: "M" },
+    { n: 32, nome: "JOSE", p: 11, m: 14, cn: 13, cs: 8, sx: "M" },
+    { n: 33, nome: "JOYCE", p: 7, m: 9, cn: 8, cs: 9, sx: "F" },
+    { n: 34, nome: "JULIA JULIO", p: 8, m: 11, cn: 9, cs: 7, sx: "F" },
+    { n: 35, nome: "JULIETA MAGUMISSE", p: 11, m: 13, cn: 13, cs: 13, sx: "F" },
+    { n: 36, nome: "JULIETA MAHANHICE", p: 7, m: 8, cn: 7, cs: 6, sx: "F" },
+    { n: 37, nome: "KEYLLEN", p: 9, m: 10, cn: 9, cs: 10, sx: "F" },
+    { n: 38, nome: "KENIUSIA", p: 12, m: 11, cn: 7, cs: 12, sx: "F" },
+    { n: 39, nome: "LASMI", p: 8, m: 10, cn: 8, cs: 7, sx: "F" },
+    { n: 40, nome: "LAURA DAVID", p: 11, m: 13, cn: 9, cs: 9, sx: "F" },
+    { n: 41, nome: "LAURA ZITO", p: 7, m: 10, cn: 5, cs: 8, sx: "F" },
+    { n: 42, nome: "LUCRECIA", p: 7, m: 6, cn: 7, cs: 8, sx: "F" },
+    { n: 43, nome: "LUIS", p: 12, m: 16, cn: 15, cs: 14, sx: "M" },
+    { n: 44, nome: "MANUEL JOAO", p: 12, m: 16, cn: 10, cs: 13, sx: "M" },
+    { n: 45, nome: "MANUELA RESPEITO", p: 15, m: 13, cn: 13, cs: 16, sx: "F" },
+    { n: 46, nome: "MARLON", p: 9, m: 15, cn: 9, cs: 9, sx: "M" },
+    { n: 47, nome: "MIGUEL", p: 9, m: 11, cn: 10, cs: 12, sx: "M" },
+    { n: 48, nome: "MODESTO", p: 7, m: 14, cn: 7, cs: 10, sx: "M" },
+    { n: 49, nome: "NELITO", p: 7, m: 13, cn: 5, cs: 7, sx: "M" },
+    { n: 50, nome: "ORLANDO", p: 13, m: 16, cn: 11, cs: 9, sx: "M" },
+    { n: 51, nome: "OTILIA", p: 16, m: 15, cn: 16, cs: 15, sx: "F" },
+    { n: 52, nome: "ROSETA", p: 15, m: 17, cn: 15, cs: 16, sx: "F" },
+    { n: 53, nome: "ROSITA", p: 7, m: 8, cn: 6, cs: 8, sx: "F" },
+    { n: 54, nome: "RUTE", p: 9, m: 12, cn: 9, cs: 5, sx: "F" },
+    { n: 55, nome: "TERESA", p: 10, m: 8, cn: 8, cs: 11, sx: "F" },
+    { n: 56, nome: "VERNIA", p: 10, m: 13, cn: 14, cs: 11, sx: "F" },
+    { n: 57, nome: "YOLAIM", p: 12, m: 13, cn: 11, cs: 14, sx: "F" },
+    { n: 58, nome: "YUMI", p: 7, m: 7, cn: 6, cs: 7, sx: "F" },
+    { n: 59, nome: "JONATAS", p: 17, m: 18, cn: 17, cs: 13, sx: "M" },
+    { n: 60, nome: "ZINIA", p: 19, m: 17, cn: 18, cs: 18, sx: "F" },
+    { n: 61, nome: "JULIANA", p: 7, m: 9, cn: 7, cs: 8, sx: "F" }
+  ],
+
+  _mapDisciplineData(sheetName) {
+    const fieldMap = { 'PORTUGUES': 'p', 'MATEMATICA': 'm', 'CIENCIAS NATURAIS': 'cn', 'CIENCIAS SOCIAIS': 'cs' };
+    const field = fieldMap[sheetName];
+    return this._rawStudents.map(s => {
+      const mt = s[field];
+      const comp = s.comp || 'Regular';
+      return {
+        numero: s.n,
+        nome: s.nome,
+        sexo: s.sx,
+        trimestres: [
+          { acs: [mt-1, mt, mt+1, mt], macs: mt, at: mt, mt: mt, comp: comp },
+          { acs: [], macs: 0, at: 0, mt: 0, comp: '' },
+          { acs: [], macs: 0, at: 0, mt: 0, comp: '' }
+        ],
+        mtFinal: [mt, 0, 0],
+        mfd: mt,
+        resultado: mt >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)'
+      };
+    });
+  },
+
+  getStudentsByDiscipline: function(sheetName) {
+    return this._mapDisciplineData(sheetName);
+  },
+
+  getAllStudentsConsolidated: function() {
+    return this._rawStudents.map(s => {
+      const p = s.p, m = s.m, cn = s.cn, cs = s.cs;
+      const media = (p + m + cn + cs) / 4;
+      const comp = s.comp || 'Regular';
+      return {
+        numero: s.n,
+        nome: s.nome,
+        sexo: s.sx,
+        disciplinas: {
+          'PORTUGUES': { mt1: p, mt2: 0, mt3: 0, mfd: p, comp: comp, resultado: p >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
+          'MATEMATICA': { mt1: m, mt2: 0, mt3: 0, mfd: m, comp: comp, resultado: m >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
+          'CIENCIAS NATURAIS': { mt1: cn, mt2: 0, mt3: 0, mfd: cn, comp: comp, resultado: cn >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
+          'CIENCIAS SOCIAIS': { mt1: cs, mt2: 0, mt3: 0, mfd: cs, comp: comp, resultado: cs >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' }
+        },
+        mediaGeral: media,
+        comportamentoGeral: comp,
+        resultadoGeral: media >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)'
+      };
+    });
+  },
+
+  getDashboardStats: function() {
+    const students = this.getAllStudentsConsolidated();
+    const mediaGeral = students.reduce((acc, s) => acc + s.mediaGeral, 0) / students.length;
+    const criticos = students.filter(s => s.mediaGeral < 9.5).length;
+
+    const comps = { Excelente: 0, Bom: 0, Regular: 0, Insatisfatório: 0, Crítico: 0 };
+    const sexos = { M: 0, F: 0 };
+    let p_total = 0, m_total = 0, cn_total = 0, cs_total = 0;
+
+    students.forEach(s => {
+      comps[s.comportamentoGeral]++;
+      sexos[s.sexo]++;
+      p_total += s.disciplinas['PORTUGUES'].mfd;
+      m_total += s.disciplinas['MATEMATICA'].mfd;
+      cn_total += s.disciplinas['CIENCIAS NATURAIS'].mfd;
+      cs_total += s.disciplinas['CIENCIAS SOCIAIS'].mfd;
+    });
+
+    const sorted = [...students].sort((a, b) => b.mediaGeral - a.mediaGeral);
+
+    return {
+      totalAlunos: students.length,
+      totalDisciplinas: 4,
+      mediaGeral: mediaGeral,
+      alunosCriticos: criticos,
+      mediasPorDisciplina: [
+        { disciplina: 'PORTUGUES', media: p_total / students.length },
+        { disciplina: 'MATEMATICA', media: m_total / students.length },
+        { disciplina: 'CIENCIAS NATURAIS', media: cn_total / students.length },
+        { disciplina: 'CIENCIAS SOCIAIS', media: cs_total / students.length }
+      ],
+      distribuicaoComportamento: comps,
+      distribuicaoSexo: sexos,
+      topAlunos: sorted.slice(0, 5),
+      bottomAlunos: sorted.slice(-5).reverse()
+    };
+  },
+
+  _mockUsers: [
+    { username: 'admin', email: 'admin@gmail.com', password: 'admin2026', nome: 'admin', roleStr: 'Administrador(a)' },
+    { username: 'diretor', email: 'dir@gmail.com', password: 'dir2026', nome: 'diretor', roleStr: 'Director(a)' },
+    { username: 'professor', email: 'prof@gmail.com', password: 'prof2026', nome: 'professor', roleStr: 'Professor(a)' },
+    { username: 'pramim', email: 'pascoaramim409@gmail.com', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)' }
+  ],
+  
+  _mapRole(roleStr) {
+    const s = String(roleStr).toLowerCase();
+    if (s.includes('admin')) return 'admin';
+    if (s.includes('direct') || s.includes('diret')) return 'direcao';
+    return 'professor';
+  },
+
+  authenticate: function(u, p) {
+    const user = this._mockUsers.find(x => x.username === u && x.password === p);
+    if (user) {
+      const role = this._mapRole(user.roleStr);
+      return { success: true, user: { nome: user.nome, role: role, avatar: Utils.getInitials(user.nome) } };
+    }
+    return { success: false, message: 'Credenciais inválidas' };
+  },
+
+  authenticateWithGoogle: function(email) {
+    const user = this._mockUsers.find(x => x.email === email);
+    if (user) {
+      const role = this._mapRole(user.roleStr);
+      return { success: true, user: { nome: user.nome, role: role, avatar: Utils.getInitials(user.nome) } };
+    }
+    return { success: false, message: 'Este email não está autorizado no sistema. Contacte a direção.' };
+  },
+
+  updateGrade: function(sheetName, numero, trimester, column, value) {
+    const student = this._rawStudents.find(s => s.n === numero);
+    if (!student) return { success: false, message: 'Aluno não encontrado' };
+    
+    // In a real app we'd map this better, but for mock let's just update the main mfd field loosely
+    // The real implementation in GAS will do the proper cell update
+    const fieldMap = { 'PORTUGUES': 'p', 'MATEMATICA': 'm', 'CIENCIAS NATURAIS': 'cn', 'CIENCIAS SOCIAIS': 'cs' };
+    const field = fieldMap[sheetName];
+    if (column === 'mt') {
+      student[field] = value;
+    }
+    return { success: true };
+  },
+
+  updateBehavior: function(sheetName, numero, trimester, value) {
+    const student = this._rawStudents.find(s => s.n === numero);
+    if (!student) return { success: false, message: 'Aluno não encontrado' };
+    student.comp = value;
+    return { success: true };
+  },
+
+  generateAndSavePautaPDF: () => ({ success: true, pdfUrl: '#', fileName: 'Pauta_Mock.pdf' }),
+  generateAndSaveBoletimPDF: () => ({ success: true, pdfUrl: '#', fileName: 'Boletim_Mock.pdf' }),
+  listSavedPDFs: () => []
+};
+
+// ================= GLOBAL API AND UTILS =================
+
+const API = {
+  isGAS: typeof google !== 'undefined' && google.script,
+  
+  call(functionName, ...args) {
+    return new Promise((resolve, reject) => {
+      if (this.isGAS) {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          [functionName](...args);
+      } else {
+        const mockFn = MockData[functionName];
+        if(!mockFn) return reject(new Error('Mock fn not found: ' + functionName));
+        setTimeout(() => resolve(mockFn.apply(MockData, args)), 300 + Math.random() * 500);
+      }
+    });
+  },
+
+  authenticate: (u, p) => API.call('authenticate', u, p),
+  authenticateWithGoogle: (email) => API.call('authenticateWithGoogle', email),
+  getSchoolData: () => API.call('getSchoolData'),
+  getDisciplines: () => API.call('getDisciplines'),
+  getStudentsByDiscipline: (s) => API.call('getStudentsByDiscipline', s),
+  getAllStudentsConsolidated: () => API.call('getAllStudentsConsolidated'),
+  getDashboardStats: () => API.call('getDashboardStats'),
+  generatePautaPDF: (d, t) => API.call('generateAndSavePautaPDF', d, t),
+  generateBoletimPDF: (s, t) => API.call('generateAndSaveBoletimPDF', s, t),
+  listPDFs: () => API.call('listSavedPDFs'),
+  updateGrade: (s, num, t, c, v) => API.call('updateGrade', s, num, t, c, v),
+  updateBehavior: (s, num, t, v) => API.call('updateBehavior', s, num, t, v)
+};
+
+// Utilities
+const Utils = {
+  dataTablesPT: {
+    emptyTable: "Não foi encontrado nenhum registo",
+    info: "A mostrar _START_ até _END_ de _TOTAL_ registos",
+    infoEmpty: "A mostrar 0 até 0 de 0 registos",
+    infoFiltered: "(filtrado de _MAX_ registos no total)",
+    infoPostFix: "",
+    thousands: ".",
+    lengthMenu: "Mostrar _MENU_ registos",
+    loadingRecords: "A carregar...",
+    processing: "A processar...",
+    search: "Pesquisar:",
+    zeroRecords: "Não foram encontrados registos compatíveis",
+    paginate: {
+      first: "Primeiro",
+      last: "Último",
+      next: "Seguinte",
+      previous: "Anterior"
+    },
+    aria: {
+      sortAscending: ": ativar para ordenar a coluna de forma ascendente",
+      sortDescending: ": ativar para ordenar a coluna de forma descendente"
+    }
+  },
+
+  getInitials: (name) => {
+    if(!name) return '??';
+    const parts = name.trim().split(' ');
+    if(parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  },
+  
+  getAvatarColor: (name) => {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return `hsl(${hash % 360}, 65%, 45%)`;
+  },
+  
+  getBehaviorBadge: (comp) => {
+    const map = {
+      'Excelente': 'badge-excelente',
+      'Bom': 'badge-bom',
+      'Regular': 'badge-regular',
+      'Insatisfatório': 'badge-insatisfatorio',
+      'Crítico': 'badge-critico'
+    };
+    return `<span class="badge ${map[comp] || 'badge-regular'}">${comp}</span>`;
+  },
+  
+  getGradeBadge: (grade) => {
+    const val = parseFloat(grade) || 0;
+    let cls = val >= 14 ? 'bg-success' : (val >= 9.5 ? 'bg-info text-dark' : 'bg-danger');
+    return `<span class="badge ${cls}">${val.toFixed(1)}</span>`;
+  },
+  
+  formatNumber: (n) => parseFloat(n).toFixed(1).replace('.', ','),
+  
+  showLoading: () => document.getElementById('loading-overlay').style.display = 'flex',
+  hideLoading: () => document.getElementById('loading-overlay').style.display = 'none',
+  
+  showToast: (title, icon='success') => {
+    Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, title, icon });
+  }
+};
+
+
+/* ==================== auth.js ==================== */
+const Auth = {
+  init() {
+    const loginForm = document.getElementById('login-form');
+    const togglePwd = document.getElementById('toggle-password');
+    const logoutBtn = document.getElementById('nav-logout');
+    const menuLogoutBtn = document.getElementById('menu-logout');
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', this.handleLogin.bind(this));
+    }
+    
+    if (togglePwd) {
+      togglePwd.addEventListener('click', () => {
+        const input = document.getElementById('login-password');
+        const icon = togglePwd.querySelector('i');
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+          input.type = 'password';
+          icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+      });
+    }
+
+    if (logoutBtn) logoutBtn.addEventListener('click', this.logout.bind(this));
+    if (menuLogoutBtn) menuLogoutBtn.addEventListener('click', this.logout.bind(this));
+
+    this.initGoogleAuth();
+  },
+
+  initGoogleAuth() {
+    if (typeof google !== 'undefined' && google.accounts) {
+      google.accounts.id.initialize({
+        client_id: '50630855932-8cjspcb019avab7db1ll100hi434thui.apps.googleusercontent.com',
+        callback: this.handleGoogleCallback.bind(this)
+      });
+      google.accounts.id.renderButton(
+        document.getElementById('google-signin-btn-container'),
+        { theme: 'outline', size: 'large', text: 'continue_with', width: '300' }
+      );
+    } else {
+      setTimeout(this.initGoogleAuth.bind(this), 500);
+    }
+  },
+
+  async handleGoogleCallback(response) {
+    const errorMsg = document.getElementById('login-error');
+    errorMsg.classList.add('d-none');
+    
+    try {
+      // Parse JWT token
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      
+      const payload = JSON.parse(jsonPayload);
+      const email = payload.email;
+      
+      Utils.showLoading();
+      
+      const res = await API.authenticateWithGoogle(email);
+      if (res.success) {
+        sessionStorage.setItem('user', JSON.stringify(res.user));
+        this.completeLogin(res.user);
+      } else {
+        errorMsg.classList.remove('d-none');
+        document.getElementById('login-error-text').textContent = res.message;
+      }
+    } catch (error) {
+      console.error("Login falhou com exceção:", error);
+      this.showError(error.message || 'Erro ao conectar ao servidor. Verifique a consola.');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  async handleLogin(e) {
+    e.preventDefault();
+    const u = document.getElementById('login-username').value.trim();
+    const p = document.getElementById('login-password').value.trim();
+    const btnText = document.querySelector('.btn-text');
+    const btnLoader = document.querySelector('.btn-loader');
+    const errorMsg = document.getElementById('login-error');
+
+    btnText.classList.add('d-none');
+    btnLoader.classList.remove('d-none');
+    errorMsg.classList.add('d-none');
+
+    try {
+      const res = await API.authenticate(u, p);
+      if (res.success) {
+        sessionStorage.setItem('user', JSON.stringify(res.user));
+        this.completeLogin(res.user);
+      } else {
+        errorMsg.classList.remove('d-none');
+        document.getElementById('login-error-text').textContent = res.message;
+      }
+    } catch (err) {
+      console.error(err);
+      Utils.showToast('Erro: ' + (err.message || 'Falha de conexão'), 'error');
+    } finally {
+      btnText.classList.remove('d-none');
+      btnLoader.classList.add('d-none');
+    }
+  },
+
+  completeLogin(user) {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('app-shell').style.display = 'flex';
+    
+    // Update UI profile
+    document.getElementById('user-display-name').textContent = user.nome;
+    document.getElementById('user-display-role').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+    document.getElementById('user-avatar-initials').textContent = user.avatar;
+    document.querySelector('.user-avatar').style.background = Utils.getAvatarColor(user.nome);
+
+    App.start();
+  },
+
+  checkSession() {
+    const session = sessionStorage.getItem('user');
+    if (session) {
+      this.completeLogin(JSON.parse(session));
+      return true;
+    }
+    return false;
+  },
+
+  logout(e) {
+    if(e) e.preventDefault();
+    sessionStorage.removeItem('user');
+    document.getElementById('app-shell').style.display = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+    document.getElementById('login-form').reset();
+    document.getElementById('login-error').classList.add('d-none');
+  }
+};
+
+
+/* ==================== dashboard.js ==================== */
+const Dashboard = {
+  stats: null,
+  charts: {},
+
+  async init() {
+    try {
+      this.stats = await API.getDashboardStats();
+      this.renderKPIs();
+      this.renderCharts();
+      this.renderTopBottom();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar Dashboard', 'error');
+    }
+  },
+
+  renderKPIs() {
+    const s = this.stats;
+    document.getElementById('kpi-total-alunos').textContent = s.totalAlunos;
+    document.getElementById('kpi-total-disciplinas').textContent = s.totalDisciplinas;
+    document.getElementById('kpi-media-geral').textContent = Utils.formatNumber(s.mediaGeral);
+    document.getElementById('kpi-alunos-criticos').textContent = s.alunosCriticos;
+  },
+
+  renderCharts() {
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = "#718096";
+
+    this.renderMediasChart();
+    this.renderComportamentoChart();
+    this.renderSexoChart();
+    this.renderEvolucaoChart();
+  },
+
+  renderMediasChart() {
+    const ctx = document.getElementById('chart-medias-disciplina').getContext('2d');
+    const labels = this.stats.mediasPorDisciplina.map(d => d.disciplina);
+    const data = this.stats.mediasPorDisciplina.map(d => d.media);
+    const bgColors = data.map(v => v >= 14 ? 'rgba(16,185,129,0.8)' : (v >= 10 ? 'rgba(59,130,246,0.8)' : 'rgba(239,68,68,0.8)'));
+
+    this.charts.medias = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Média',
+          data: data,
+          backgroundColor: bgColors,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, max: 20 }
+        }
+      }
+    });
+  },
+
+  renderComportamentoChart() {
+    const ctx = document.getElementById('chart-comportamento').getContext('2d');
+    const comps = this.stats.distribuicaoComportamento;
+    
+    this.charts.comportamento = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Excelente', 'Bom', 'Regular', 'Insatisfatório', 'Crítico'],
+        datasets: [{
+          data: [comps.Excelente, comps.Bom, comps.Regular, comps.Insatisfatório, comps.Crítico],
+          backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#f97316', '#ef4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  },
+
+  renderSexoChart() {
+    const ctx = document.getElementById('chart-sexo').getContext('2d');
+    const sexos = this.stats.distribuicaoSexo;
+    
+    this.charts.sexo = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Feminino', 'Masculino'],
+        datasets: [{
+          data: [sexos.F, sexos.M],
+          backgroundColor: ['#ec4899', '#3b82f6'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  },
+
+  renderEvolucaoChart() {
+    const ctx = document.getElementById('chart-evolucao').getContext('2d');
+    // Mock data for evolution since we only have T1
+    const labels = ['1º Trim.', '2º Trim.', '3º Trim.'];
+    const datasets = this.stats.mediasPorDisciplina.map((d, i) => {
+      const colors = ['#1a365d', '#d4a843', '#10b981', '#8b5cf6'];
+      return {
+        label: d.disciplina,
+        data: [d.media, null, null], // T2 and T3 are null
+        borderColor: colors[i],
+        backgroundColor: colors[i],
+        tension: 0.4,
+        spanGaps: true
+      };
+    });
+
+    this.charts.evolucao = new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, max: 20 } }
+      }
+    });
+  },
+
+  renderTopBottom() {
+    const buildRow = (s, i) => `
+      <tr>
+        <td><strong>${i+1}º</strong></td>
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="student-avatar me-3" style="background: ${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+            <div>
+              <div class="fw-bold">${s.nome}</div>
+              <div class="text-secondary small">Nº ${s.numero}</div>
+            </div>
+          </div>
+        </td>
+        <td>${Utils.getGradeBadge(s.mediaGeral)}</td>
+      </tr>
+    `;
+
+    document.getElementById('top-alunos-list').innerHTML = this.stats.topAlunos.map(buildRow).join('');
+    
+    const buildBottomRow = (s, i) => `
+      <tr>
+        <td><strong>${i+1}º</strong></td>
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="student-avatar me-3" style="background: ${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+            <div class="fw-bold">${s.nome}</div>
+          </div>
+        </td>
+        <td>${Utils.getGradeBadge(s.mediaGeral)}</td>
+        <td><span class="badge bg-danger">Em Risco</span></td>
+      </tr>
+    `;
+    
+    document.getElementById('bottom-alunos-list').innerHTML = this.stats.bottomAlunos.map(buildBottomRow).join('');
+  }
+};
+
+
+/* ==================== alunos.js ==================== */
+const Alunos = {
+  students: [],
+  table: null,
+
+  async init() {
+    try {
+      this.students = await API.getAllStudentsConsolidated();
+      this.updateStats();
+      this.setupFilters();
+      this.renderTable();
+      this.setupEventHandlers();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar alunos', 'error');
+    }
+  },
+
+  updateStats() {
+    document.getElementById('stat-total').textContent = this.students.length;
+    document.getElementById('stat-masculino').textContent = this.students.filter(s => s.sexo === 'M').length;
+    document.getElementById('stat-feminino').textContent = this.students.filter(s => s.sexo === 'F').length;
+    
+    const media = this.students.reduce((acc, s) => acc + s.mediaGeral, 0) / this.students.length;
+    document.getElementById('stat-media').textContent = Utils.formatNumber(media);
+  },
+
+  setupFilters() {
+    const discSelect = document.getElementById('filter-disciplina');
+    const disciplines = Object.keys(this.students[0].disciplinas);
+    disciplines.forEach(d => {
+      discSelect.innerHTML += `<option value="${d}">${d}</option>`;
+    });
+
+    const searchInput = document.getElementById('search-alunos');
+    const compSelect = document.getElementById('filter-comportamento');
+    const sexoSelect = document.getElementById('filter-sexo');
+    const btnReset = document.getElementById('btn-reset-filters');
+
+    const triggerFilter = () => {
+      this.table.search(searchInput.value).draw();
+      // Custom filtering logic could be added here for the dropdowns
+    };
+
+    searchInput.addEventListener('input', triggerFilter);
+    compSelect.addEventListener('change', triggerFilter);
+    sexoSelect.addEventListener('change', triggerFilter);
+
+    btnReset.addEventListener('click', () => {
+      searchInput.value = '';
+      compSelect.value = '';
+      sexoSelect.value = '';
+      discSelect.value = '';
+      this.table.search('').columns().search('').draw();
+    });
+  },
+
+  renderTable() {
+    // Custom search function for DataTables
+    $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
+      if (settings.nTable.id !== 'table-alunos') return true;
+      
+      const compFilter = document.getElementById('filter-comportamento').value;
+      const sexoFilter = document.getElementById('filter-sexo').value;
+      
+      const sexo = data[2]; // Sexo column
+      const comp = data[4]; // Comportamento column (contains HTML badge, need to check text)
+
+      if (sexoFilter && sexo !== sexoFilter) return false;
+      if (compFilter && !comp.includes(compFilter)) return false;
+      
+      return true;
+    });
+
+    this.table = $('#table-alunos').DataTable({
+      data: this.students,
+      pageLength: 15,
+      language: Utils.dataTablesPT,
+      columns: [
+        { data: 'numero' },
+        { 
+          data: 'nome',
+          render: (data) => `
+            <div class="d-flex align-items-center">
+              <div class="student-avatar me-3" style="background: ${Utils.getAvatarColor(data)}">${Utils.getInitials(data)}</div>
+              <span class="fw-bold">${data}</span>
+            </div>
+          `
+        },
+        { data: 'sexo' },
+        { 
+          data: 'mediaGeral',
+          render: (data) => Utils.getGradeBadge(data)
+        },
+        { 
+          data: 'comportamentoGeral',
+          render: (data) => Utils.getBehaviorBadge(data)
+        },
+        {
+          data: null,
+          orderable: false,
+          render: (data) => `
+            <button class="btn btn-sm btn-outline-custom view-student" data-name="${data.nome}">
+              <i class="fas fa-eye"></i> Perfil
+            </button>
+          `
+        }
+      ],
+      dom: '<"row"<"col-sm-12"tr>><"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+    });
+  },
+
+  setupEventHandlers() {
+    $('#table-alunos tbody').on('click', '.view-student', (e) => {
+      const name = e.currentTarget.getAttribute('data-name');
+      this.openStudentModal(name);
+    });
+    
+    document.getElementById('btn-export-alunos').addEventListener('click', () => {
+      Utils.showToast('Exportando dados para Excel...', 'info');
+      // Dummy export logic
+    });
+  },
+
+  openStudentModal(name) {
+    const student = this.students.find(s => s.nome === name);
+    if(!student) return;
+    
+    Swal.fire({
+      title: 'Perfil do Aluno',
+      html: `
+        <div class="text-center mb-4">
+          <div class="student-avatar mx-auto mb-2" style="width:80px;height:80px;font-size:2rem;background:${Utils.getAvatarColor(student.nome)}">${Utils.getInitials(student.nome)}</div>
+          <h5>${student.nome}</h5>
+          <p class="text-secondary mb-2">Nº ${student.numero} | Sexo: ${student.sexo}</p>
+          <div class="d-flex justify-content-center gap-2">
+            ${Utils.getGradeBadge(student.mediaGeral)}
+            ${Utils.getBehaviorBadge(student.comportamentoGeral)}
+          </div>
+        </div>
+        <hr>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead><tr><th>Disciplina</th><th>Média</th><th>Situação</th></tr></thead>
+            <tbody>
+              ${Object.entries(student.disciplinas).map(([disc, data]) => `
+                <tr>
+                  <td class="text-start">${disc}</td>
+                  <td>${Utils.getGradeBadge(data.mfd)}</td>
+                  <td>${data.resultado}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `,
+      width: 600,
+      showCloseButton: true,
+      showConfirmButton: false
+    });
+  }
+};
+
+
+/* ==================== disciplinas.js ==================== */
+const Disciplinas = {
+  disciplinesList: [],
+  currentSheetData: null,
+  table: null,
+
+  async init() {
+    try {
+      this.disciplinesList = await API.getDisciplines();
+      this.renderGrid();
+      this.setupEventHandlers();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar disciplinas', 'error');
+    }
+  },
+
+  renderGrid() {
+    const grid = document.getElementById('disciplinas-grid');
+    grid.innerHTML = '';
+
+    const icons = {
+      'PORTUGUES': 'fa-book-open text-primary',
+      'MATEMATICA': 'fa-calculator text-success',
+      'CIENCIAS NATURAIS': 'fa-leaf text-info',
+      'CIENCIAS SOCIAIS': 'fa-globe-africa text-warning'
+    };
+
+    this.disciplinesList.forEach((disc, index) => {
+      const icon = icons[disc.name] || 'fa-book text-primary';
+      const delay = index * 0.1;
+      
+      const html = `
+        <div class="col-xl-3 col-md-6" style="animation: fadeIn 0.5s ease forwards; animation-delay: ${delay}s; opacity: 0;">
+          <div class="card h-100 disc-card cursor-pointer" data-sheet="${disc.sheetName}">
+            <div class="card-body text-center py-4">
+              <div class="mb-3" style="font-size: 3rem;">
+                <i class="fas ${icon}"></i>
+              </div>
+              <h5 class="fw-bold mb-3">${disc.name}</h5>
+              <button class="btn btn-outline-custom btn-sm w-100">Ver Pauta</button>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.innerHTML += html;
+    });
+
+    // Add click listeners to cards
+    document.querySelectorAll('.disc-card').forEach(card => {
+      card.addEventListener('click', () => {
+        this.showDisciplineDetail(card.getAttribute('data-sheet'));
+      });
+    });
+  },
+
+  async showDisciplineDetail(sheetName) {
+    Utils.showLoading();
+    try {
+      const students = await API.getStudentsByDiscipline(sheetName);
+      this.currentSheetData = { sheetName, students };
+      
+      // Update header
+      document.getElementById('disc-detail-name').textContent = sheetName;
+      document.getElementById('disc-detail-total').textContent = students.length;
+      
+      const validMt = students.map(s => s.mtFinal[0]).filter(v => v > 0);
+      const media = validMt.reduce((a,b)=>a+b,0) / (validMt.length || 1);
+      
+      document.getElementById('disc-detail-media').textContent = Utils.formatNumber(media);
+      document.getElementById('disc-detail-max').textContent = Math.max(...validMt, 0).toFixed(1);
+      document.getElementById('disc-detail-min').textContent = Math.min(...validMt, 20).toFixed(1);
+
+      // Switch view
+      document.getElementById('disciplinas-grid').style.display = 'none';
+      document.getElementById('disciplina-detail').style.display = 'block';
+
+      this.renderGradesTable(1); // Default to Trimester 1
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar dados da disciplina', 'error');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  renderGradesTable(trimester) {
+    const tIndex = trimester - 1; // 0-indexed
+    
+    if (this.table) {
+      this.table.destroy();
+    }
+
+    this.table = $('#table-disciplina-notas').DataTable({
+      data: this.currentSheetData.students,
+      pageLength: 20,
+      language: Utils.dataTablesPT,
+      columns: [
+        { data: 'numero' },
+        { 
+          data: 'nome',
+          render: (data) => `<span class="fw-bold">${data}</span>`
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.0`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="0" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.1`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="1" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.2`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="2" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.3`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="3" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.macs`, 
+          render: (v, type, row) => `<span class="text-info fw-medium macs-display" data-num="${row.numero}">${Utils.formatNumber(v)}</span>` 
+        },
+        { 
+          data: `trimestres.${tIndex}.at`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="at" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.mt`, 
+          render: (v, type, row) => `<span class="fw-bold mt-display ${v>=10?'text-success':'text-danger'}" data-num="${row.numero}">${Utils.formatNumber(v)}</span>` 
+        },
+        { 
+          data: `trimestres.${tIndex}.comp`,
+          render: (v, type, row) => `
+            <select class="form-select form-select-sm comp-select" data-num="${row.numero}">
+              <option value="Excelente" ${v==='Excelente'?'selected':''}>Excelente</option>
+              <option value="Bom" ${v==='Bom'?'selected':''}>Bom</option>
+              <option value="Regular" ${v==='Regular'||!v?'selected':''}>Regular</option>
+              <option value="Insatisfatório" ${v==='Insatisfatório'?'selected':''}>Insatisfatório</option>
+              <option value="Crítico" ${v==='Crítico'?'selected':''}>Crítico</option>
+            </select>
+          `
+        }
+      ],
+      dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+      drawCallback: () => {
+        // Auto-save logic on input change
+        const gradeInputs = document.querySelectorAll('#table-disciplina-notas .grade-input');
+        const compSelects = document.querySelectorAll('#table-disciplina-notas .comp-select');
+        const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+        const sheetName = this.currentSheetData.sheetName;
+
+        gradeInputs.forEach(input => {
+          // 1. Real-time visual calculation
+          input.addEventListener('input', (e) => {
+            const tr = e.target.closest('tr');
+            if(!tr) return;
+            const acsInputs = tr.querySelectorAll('.grade-input[data-col="0"], .grade-input[data-col="1"], .grade-input[data-col="2"], .grade-input[data-col="3"]');
+            const atInput = tr.querySelector('.grade-input[data-col="at"]');
+            
+            let sumACS = 0;
+            let countACS = 0;
+            acsInputs.forEach(inp => {
+               const val = parseFloat(inp.value);
+               if(!isNaN(val)) { sumACS += val; countACS++; }
+            });
+            
+            const macs = countACS > 0 ? (sumACS / countACS) : 0;
+            const macsDisplay = tr.querySelector('.macs-display');
+            if(macsDisplay) macsDisplay.textContent = Utils.formatNumber(macs);
+            
+            const atVal = atInput && !isNaN(parseFloat(atInput.value)) ? parseFloat(atInput.value) : 0;
+            const mt = (macs + atVal) / 2;
+            const mtDisplay = tr.querySelector('.mt-display');
+            if(mtDisplay) {
+               mtDisplay.textContent = Utils.formatNumber(mt);
+               mtDisplay.className = `fw-bold mt-display ${mt>=10?'text-success':'text-danger'}`;
+            }
+          });
+
+          // 2. Save only on 'Enter' key
+          input.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.target.blur(); // Remove focus to show completion
+              
+              const num = parseInt(e.target.getAttribute('data-num'));
+              const col = e.target.getAttribute('data-col');
+              const val = parseFloat(e.target.value) || 0;
+              
+              e.target.classList.add('bg-warning', 'bg-opacity-25');
+              try {
+                await API.updateGrade(sheetName, num, activeTrim, col, val);
+                e.target.classList.remove('bg-warning', 'bg-opacity-25');
+                e.target.classList.add('bg-success', 'bg-opacity-25');
+                setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
+              } catch (err) {
+                console.error(err);
+                e.target.classList.remove('bg-warning', 'bg-opacity-25');
+                e.target.classList.add('bg-danger', 'bg-opacity-25');
+              }
+            }
+          });
+        });
+
+        compSelects.forEach(select => {
+          select.addEventListener('change', async (e) => {
+            const num = parseInt(e.target.getAttribute('data-num'));
+            const val = e.target.value;
+            
+            e.target.classList.add('bg-warning', 'bg-opacity-25');
+            try {
+              await API.updateBehavior(sheetName, num, activeTrim, val);
+              e.target.classList.remove('bg-warning', 'bg-opacity-25');
+              e.target.classList.add('bg-success', 'bg-opacity-25');
+              setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
+            } catch (err) {
+              console.error(err);
+              e.target.classList.remove('bg-warning', 'bg-opacity-25');
+              e.target.classList.add('bg-danger', 'bg-opacity-25');
+            }
+          });
+        });
+      }
+    });
+  },
+
+  setupEventHandlers() {
+    document.getElementById('btn-back-disciplinas').addEventListener('click', () => {
+      document.getElementById('disciplina-detail').style.display = 'none';
+      document.getElementById('disciplinas-grid').style.display = 'flex';
+    });
+
+    document.querySelectorAll('.trimester-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        document.querySelectorAll('.trimester-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        const trim = parseInt(e.target.getAttribute('data-trimester'));
+        this.renderGradesTable(trim);
+      });
+    });
+    
+    document.getElementById('btn-save-notas').addEventListener('click', async () => {
+      const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+      
+      Utils.showLoading();
+      try {
+        // Here we simulate saving all rows that have been edited.
+        // For the MVP, we will gather all inputs from the current page of datatable.
+        // A full implementation would track "dirty" cells via 'change' event on inputs.
+        const gradeInputs = document.querySelectorAll('.grade-input');
+        const compInputs = document.querySelectorAll('.comp-select');
+        
+        let updatePromises = [];
+
+        gradeInputs.forEach(input => {
+          const num = parseInt(input.getAttribute('data-num'));
+          const col = input.getAttribute('data-col'); // 0, 1, 2, 3, at
+          const val = parseFloat(input.value) || 0;
+          updatePromises.push(API.updateGrade(this.currentSheetData.sheetName, num, activeTrim, col, val));
+        });
+
+        compInputs.forEach(select => {
+           const num = parseInt(select.getAttribute('data-num'));
+           const val = select.value;
+           updatePromises.push(API.updateBehavior(this.currentSheetData.sheetName, num, activeTrim, val));
+        });
+
+        await Promise.all(updatePromises);
+        Swal.fire('Guardado', 'Notas sincronizadas com o Google Sheets.', 'success');
+        
+        // Refresh local data model
+        const students = await API.getStudentsByDiscipline(this.currentSheetData.sheetName);
+        this.currentSheetData.students = students;
+        
+      } catch (e) {
+        console.error(e);
+        Swal.fire('Erro', 'Não foi possível guardar as notas.', 'error');
+      } finally {
+        Utils.hideLoading();
+      }
+    });
+
+    document.getElementById('btn-export-notas').addEventListener('click', () => {
+      const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+      const tIndex = activeTrim - 1;
+      const sheetName = this.currentSheetData.sheetName;
+      const students = this.currentSheetData.students;
+
+      let csvContent = 'Nº,Nome,ACS1,ACS2,ACS3,ACS4,MACS,AT,MT,Comportamento\n';
+
+      students.forEach(s => {
+        const t = s.trimestres[tIndex] || {};
+        csvContent += `${s.numero},"${s.nome}",${t.acs?.[0]||0},${t.acs?.[1]||0},${t.acs?.[2]||0},${t.acs?.[3]||0},${t.macs||0},${t.at||0},${t.mt||0},"${t.comp||'Regular'}"\n`;
+      });
+
+      const blob = new Blob(["\ufeff", csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Notas_${sheetName}_T${activeTrim}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
+};
+
+
+/* ==================== pautas.js ==================== */
+const Pautas = {
+  async init() {
+    this.setupForm();
+    await this.loadSavedPDFs();
+  },
+
+  setupForm() {
+    const discSelect = document.getElementById('select-pauta-disciplina');
+    const tipoSelect = document.getElementById('select-pauta-tipo');
+    const alunoWrapper = document.getElementById('pauta-aluno-wrapper');
+    const alunoSelect = document.getElementById('select-pauta-aluno');
+    const btnGenerate = document.getElementById('btn-generate-pauta');
+    const btnPreview = document.getElementById('btn-preview-pauta');
+
+    // Populate disciplines
+    API.getDisciplines().then(disciplines => {
+      disciplines.forEach(d => {
+        discSelect.innerHTML += `<option value="${d.sheetName}">${d.name}</option>`;
+      });
+    });
+
+    // Populate students (for Boletim Individual)
+    API.getAllStudentsConsolidated().then(students => {
+      students.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(s => {
+        alunoSelect.innerHTML += `<option value="${s.nome}">${s.numero} - ${s.nome}</option>`;
+      });
+    });
+
+    // Handle type change
+    tipoSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'individual') {
+        alunoWrapper.classList.remove('d-none');
+        discSelect.disabled = true;
+      } else if (e.target.value === 'geral') {
+        alunoWrapper.classList.add('d-none');
+        discSelect.disabled = true;
+      } else {
+        alunoWrapper.classList.add('d-none');
+        discSelect.disabled = false;
+      }
+    });
+
+    btnGenerate.addEventListener('click', this.generatePauta.bind(this));
+    btnPreview.addEventListener('click', this.previewPauta.bind(this));
+    
+    // Bind print/download buttons of the existing modal
+    const printHandler = () => {
+      const content = document.getElementById('pauta-preview-content').innerHTML;
+      const w = window.open('', '_blank');
+      w.document.write('<html><head><title>Imprimir Pauta</title></head><body onload="window.print()">' + content + '</body></html>');
+      w.document.close();
+    };
+    
+    const downloadHandler = () => {
+      const element = document.getElementById('pauta-preview-content');
+      const opt = {
+        margin:       10,
+        filename:     'Pauta_Exportada.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      html2pdf().set(opt).from(element).save();
+    };
+    
+    document.getElementById('btn-print-pauta')?.addEventListener('click', printHandler);
+    document.getElementById('btn-print-pauta-footer')?.addEventListener('click', printHandler);
+    document.getElementById('btn-download-pauta')?.addEventListener('click', downloadHandler);
+    document.getElementById('btn-download-pauta-footer')?.addEventListener('click', downloadHandler);
+  },
+
+  async buildPautaHTML(tipo, trim, disc, aluno) {
+      let html = `<style>
+        body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        h2 { color: #1a365d; border-bottom: 2px solid #1a365d; padding-bottom: 5px; }
+        .text-center { text-align: center; }
+      </style>`;
+      
+      const sd = App.schoolData || await API.getSchoolData();
+      
+      html += `
+        <div class="text-center">
+          <h2>${sd.escola}</h2>
+          <p>${sd.endereco} | Ano Lectivo: ${sd.ano}</p>
+        </div>
+      `;
+
+      if (tipo === 'trimestral') {
+        html += `<h3>Pauta Trimestral - ${disc} - ${trim}º Trimestre</h3>`;
+        const students = await API.getStudentsByDiscipline(disc);
+        html += `<table><thead><tr><th>Nº</th><th>Nome</th><th>MACS</th><th>AT</th><th>MT</th><th>Comportamento</th></tr></thead><tbody>`;
+        students.forEach(s => {
+          const tData = s.trimestres[parseInt(trim)-1] || {};
+          html += `<tr><td>${s.numero}</td><td>${s.nome}</td><td>${tData.macs||0}</td><td>${tData.at||0}</td><td><strong>${tData.mt||0}</strong></td><td>${tData.comp||'Regular'}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      } else if (tipo === 'individual') {
+        html += `<h3>Boletim Escolar Individual</h3>`;
+        html += `<p><strong>Aluno:</strong> ${aluno}</p>`;
+        const allStudents = await API.getAllStudentsConsolidated();
+        const student = allStudents.find(s => s.nome === aluno);
+        if (student) {
+          html += `<table><thead><tr><th>Disciplina</th><th>Média Final</th><th>Comportamento</th><th>Situação</th></tr></thead><tbody>`;
+          Object.keys(student.disciplinas).forEach(d => {
+             const data = student.disciplinas[d];
+             html += `<tr><td>${d}</td><td><strong>${data.mfd}</strong></td><td>${data.comp}</td><td>${data.resultado}</td></tr>`;
+          });
+          html += `</tbody></table>`;
+        }
+      } else {
+        const isAnual = (trim === 'anual');
+        html += `<h3 style="margin-bottom:5px">Pauta Geral - ${isAnual ? 'Anual' : trim + 'º Trimestre'}</h3>`;
+        html += `<p style="font-size:0.9em;color:#666;margin-bottom:15px">Classe: ${sd.classe} | Professor(a): ${sd.professor}</p>`;
+        
+        const allStudents = await API.getAllStudentsConsolidated();
+        const discNames = Object.keys(allStudents[0].disciplinas);
+
+        let thead = '';
+        if (isAnual) {
+          thead += '<tr>';
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;min-width:30px">Nº</th>';
+          thead += '<th rowspan="2" style="vertical-align:middle;min-width:120px">Nome do Aluno</th>';
+          discNames.forEach(d => {
+            thead += `<th colspan="4" style="text-align:center;background:#e8edf3;border-bottom:2px solid #1a365d">${d}</th>`;
+          });
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;background:#d4edda;min-width:50px">Média<br>Global</th>';
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;min-width:60px">Comp.</th>';
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;min-width:80px">Resultado</th>';
+          thead += '</tr><tr>';
+          discNames.forEach(() => {
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px">1ºT</th>';
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px">2ºT</th>';
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px">3ºT</th>';
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px;background:#f0f0f0;font-weight:700">MFD</th>';
+          });
+          thead += '</tr>';
+        } else {
+          thead += '<tr>';
+          thead += '<th style="vertical-align:middle;text-align:center;min-width:30px">Nº</th>';
+          thead += '<th style="vertical-align:middle;min-width:120px">Nome do Aluno</th>';
+          discNames.forEach(d => {
+            thead += `<th style="text-align:center;background:#e8edf3;border-bottom:2px solid #1a365d">${d}</th>`;
+          });
+          thead += '<th style="vertical-align:middle;text-align:center;background:#d4edda;min-width:50px">Média</th>';
+          thead += '<th style="vertical-align:middle;text-align:center;min-width:60px">Comp.</th>';
+          thead += '<th style="vertical-align:middle;text-align:center;min-width:80px">Resultado</th>';
+          thead += '</tr>';
+        }
+
+        html += `<table style="font-size:0.78em;width:100%"><thead>${thead}</thead><tbody>`;
+
+        allStudents.forEach(s => {
+          let row = `<td style="text-align:center">${s.numero}</td>`;
+          row += `<td style="white-space:nowrap;font-weight:500">${s.nome}</td>`;
+
+          if (isAnual) {
+            discNames.forEach(d => {
+              const data = s.disciplinas[d];
+              const vals = [data.mt1, data.mt2, data.mt3];
+              const mfd = data.mfd || 0;
+              vals.forEach(v => {
+                const val = v || 0;
+                const display = val > 0 ? val.toFixed(1) : '—';
+                const clr = val > 0 ? (val >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
+                row += `<td style="text-align:center;color:${clr};padding:4px">${display}</td>`;
+              });
+              const mfdDisplay = mfd > 0 ? mfd.toFixed(1) : '—';
+              const mfdClr = mfd > 0 ? (mfd >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
+              row += `<td style="text-align:center;font-weight:700;color:${mfdClr};background:#f9f9f9;padding:4px">${mfdDisplay}</td>`;
+            });
+            const mg = s.mediaGeral;
+            const mgClr = mg >= 9.5 ? '#10b981' : '#ef4444';
+            const res = s.resultadoGeral || (mg >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)');
+            const resClr = res.toUpperCase().includes('REPROVADO') ? '#ef4444' : '#10b981';
+            row += `<td style="text-align:center;font-weight:700;color:${mgClr};background:#d4edda;padding:4px">${mg.toFixed(1)}</td>`;
+            row += `<td style="text-align:center;padding:4px">${s.comportamentoGeral}</td>`;
+            row += `<td style="text-align:center;font-weight:700;color:${resClr};padding:4px;font-size:0.9em">${res}</td>`;
+          } else {
+            let rowMedias = [];
+            const trimIndex = parseInt(trim) - 1;
+            discNames.forEach(d => {
+              const data = s.disciplinas[d];
+              const tData = data.trimestres && data.trimestres[trimIndex] ? data.trimestres[trimIndex] : {};
+              const mt = tData.mt || 0;
+              rowMedias.push(mt);
+              const display = mt > 0 ? mt.toFixed(1) : '—';
+              const clr = mt > 0 ? (mt >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
+              row += `<td style="text-align:center;color:${clr};padding:4px">${display}</td>`;
+            });
+            const mediaValid = rowMedias.filter(m => m > 0);
+            const media = mediaValid.length > 0
+              ? (mediaValid.reduce((a, b) => a + b, 0) / mediaValid.length)
+              : 0;
+            const mediaClr = media >= 9.5 ? '#10b981' : '#ef4444';
+            const res = media >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)';
+            const resClr = res.includes('REPROVADO') ? '#ef4444' : '#10b981';
+            row += `<td style="text-align:center;font-weight:700;color:${mediaClr};background:#d4edda;padding:4px">${media.toFixed(1)}</td>`;
+            row += `<td style="text-align:center;padding:4px">${s.comportamentoGeral}</td>`;
+            row += `<td style="text-align:center;font-weight:700;color:${resClr};padding:4px;font-size:0.9em">${res}</td>`;
+          }
+
+          html += `<tr>${row}</tr>`;
+        });
+
+        html += '</tbody></table>';
+      }
+      return html;
+  },
+
+  async generatePauta() {
+    const tipo = document.getElementById('select-pauta-tipo').value;
+    const trim = document.getElementById('select-pauta-trimestre').value;
+    const disc = document.getElementById('select-pauta-disciplina').value;
+    const aluno = document.getElementById('select-pauta-aluno').value;
+
+    if (tipo === 'individual' && !aluno) {
+      return Swal.fire('Atenção', 'Selecione um aluno para gerar o boletim.', 'warning');
+    }
+
+    Swal.fire({
+      title: 'Gerando Pauta...',
+      html: 'A comunicar com o Google Drive para criar o PDF.',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    try {
+      const html = await this.buildPautaHTML(tipo, trim, disc, aluno);
+      
+      // Inject into a hidden element to generate PDF
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      
+      const fileName = tipo === 'individual' ? `Boletim_${aluno}.pdf` : `Pauta_${disc||'Geral'}_T${trim}.pdf`;
+
+      const opt = {
+        margin:       10,
+        filename:     fileName.replace(/\s+/g, '_'),
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      
+      await html2pdf().set(opt).from(container).save();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'PDF Gerado e Baixado!',
+        text: `Arquivo: ${opt.filename}`,
+        confirmButtonText: 'Fechar'
+      });
+      
+      // Mock saving to list
+      this.loadSavedPDFs();
+    } catch (e) {
+      console.error(e);
+      Swal.fire('Erro', 'Não foi possível gerar a pauta: ' + e.message, 'error');
+    }
+  },
+
+  async previewPauta() {
+    const tipo = document.getElementById('select-pauta-tipo').value;
+    const trim = document.getElementById('select-pauta-trimestre').value;
+    const disc = document.getElementById('select-pauta-disciplina').value;
+    const aluno = document.getElementById('select-pauta-aluno').value;
+
+    if (tipo === 'individual' && !aluno) {
+      return Swal.fire('Atenção', 'Selecione um aluno para gerar o boletim.', 'warning');
+    }
+
+    Utils.showLoading();
+    try {
+      const html = await this.buildPautaHTML(tipo, trim, disc, aluno);
+      const container = document.getElementById('pauta-preview-content');
+      const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-pauta-preview'));
+      
+      container.innerHTML = html;
+      modal.show();
+
+    } catch (e) {
+      console.error(e);
+      Swal.fire('Erro', 'Não foi possível gerar a pré-visualização.', 'error');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  async loadSavedPDFs() {
+    try {
+      const pdfs = await API.listPDFs();
+      this.renderPDFList(pdfs);
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  renderPDFList(pdfs) {
+    const list = document.getElementById('pautas-list');
+    const empty = document.getElementById('pautas-empty');
+    document.getElementById('pautas-count').textContent = pdfs.length;
+
+    if (pdfs.length === 0) {
+      empty.style.display = 'block';
+      // list.innerHTML is handled by HTML template
+      return;
+    }
+
+    empty.style.display = 'none';
+    let html = '';
+    
+    // Fallback Mock items if real list is empty but we want to show something
+    const mockPdfs = [
+      { name: 'Pauta_Trimestral_PORTUGUES_1_Trimestre.pdf', date: 'Hoje', size: '124 KB' },
+      { name: 'Boletim_ZINIA_1_Trimestre.pdf', date: 'Ontem', size: '45 KB' }
+    ];
+    
+    const items = pdfs.length ? pdfs : mockPdfs;
+
+    items.forEach(pdf => {
+      html += `
+        <div class="card mb-2">
+          <div class="card-body p-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-file-pdf text-danger fa-2x me-3"></i>
+              <div>
+                <h6 class="mb-0 text-dark">${pdf.name}</h6>
+                <small class="text-secondary">${pdf.date} • ${pdf.size}</small>
+              </div>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-outline-success"><i class="fas fa-download"></i></button>
+              <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    // Replace everything except the empty div
+    list.innerHTML = empty.outerHTML + html;
+  }
+};
+
+/* ==================== relatorios.js ==================== */
+const Relatorios = {
+  students: [],
+  chart: null,
+  currentType: 'ranking',
+
+  async init() {
+    try {
+      this.students = await API.getAllStudentsConsolidated();
+      this.setupTabs();
+      this.setupFilters();
+      this.loadData();
+    } catch (e) {
+      console.error('Erro Relatorios', e);
+    }
+  },
+  
+  async loadData() {
+    // If called by auto-sync, fetch fresh data
+    if (this.students.length === 0 || document.querySelector('.sidebar-item.active').getAttribute('data-page') === 'relatorios') {
+       this.students = await App.schoolData ? await API.getAllStudentsConsolidated() : this.students;
+    }
+    this.loadReport(this.currentType);
+  },
+
+  setupTabs() {
+    const tabs = document.querySelectorAll('.report-type-card');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        tabs.forEach(t => t.classList.remove('active'));
+        const current = e.currentTarget;
+        current.classList.add('active');
+        
+        this.currentType = current.getAttribute('data-report');
+        this.loadReport(this.currentType);
+      });
+    });
+    
+    document.getElementById('btn-print-relatorio').addEventListener('click', () => window.print());
+    
+    // Export CSV hook
+    const btnCsv = document.getElementById('btn-export-excel');
+    if (btnCsv) {
+      btnCsv.addEventListener('click', () => {
+        Utils.showToast('Exportando dados do relatório para Excel...', 'info');
+        // Simple mock of export
+      });
+    }
+    // Export PDF hook
+    const btnPdf = document.getElementById('btn-export-pdf');
+    if (btnPdf) {
+      btnPdf.addEventListener('click', () => {
+        Utils.showToast('Gerando PDF do relatório...', 'info');
+        // Simple mock of export
+      });
+    }
+  },
+  
+  setupFilters() {
+    const discSelect = document.getElementById('filter-relatorio-disciplina');
+    if (discSelect && this.students.length > 0) {
+      const disciplines = Object.keys(this.students[0].disciplinas);
+      discSelect.innerHTML = '<option value="">Todas as Disciplinas</option>';
+      disciplines.forEach(d => {
+        discSelect.innerHTML += `<option value="${d}">${d}</option>`;
+      });
+      
+      discSelect.addEventListener('change', () => this.loadReport(this.currentType));
+    }
+    
+    const trimSelect = document.getElementById('filter-relatorio-trimestre');
+    if (trimSelect) {
+      trimSelect.addEventListener('change', () => this.loadReport(this.currentType));
+    }
+    
+    const btnGen = document.getElementById('btn-generate-relatorio');
+    if (btnGen) {
+      btnGen.addEventListener('click', () => this.loadReport(this.currentType));
+    }
+  },
+
+  getChartColors() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return {
+      text: isDark ? '#f8fafc' : '#718096',
+      grid: isDark ? '#334155' : '#e2e8f0',
+      bgPrimary: isDark ? '#3b82f6' : '#1a365d',
+      bgSecondary: isDark ? '#ec4899' : '#ec4899',
+      bgSuccess: '#10b981',
+      bgWarning: '#f59e0b',
+      bgDanger: '#ef4444'
+    };
+  },
+
+  loadReport(type) {
+    if (this.chart) this.chart.destroy();
+    
+    // Reset standard areas visibility
+    document.getElementById('relatorio-chart-area').style.display = 'block';
+    document.getElementById('relatorio-table-area').style.display = 'block';
+    const actaArea = document.getElementById('relatorio-acta-area');
+    if (actaArea) actaArea.style.display = 'none';
+
+    const discFilter = document.getElementById('filter-relatorio-disciplina');
+    if (discFilter) {
+      if (type === 'acta') {
+        discFilter.setAttribute('disabled', 'disabled');
+      } else {
+        discFilter.removeAttribute('disabled');
+      }
+    }
+
+    switch (type) {
+      case 'ranking':
+        document.getElementById('relatorio-chart-area').style.display = 'none';
+        this.renderRanking();
+        break;
+      case 'disciplina':
+        this.renderDisciplinaAnalysis();
+        break;
+      case 'comportamento':
+        this.renderBehaviorAnalysis();
+        break;
+      case 'sexo':
+        this.renderSexAnalysis();
+        break;
+      case 'acta':
+        document.getElementById('relatorio-chart-area').style.display = 'none';
+        document.getElementById('relatorio-table-area').style.display = 'none';
+        if (actaArea) actaArea.style.display = 'block';
+        this.renderActa();
+        break;
+    }
+  },
+
+  renderRanking() {
+    const sorted = [...this.students].sort((a,b) => b.mediaGeral - a.mediaGeral);
+    
+    let html = '';
+    sorted.forEach((s, i) => {
+      html += `
+        <tr>
+          <td><strong>${i+1}º</strong></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="student-avatar me-3" style="background:${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+              <div>
+                <span class="fw-bold d-block">${s.nome}</span>
+                <small class="text-secondary">Nº ${s.numero} | Sexo: ${s.sexo}</small>
+              </div>
+            </div>
+          </td>
+          <td class="text-center align-middle">${Utils.getGradeBadge(s.mediaGeral)}</td>
+          <td class="text-center align-middle"><span class="badge ${s.resultadoGeral === 'APROVADO(A)' ? 'bg-success' : 'bg-danger'}">${s.resultadoGeral}</span></td>
+          <td class="text-center align-middle">${Utils.getBehaviorBadge(s.comportamentoGeral)}</td>
+        </tr>
+      `;
+    });
+    
+    document.querySelector('#table-relatorio thead').innerHTML = `
+      <tr>
+        <th style="width: 50px;">Pos.</th>
+        <th>Aluno</th>
+        <th class="text-center">Média Global</th>
+        <th class="text-center">Resultado</th>
+        <th class="text-center">Comportamento</th>
+      </tr>
+    `;
+    document.querySelector('#table-relatorio tbody').innerHTML = html;
+  },
+
+  renderDisciplinaAnalysis() {
+    const discFilter = document.getElementById('filter-relatorio-disciplina').value;
+    const colors = this.getChartColors();
+    
+    if (discFilter) {
+      // Show details for one specific discipline
+      const vals = this.students.map(s => s.disciplinas[discFilter].mfd);
+      const mediaTurma = vals.reduce((a,b)=>a+b,0) / vals.length;
+      const positivas = vals.filter(v => v >= 10).length;
+      const negativas = vals.filter(v => v < 10).length;
+ 
+      const ctx = document.getElementById('chart-relatorio').getContext('2d');
+      this.chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Positivas (>=10)', 'Negativas (<10)'],
+          datasets: [{
+            data: [positivas, negativas],
+            backgroundColor: [colors.bgSuccess, colors.bgDanger]
+          }]
+        },
+        options: { 
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: colors.text } } }
+        }
+      });
+
+      let html = '';
+      this.students.forEach((s, i) => {
+        const nota = s.disciplinas[discFilter].mfd;
+        const result = s.disciplinas[discFilter].resultado;
+        const comp = s.disciplinas[discFilter].comp;
+        html += `
+          <tr>
+            <td>${s.numero}</td>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="student-avatar me-3" style="background:${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+                <span class="fw-bold">${s.nome}</span>
+              </div>
+            </td>
+            <td class="text-center align-middle"><span class="fw-bold ${nota>=10?'text-success':'text-danger'}">${Utils.formatNumber(nota)}</span></td>
+            <td class="text-center align-middle">${result}</td>
+            <td class="text-center align-middle">${Utils.getBehaviorBadge(comp)}</td>
+          </tr>
+        `;
+      });
+      
+      document.querySelector('#table-relatorio thead').innerHTML = `
+        <tr><th style="width: 50px;">Nº</th><th>Aluno</th><th class="text-center">Nota Exacta</th><th class="text-center">Situação</th><th class="text-center">Comportamento</th></tr>
+      `;
+      document.querySelector('#table-relatorio tbody').innerHTML = html;
+
+    } else {
+      // General discipline overview
+      const labels = ['PORTUGUES', 'MATEMATICA', 'CIENCIAS NATURAIS', 'CIENCIAS SOCIAIS'];
+      const medias = labels.map(disc => {
+        const sum = this.students.reduce((acc, s) => acc + s.disciplinas[disc].mfd, 0);
+        return sum / this.students.length;
+      });
+
+      const ctx = document.getElementById('chart-relatorio').getContext('2d');
+      this.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Média da Turma',
+            data: medias,
+            backgroundColor: colors.bgPrimary,
+            borderRadius: 4
+          }]
+        },
+        options: { 
+          responsive: true, maintainAspectRatio: false, 
+          scales: { 
+            y: { max: 20, grid: { color: colors.grid }, ticks: { color: colors.text } },
+            x: { grid: { display: false }, ticks: { color: colors.text } }
+          },
+          plugins: { legend: { labels: { color: colors.text } } }
+        }
+      });
+
+      let html = '';
+      labels.forEach((disc, i) => {
+        const vals = this.students.map(s => s.disciplinas[disc].mfd);
+        const max = Math.max(...vals);
+        const min = Math.min(...vals);
+        html += `
+          <tr>
+            <td>${i+1}</td>
+            <td><strong>${disc}</strong></td>
+            <td class="text-center align-middle">${Utils.getGradeBadge(medias[i])}</td>
+            <td class="text-center align-middle text-success fw-bold">${Utils.formatNumber(max)}</td>
+            <td class="text-center align-middle text-danger fw-bold">${Utils.formatNumber(min)}</td>
+          </tr>
+        `;
+      });
+      
+      document.querySelector('#table-relatorio thead').innerHTML = `
+        <tr><th>#</th><th>Disciplina</th><th class="text-center">Média Geral</th><th class="text-center">Nota Máxima</th><th class="text-center">Nota Mínima</th></tr>
+      `;
+      document.querySelector('#table-relatorio tbody').innerHTML = html;
+    }
+  },
+
+  renderBehaviorAnalysis() {
+    const colors = this.getChartColors();
+    const comps = { Excelente: 0, Bom: 0, Regular: 0, Insatisfatório: 0, Crítico: 0 };
+    this.students.forEach(s => {
+      if (comps[s.comportamentoGeral] !== undefined) comps[s.comportamentoGeral]++;
+    });
+
+    const ctx = document.getElementById('chart-relatorio').getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(comps),
+        datasets: [{
+          data: Object.values(comps),
+          backgroundColor: [colors.bgSuccess, colors.bgPrimary, colors.bgWarning, '#f97316', colors.bgDanger],
+          borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#fff'
+        }]
+      },
+      options: { 
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: colors.text } } }
+      }
+    });
+
+    let html = '';
+    Object.keys(comps).forEach((k, i) => {
+      html += `
+        <tr>
+          <td>${i+1}</td>
+          <td><strong>${k}</strong></td>
+          <td class="text-center align-middle">${comps[k]} alunos</td>
+          <td class="text-center align-middle">${Utils.getBehaviorBadge(k)}</td>
+        </tr>
+      `;
+    });
+    
+    document.querySelector('#table-relatorio thead').innerHTML = `
+      <tr><th>#</th><th>Comportamento</th><th class="text-center">Quantidade</th><th class="text-center">Status</th></tr>
+    `;
+    document.querySelector('#table-relatorio tbody').innerHTML = html;
+  },
+  
+  renderSexAnalysis() {
+    const colors = this.getChartColors();
+    const m = this.students.filter(s => s.sexo === 'M');
+    const f = this.students.filter(s => s.sexo === 'F');
+
+    const mMedia = m.length ? m.reduce((a,s) => a+s.mediaGeral, 0) / m.length : 0;
+    const fMedia = f.length ? f.reduce((a,s) => a+s.mediaGeral, 0) / f.length : 0;
+
+    const ctx = document.getElementById('chart-relatorio').getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Masculino', 'Feminino'],
+        datasets: [{
+          data: [m.length, f.length],
+          backgroundColor: [colors.bgPrimary, colors.bgSecondary],
+          borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#fff'
+        }]
+      },
+      options: { 
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: colors.text } } }
+      }
+    });
+
+    let html = `
+      <tr>
+        <td>1</td>
+        <td><strong>Masculino</strong></td>
+        <td class="text-center align-middle">${m.length} alunos</td>
+        <td class="text-center align-middle">${Utils.getGradeBadge(mMedia)}</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Feminino</strong></td>
+        <td class="text-center align-middle">${f.length} alunas</td>
+        <td class="text-center align-middle">${Utils.getGradeBadge(fMedia)}</td>
+      </tr>
+    `;
+    
+    document.querySelector('#table-relatorio thead').innerHTML = `
+      <tr><th>#</th><th>Sexo</th><th class="text-center">Total Alunos</th><th class="text-center">Média Global</th></tr>
+    `;
+    document.querySelector('#table-relatorio tbody').innerHTML = html;
+  },
+
+  async renderActa() {
+    let trimVal = document.getElementById('filter-relatorio-trimestre').value;
+    if (!trimVal) {
+      trimVal = '1';
+      document.getElementById('filter-relatorio-trimestre').value = '1';
+      Utils.showToast('Selecione um trimestre específico para a Acta do Conselho. Mostrando o 1º Trimestre.', 'warning');
+    }
+
+    try {
+      const school = await API.getSchoolData();
+      
+      // Update basic fields
+      document.getElementById('acta-turma-nome').textContent = school.classe ? (school.classe + ' Classe') : '---';
+      document.getElementById('acta-trimestre-nome').textContent = trimVal + 'º';
+      document.getElementById('acta-director-nome').textContent = school.director || 'Maria Manuela';
+      document.getElementById('acta-professor-nome').textContent = school.professor || 'Pascoa da Graca Ramim';
+
+      // Set date defaults if empty
+      const dayInput = document.getElementById('acta-dia');
+      const monthInput = document.getElementById('acta-mes');
+      const yearInput = document.getElementById('acta-ano');
+      const roomInput = document.getElementById('acta-sala');
+
+      const now = new Date();
+      if (!dayInput.value) dayInput.value = now.getDate();
+      if (!monthInput.value) {
+        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        monthInput.value = months[now.getMonth()];
+      }
+      if (!yearInput.value) yearInput.value = now.getFullYear();
+      if (!roomInput.value) roomInput.value = 'Sala 1';
+
+      // Statistics calculations
+      const students = this.students;
+      const activeStudents = students.filter(s => s.nome && s.nome.trim() !== '');
+
+      // Gender counts
+      const totalM = activeStudents.filter(s => s.sexo === 'F').length; // M stands for Mulheres (Female)
+      const totalHM = activeStudents.length; // HM stands for Homens + Mulheres (Total)
+
+      // Set Turma Indicators defaults
+      document.getElementById('ind-mat-m').value = totalM;
+      document.getElementById('ind-mat-hm').value = totalHM;
+      document.getElementById('ind-ini-m').value = totalM;
+      document.getElementById('ind-ini-hm').value = totalHM;
+
+      // Compute quarterly average and positive students count
+      const trimKey = 'mt' + trimVal;
+      let posM = 0;
+      let posHM = 0;
+
+      activeStudents.forEach(s => {
+        let sum = 0;
+        let count = 0;
+        const discNames = Object.keys(s.disciplinas);
+        discNames.forEach(d => {
+          const val = s.disciplinas[d] ? s.disciplinas[d][trimKey] : null;
+          if (val !== null && val !== undefined && val !== '' && !isNaN(val)) {
+            sum += Number(val);
+            count++;
+          }
+        });
+        const avg = count > 0 ? (sum / count) : 0;
+        if (avg >= 9.5) {
+          posHM++;
+          if (s.sexo === 'F') {
+            posM++;
+          }
+        }
+      });
+
+      document.getElementById('ind-pos-m').textContent = posM;
+      document.getElementById('ind-pos-hm').textContent = posHM;
+
+      // Add event listeners for inputs to update Fim do Trimestre and Aproveitamento % dynamically
+      const updateFrequencia = () => {
+        const iniM = parseInt(document.getElementById('ind-ini-m').value) || 0;
+        const iniHM = parseInt(document.getElementById('ind-ini-hm').value) || 0;
+        const desM = parseInt(document.getElementById('ind-des-m').value) || 0;
+        const desHM = parseInt(document.getElementById('ind-des-hm').value) || 0;
+        const entM = parseInt(document.getElementById('ind-ent-m').value) || 0;
+        const entHM = parseInt(document.getElementById('ind-ent-hm').value) || 0;
+        const saiM = parseInt(document.getElementById('ind-sai-m').value) || 0;
+        const saiHM = parseInt(document.getElementById('ind-sai-hm').value) || 0;
+
+        const fimM = iniM - desM - saiM + entM;
+        const fimHM = iniHM - desHM - saiHM + entHM;
+
+        document.getElementById('ind-fim-m').textContent = fimM;
+        document.getElementById('ind-fim-hm').textContent = fimHM;
+
+        const aprovM = fimM > 0 ? ((posM / fimM) * 100).toFixed(1) + '%' : '0%';
+        const aprovHM = fimHM > 0 ? ((posHM / fimHM) * 100).toFixed(1) + '%' : '0%';
+
+        document.getElementById('ind-aprov-m').textContent = aprovM;
+        document.getElementById('ind-aprov-hm').textContent = aprovHM;
+      };
+
+      // Register input change listeners
+      const inputs = [
+        'ind-mat-m', 'ind-mat-hm',
+        'ind-ini-m', 'ind-ini-hm',
+        'ind-des-m', 'ind-des-hm',
+        'ind-ent-m', 'ind-ent-hm',
+        'ind-sai-m', 'ind-sai-hm'
+      ];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.removeEventListener('input', updateFrequencia);
+          el.addEventListener('input', updateFrequencia);
+        }
+      });
+
+      // Run once initially
+      updateFrequencia();
+
+      // Populate Pedagogical Achievement Table
+      const disciplinesToRender = [
+        { label: 'Português', key: 'PORTUGUES' },
+        { label: 'C. sociais', key: 'CIENCIAS SOCIAIS' },
+        { label: 'Matemática', key: 'MATEMATICA' },
+        { label: 'C. naturais', key: 'CIENCIAS NATURAIS' },
+        { label: 'Ed. Visual', key: 'ED. VISUAL' },
+        { label: 'Ed. Física', key: 'ED. FISICA' }
+      ];
+
+      let tableHtml = '';
+      disciplinesToRender.forEach(d => {
+        let evalH = 0, evalM = 0, evalHM = 0;
+        let posH = 0, posM = 0, posHM = 0;
+        let negH = 0, negM = 0, negHM = 0;
+        
+        let span0_9 = 0;   // Não Satisfatório (0-9)
+        let span10_13 = 0; // Satisfatório (10-13)
+        let span14_16 = 0; // Bom (14-16)
+        let span17_18 = 0; // Muito Bom (17-18)
+        let span19_20 = 0; // Excelente (19-20)
+
+        activeStudents.forEach(s => {
+          const discData = s.disciplinas[d.key];
+          const rawGrade = discData ? discData[trimKey] : null;
+
+          if (rawGrade !== null && rawGrade !== undefined && rawGrade !== '' && !isNaN(rawGrade)) {
+            const grade = Number(rawGrade);
+            
+            // Count evaluated
+            evalHM++;
+            if (s.sexo === 'F') {
+              evalM++;
+            } else {
+              evalH++;
+            }
+
+            // Count positive and negative
+            if (grade >= 9.5) {
+              posHM++;
+              if (s.sexo === 'F') {
+                posM++;
+              } else {
+                posH++;
+              }
+            } else {
+              negHM++;
+              if (s.sexo === 'F') {
+                negM++;
+              } else {
+                negH++;
+              }
+            }
+
+            // Distribution
+            if (grade < 9.5) {
+              span0_9++;
+            } else if (grade < 13.5) {
+              span10_13++;
+            } else if (grade < 16.5) {
+              span14_16++;
+            } else if (grade < 18.5) {
+              span17_18++;
+            } else {
+              span19_20++;
+            }
+          }
+        });
+
+        const pctH = evalH > 0 ? ((posH / evalH) * 100).toFixed(1) : '0.0';
+        const pctM = evalM > 0 ? ((posM / evalM) * 100).toFixed(1) : '0.0';
+        const pctHM = evalHM > 0 ? ((posHM / evalHM) * 100).toFixed(1) : '0.0';
+
+        tableHtml += `
+          <tr>
+            <td class="text-left fw-bold">${d.label}</td>
+            <td>${evalH}</td>
+            <td>${evalM}</td>
+            <td class="fw-bold">${evalHM}</td>
+            <td>${posH}</td>
+            <td>${posM}</td>
+            <td class="fw-bold text-success">${posHM}</td>
+            <td>${negH}</td>
+            <td>${negM}</td>
+            <td class="fw-bold text-danger">${negHM}</td>
+            <td>${pctH}%</td>
+            <td>${pctM}%</td>
+            <td class="fw-bold">${pctHM}%</td>
+            <td>${span0_9}</td>
+            <td>${span10_13}</td>
+            <td>${span14_16}</td>
+            <td>${span17_18}</td>
+            <td>${span19_20}</td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('acta-aproveitamento-body').innerHTML = tableHtml;
+
+      // Print button click handler
+      const printBtn = document.getElementById('btn-print-acta');
+      if (printBtn) {
+        printBtn.onclick = () => window.print();
+      }
+
+      // PDF download button handler
+      const downloadBtn = document.getElementById('btn-download-acta');
+      if (downloadBtn) {
+        downloadBtn.onclick = () => {
+          Utils.showToast('Gerando PDF da Acta...', 'info');
+          const element = document.querySelector('.printable-acta');
+          const opt = {
+            margin:       10,
+            filename:     `Acta_Conselho_Trimestre_${trimVal}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
+          html2pdf().set(opt).from(element).save();
+        };
+      }
+
+    } catch (e) {
+      console.error('Erro renderActa', e);
+      Utils.showToast('Erro ao carregar dados para a Acta do Conselho.', 'danger');
+    }
+  }
+};
+
+/* ==================== config.js ==================== */
+const Config = {
+  init() {
+    this.renderConfig();
+  },
+
+  renderConfig() {
+    if(!App.schoolData) return;
+    const sd = App.schoolData;
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+
+    // School Info (Assuming we inject a list of items dynamically or update existing ones)
+    // The HTML has hardcoded values, let's update them dynamically
+    const configCard = document.querySelector('#config-page .col-lg-6:first-child .config-card');
+    if(configCard) {
+      configCard.innerHTML = `
+        <h6><i class="fas fa-school me-2"></i>Informações da Escola</h6>
+        <div class="config-item"><span class="label">Escola</span><span class="value">${sd.escola}</span></div>
+        <div class="config-item"><span class="label">Localização</span><span class="value">${sd.endereco}</span></div>
+        <div class="config-item"><span class="label">Contacto</span><span class="value">${sd.contacto}</span></div>
+        <div class="config-item"><span class="label">Classe</span><span class="value">${sd.classe}</span></div>
+        <div class="config-item"><span class="label">Ano Lectivo</span><span class="value">${sd.ano}</span></div>
+        <div class="config-item"><span class="label">Professor(a)</span><span class="value">${sd.professor}</span></div>
+        <div class="config-item"><span class="label">Dir. Pedagógico</span><span class="value">${sd.directorPedagogico}</span></div>
+        <div class="config-item"><span class="label">Directora</span><span class="value">${sd.director}</span></div>
+      `;
+    }
+
+    // User Profile
+    document.getElementById('config-avatar-initials').textContent = user.avatar;
+    document.querySelector('.config-avatar').style.background = Utils.getAvatarColor(user.nome || '');
+    document.getElementById('config-user-name').textContent = user.nome;
+    document.getElementById('config-user-role').textContent = user.role.toUpperCase();
+    document.getElementById('config-last-login').textContent = new Date().toLocaleString();
+
+    document.getElementById('btn-change-password').addEventListener('click', () => {
+      Swal.fire({
+        title: 'Funcionalidade desativada',
+        text: 'Nesta versão MVP as senhas são geridas pelo administrador.',
+        icon: 'info'
+      });
+    });
+  }
+};
+
+
+/* ==================== app.js ==================== */
+const App = {
+  schoolData: null,
+  syncTimer: 300,
+  syncInterval: null,
+  
+  async start() {
+    Utils.showLoading();
+    try {
+      this.schoolData = await API.getSchoolData();
+      document.querySelector('.login-school').textContent = this.schoolData.escola;
+      document.querySelector('.sidebar-title').textContent = 'Caderneta Escolar';
+      document.querySelector('.sidebar-subtitle').textContent = `${this.schoolData.classe} · ${this.schoolData.ano}`;
+      
+      this.initTheme();
+      this.initRouter();
+      
+      // Init modules
+      await Dashboard.init();
+      Alunos.init();
+      Disciplinas.init();
+      Pautas.init();
+      Relatorios.init();
+      Config.init();
+      
+      this.navigate('dashboard');
+      
+      // Start 5-minute auto-sync timer
+      this.startSyncTimer();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar dados iniciais', 'error');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  startSyncTimer() {
+    if (this.syncInterval) clearInterval(this.syncInterval);
+    this.syncTimer = 300;
+    this.updateTimerDisplay();
+    
+    this.syncInterval = setInterval(() => {
+      this.syncTimer--;
+      if (this.syncTimer <= 0) {
+        this.performAutoSync();
+      } else {
+        this.updateTimerDisplay();
+      }
+    }, 1000);
+  },
+  
+  updateTimerDisplay() {
+    const percentage = (this.syncTimer / 300) * 100;
+    const circle = document.getElementById('sync-progress-circle');
+    if (circle) {
+      circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #e2e8f0 0)`;
+    }
+  },
+  
+  async performAutoSync() {
+    const spinner = document.getElementById('sync-spinner');
+    if (spinner) spinner.classList.add('fa-spin', 'text-primary');
+    
+    try {
+      // Re-fetch core data
+      this.schoolData = await API.getSchoolData();
+      
+      // Refresh current page if it is Dashboard or Relatorios to show updated data instantly
+      // (avoid refreshing active tables if user is typing)
+      const currentPage = document.querySelector('.sidebar-item.active').getAttribute('data-page');
+      if (currentPage === 'dashboard') {
+        await Dashboard.loadDashboard();
+      } else if (currentPage === 'relatorios') {
+        await Relatorios.loadData();
+      }
+      
+      Utils.showToast('Dados sincronizados com o servidor.', 'success');
+    } catch (e) {
+      console.error('Auto-sync failed', e);
+      Utils.showToast('Falha na sincronização automática', 'warning');
+    } finally {
+      if (spinner) spinner.classList.remove('fa-spin', 'text-primary');
+      this.syncTimer = 300; // Reset timer
+      this.updateTimerDisplay();
+    }
+  },
+
+  initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    const icon = document.getElementById('theme-icon');
+    
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+      localStorage.setItem('theme', 'light');
+    }
+
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => this.toggleTheme());
+    }
+  },
+
+  toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const icon = document.getElementById('theme-icon');
+    
+    if (current === 'dark') {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      if (icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+    }
+    
+    // Reload charts if on the Relatorios page
+    const currentPage = document.querySelector('.sidebar-item.active').getAttribute('data-page');
+    if (currentPage === 'relatorios' && typeof Relatorios !== 'undefined') {
+      Relatorios.loadReport(Relatorios.currentType);
+    }
+  },
+
+  initRouter() {
+    const btnSync = document.getElementById('btn-manual-sync');
+    if (btnSync) {
+      btnSync.addEventListener('click', () => {
+        this.syncTimer = 0; // Trigger sync on next tick
+        this.performAutoSync();
+      });
+    }
+
+    const items = document.querySelectorAll('.sidebar-nav .sidebar-item[data-page]');
+    items.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = item.getAttribute('data-page');
+        this.navigate(page);
+        
+        // Mobile sidebar close
+        if(window.innerWidth <= 992) {
+          document.getElementById('sidebar').classList.remove('show');
+          document.getElementById('sidebar-overlay').classList.remove('show');
+        }
+      });
+    });
+
+    // Mobile toggle
+    const toggle = document.getElementById('sidebar-toggle');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(toggle) {
+      toggle.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.add('show');
+        overlay.classList.add('show');
+      });
+    }
+    if(overlay) {
+      overlay.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('show');
+        overlay.classList.remove('show');
+      });
+    }
+  },
+
+  navigate(pageId) {
+    let targetPage = pageId;
+    let reportSubPage = null;
+    if (pageId.startsWith('relatorios-')) {
+      targetPage = 'relatorios';
+      reportSubPage = pageId.split('-')[1];
+    }
+
+    // Hide all pages
+    document.querySelectorAll('.page-section').forEach(sec => sec.style.display = 'none');
+    
+    // Show target page
+    const pageEl = document.getElementById(`${targetPage}-page`);
+    if (pageEl) pageEl.style.display = 'block';
+    
+    // Update sidebar active state
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+    const activeItem = document.querySelector(`.sidebar-item[data-page="${pageId}"]`);
+    if(activeItem) activeItem.classList.add('active');
+
+    // Update Header
+    const titles = {
+      dashboard: 'Dashboard',
+      alunos: 'Gestão de Alunos',
+      disciplinas: 'Disciplinas',
+      pautas: 'Geração de Pautas',
+      relatorios: 'Relatórios',
+      'relatorios-acta': 'Acta do Conselho',
+      config: 'Configurações do Sistema'
+    };
+    
+    document.getElementById('page-title').textContent = titles[pageId] || 'Página';
+    document.getElementById('breadcrumb-current').textContent = titles[pageId] || 'Página';
+
+    if (reportSubPage && typeof Relatorios !== 'undefined') {
+      const tabBtn = document.getElementById(`report-${reportSubPage}`);
+      if (tabBtn) {
+        document.querySelectorAll('.report-type-card').forEach(t => t.classList.remove('active'));
+        tabBtn.classList.add('active');
+        Relatorios.currentType = reportSubPage;
+        Relatorios.loadReport(reportSubPage);
+      }
+    }
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  Auth.init();
+  if (!Auth.checkSession()) {
+    document.getElementById('app-shell').style.display = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+  }
+});
+
+
+</script>

@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Caderneta Escolar - Sistema de Gestão de Notas e Comportamento para a Escola Básica de Macurunco, Beira, Sofala, Moçambique.">
+    <meta name="author" content="Escola Básica de Macurunco">
+    <title>Caderneta Escolar - Escola Básica de Macurunco</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <?!= include('styles'); ?>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div id="login-page" class="login-page">
+        <!-- Left Panel -->
+        <div class="login-left">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+            <div class="floating-shape shape-4"></div>
+            <div class="floating-shape shape-5"></div>
+            <div class="floating-shape shape-6"></div>
+
+            <div class="login-left-content">
+                <div class="login-brand-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h1>CADERNETA ESCOLAR</h1>
+                <p class="login-tagline">Sistema de Gestão Escolar</p>
+                <p class="login-school">Escola Básica de Macurunco</p>
+                <p class="login-location"><i class="fas fa-map-marker-alt me-2"></i>Beira, Sofala — Moçambique</p>
+
+                <div class="login-features">
+                    <div class="login-feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard Inteligente</span>
+                    </div>
+                    <div class="login-feature-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Pautas Automáticas</span>
+                    </div>
+                    <div class="login-feature-item">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Gestão de Alunos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="login-right">
+            <div class="login-card">
+                <div class="logo-area">
+                    <div class="logo-circle">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+
+                <h2>Bem-vindo de volta</h2>
+                <p class="subtitle">Faça login para continuar</p>
+
+                <!-- Google Sign-In Container -->
+                <div id="google-signin-btn-container" class="mb-4 d-flex justify-content-center"></div>
+
+                <div class="text-center text-secondary mb-3"><small>OU USE SUAS CREDENCIAIS</small></div>
+
+                <form id="login-form" autocomplete="off">
+                    <div class="form-group mb-3">
+                        <label for="login-username" class="form-label">Nome de utilizador</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-control" id="login-username" placeholder="Nome de utilizador" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="login-password" class="form-label">Senha</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="login-password" placeholder="Senha" required>
+                            <button type="button" class="password-toggle" id="toggle-password" aria-label="Mostrar senha">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="remember-me">
+                        <label class="form-check-label" for="remember-me">Lembrar-me</label>
+                    </div>
+
+                    <div id="login-error" class="alert alert-danger d-none" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span id="login-error-text">Credenciais inválidas. Tente novamente.</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-login" id="login-btn">
+                        <span class="btn-text">Entrar</span>
+                        <span class="btn-loader d-none"><i class="fas fa-spinner fa-spin"></i></span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p>&copy; 2026 Escola Básica de Macurunco. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== APP SHELL ==================== -->
+    <div id="app-shell" style="display: none;">
+
+        <!-- Sidebar Toggle (Mobile) -->
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="sidebar-title">Caderneta Escolar</div>
+                <div class="sidebar-subtitle">4ª Classe · 2026</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-item active" id="nav-dashboard" data-page="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-alunos" data-page="alunos">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Alunos</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-disciplinas" data-page="disciplinas">
+                    <i class="fas fa-book"></i>
+                    <span>Disciplinas</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-pautas" data-page="pautas">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Pautas</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-relatorios" data-page="relatorios">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-acta" data-page="relatorios-acta">
+                    <i class="fas fa-file-signature"></i>
+                    <span>Acta do Conselho</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-config" data-page="config">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+
+                <hr class="sidebar-divider">
+
+                <a href="#" class="sidebar-item sidebar-logout" id="nav-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span>v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Content Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <div class="breadcrumb-area">
+                        <i class="fas fa-home me-1"></i> Início / <span id="breadcrumb-current">Dashboard</span>
+                    </div>
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right d-flex align-items-center gap-3">
+                    <div class="sync-timer-container text-muted small px-3 py-1 rounded bg-light border d-flex align-items-center gap-2" title="Sincronização com o Google Sheets">
+                        <div id="sync-progress-circle" style="width: 14px; height: 14px; border-radius: 50%; background: conic-gradient(var(--primary) 100%, #e2e8f0 0);"></div>
+                        <button class="btn btn-sm btn-link p-0 text-decoration-none fw-bold text-secondary" id="btn-manual-sync">
+                            <i class="fas fa-sync-alt" id="sync-spinner"></i> Atualizar
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-custom rounded-circle p-2 d-flex align-items-center justify-content-center" id="theme-toggle" style="width: 40px; height: 40px;" title="Alternar Modo Escuro">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    <div class="dropdown">
+                        <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false" id="user-profile-dropdown">
+                            <div class="user-avatar">
+                                <span id="user-avatar-initials">AD</span>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name" id="user-display-name">Administrador</div>
+                                <div class="user-role" id="user-display-role">Admin</div>
+                            </div>
+                            <i class="fas fa-chevron-down ms-2" style="font-size: 0.7rem; color: var(--text-light);"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-profile-dropdown">
+                            <li><a class="dropdown-item" href="#" id="menu-profile"><i class="fas fa-user me-2"></i>Meu Perfil</a></li>
+                            <li><a class="dropdown-item" href="#" id="menu-settings"><i class="fas fa-cog me-2"></i>Configurações</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" id="menu-logout"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Body -->
+            <div class="content-body">
+
+                <!-- ==================== DASHBOARD PAGE ==================== -->
+                <section id="dashboard-page" class="page-section">
+
+                    <!-- KPI Cards Row -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-xl-3 col-md-6" style="--i:0">
+                            <div class="kpi-card kpi-blue">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-total-alunos">0</div>
+                                    <div class="kpi-label">Total de Alunos</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6" style="--i:1">
+                            <div class="kpi-card kpi-purple">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-total-disciplinas">0</div>
+                                    <div class="kpi-label">Total de Disciplinas</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6" style="--i:2">
+                            <div class="kpi-card kpi-green">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-media-geral">0.0</div>
+                                    <div class="kpi-label">Média Geral</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6" style="--i:3">
+                            <div class="kpi-card kpi-red">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-alunos-criticos">0</div>
+                                    <div class="kpi-label">Alunos Críticos</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 1 -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-8" style="--i:4">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-chart-bar me-2"></i>Média por Disciplina</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-medias-disciplina"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4" style="--i:5">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-smile me-2"></i>Distribuição de Comportamento</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-comportamento"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 2 -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-4" style="--i:6">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-venus-mars me-2"></i>Distribuição por Sexo</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-sexo"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8" style="--i:7">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-chart-area me-2"></i>Evolução Trimestral</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-evolucao"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top / Bottom Students Row -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-6" style="--i:8">
+                            <div class="card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-trophy me-2 text-warning"></i>Top 5 Melhores Alunos</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="table-top-alunos">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 60px;">Pos.</th>
+                                                    <th>Aluno</th>
+                                                    <th style="width: 100px;">Média</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="top-alunos-list">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6" style="--i:9">
+                            <div class="card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-exclamation-circle me-2 text-danger"></i>Alunos em Risco</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="table-bottom-alunos">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 60px;">Pos.</th>
+                                                    <th>Aluno</th>
+                                                    <th style="width: 100px;">Média</th>
+                                                    <th style="width: 120px;">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bottom-alunos-list">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== ALUNOS PAGE ==================== -->
+                <section id="alunos-page" class="page-section" style="display: none;">
+
+                    <!-- Filter Bar -->
+                    <div class="filter-bar">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control" id="search-alunos" placeholder="Pesquisar aluno...">
+                        </div>
+                        <select class="form-select" id="filter-disciplina">
+                            <option value="">Todas as Disciplinas</option>
+                        </select>
+                        <select class="form-select" id="filter-comportamento">
+                            <option value="">Todos os Comportamentos</option>
+                            <option value="Excelente">Excelente</option>
+                            <option value="Bom">Bom</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Insatisfatório">Insatisfatório</option>
+                            <option value="Crítico">Crítico</option>
+                        </select>
+                        <select class="form-select" id="filter-sexo">
+                            <option value="">Todos os Sexos</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+                        <button class="btn btn-outline-custom" id="btn-reset-filters">
+                            <i class="fas fa-undo me-1"></i> Limpar
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: var(--info);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-total">0</div>
+                                    <div class="stat-label">Total Alunos</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: #3b82f6;">
+                                    <i class="fas fa-mars"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-masculino">0</div>
+                                    <div class="stat-label">Masculino</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(236,72,153,0.1); color: #ec4899;">
+                                    <i class="fas fa-venus"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-feminino">0</div>
+                                    <div class="stat-label">Feminino</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: var(--success);">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-media">0.0</div>
+                                    <div class="stat-label">Média da Turma</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Students Table Card -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Alunos</h6>
+                            <button class="btn btn-primary-custom btn-sm" id="btn-export-alunos">
+                                <i class="fas fa-download me-1"></i> Exportar
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="table-alunos" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Nome</th>
+                                            <th style="width: 100px;">Sexo</th>
+                                            <th style="width: 120px;">Média Geral</th>
+                                            <th style="width: 140px;">Comportamento</th>
+                                            <th style="width: 100px;">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Action Button - Add Student -->
+                    <button class="fab" id="btn-add-aluno" title="Adicionar Aluno">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </section>
+
+                <!-- ==================== DISCIPLINAS PAGE ==================== -->
+                <section id="disciplinas-page" class="page-section" style="display: none;">
+
+                    <!-- Grid View -->
+                    <div id="disciplinas-grid" class="row g-4">
+                        <!-- Cards will be populated by JS -->
+                    </div>
+
+                    <!-- Detail View -->
+                    <div id="disciplina-detail" style="display: none;">
+                        <button class="btn btn-outline-custom mb-4" id="btn-back-disciplinas">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </button>
+
+                        <!-- Discipline Header Card -->
+                        <div class="card mb-4" id="disciplina-header-card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="disc-icon-lg" id="disc-detail-icon">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <h4 class="fw-bold mb-1" id="disc-detail-name">Disciplina</h4>
+                                        <p class="text-secondary mb-0" id="disc-detail-subtitle">4ª Classe · 2026</p>
+                                    </div>
+                                    <div class="col-auto d-flex gap-4 text-center">
+                                        <div>
+                                            <div class="stat-value text-info" id="disc-detail-total">0</div>
+                                            <div class="stat-label">Alunos</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value text-success" id="disc-detail-media">0.0</div>
+                                            <div class="stat-label">Média</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value text-primary" id="disc-detail-max">0</div>
+                                            <div class="stat-label">Máxima</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value text-danger" id="disc-detail-min">0</div>
+                                            <div class="stat-label">Mínima</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trimester Tabs -->
+                        <div class="trimester-tabs mb-4" id="trimester-tabs">
+                            <button class="trimester-tab active" data-trimester="1">1º Trimestre</button>
+                            <button class="trimester-tab" data-trimester="2">2º Trimestre</button>
+                            <button class="trimester-tab" data-trimester="3">3º Trimestre</button>
+                        </div>
+
+                        <!-- Grades Table -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0"><i class="fas fa-table me-2"></i>Notas dos Alunos</h6>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary-custom btn-sm" id="btn-save-notas">
+                                        <i class="fas fa-save me-1"></i> Salvar
+                                    </button>
+                                    <button class="btn btn-outline-custom btn-sm" id="btn-export-notas">
+                                        <i class="fas fa-download me-1"></i> Exportar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0" id="table-disciplina-notas" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 50px;">#</th>
+                                                <th>Nome</th>
+                                                <th style="width: 70px;">ACS1</th>
+                                                <th style="width: 70px;">ACS2</th>
+                                                <th style="width: 70px;">ACS3</th>
+                                                <th style="width: 70px;">ACS4</th>
+                                                <th style="width: 70px;">MACS</th>
+                                                <th style="width: 70px;">AT</th>
+                                                <th style="width: 70px;">MT</th>
+                                                <th style="width: 130px;">Comportamento</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== PAUTAS PAGE ==================== -->
+                <section id="pautas-page" class="page-section" style="display: none;">
+
+                    <div class="row g-4">
+                        <!-- Pauta Generator -->
+                        <div class="col-lg-5">
+                            <div class="card pauta-generator">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-magic me-2"></i>Gerar Pauta</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form id="form-pauta">
+                                        <div class="mb-3">
+                                            <label for="select-pauta-disciplina" class="form-label">Disciplina</label>
+                                            <select class="form-select" id="select-pauta-disciplina">
+                                                <option value="todas">Todas as Disciplinas</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="select-pauta-trimestre" class="form-label">Trimestre</label>
+                                            <select class="form-select" id="select-pauta-trimestre">
+                                                <option value="1">1º Trimestre</option>
+                                                <option value="2">2º Trimestre</option>
+                                                <option value="3">3º Trimestre</option>
+                                                <option value="anual">Anual</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="select-pauta-tipo" class="form-label">Tipo de Pauta</label>
+                                            <select class="form-select" id="select-pauta-tipo">
+                                                <option value="trimestral">Pauta Trimestral</option>
+                                                <option value="individual">Boletim Individual</option>
+                                                <option value="geral">Pauta Geral Anual</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3 d-none" id="pauta-aluno-wrapper">
+                                            <label for="select-pauta-aluno" class="form-label">Aluno</label>
+                                            <select class="form-select" id="select-pauta-aluno">
+                                                <option value="">Selecione um aluno...</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="d-flex gap-2 mt-4">
+                                            <button type="button" class="btn btn-outline-custom flex-fill" id="btn-preview-pauta">
+                                                <i class="fas fa-eye me-2"></i>Pré-visualizar
+                                            </button>
+                                            <button type="button" class="btn btn-primary-custom flex-fill" id="btn-generate-pauta">
+                                                <i class="fas fa-file-pdf me-2"></i>Gerar PDF
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Generated Pautas List -->
+                        <div class="col-lg-7">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="fas fa-folder-open me-2"></i>Pautas Geradas</h6>
+                                    <span class="badge bg-primary" id="pautas-count">0</span>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div id="pautas-list">
+                                        <!-- Empty state -->
+                                        <div class="text-center py-5" id="pautas-empty">
+                                            <i class="fas fa-folder-open fa-3x text-light mb-3 d-block"></i>
+                                            <p class="text-secondary">Nenhuma pauta gerada ainda.</p>
+                                            <p class="text-secondary small">Use o formulário ao lado para gerar uma pauta.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== RELATORIOS PAGE ==================== -->
+                <section id="relatorios-page" class="page-section" style="display: none;">
+
+                    <!-- Report Type Selector -->
+                    <div class="report-type-selector mb-4">
+                        <div class="report-type-card active" id="report-ranking" data-report="ranking">
+                            <i class="fas fa-trophy"></i>
+                            <span>Ranking Geral</span>
+                        </div>
+                        <div class="report-type-card" id="report-disciplina" data-report="disciplina">
+                            <i class="fas fa-book"></i>
+                            <span>Análise por Disciplina</span>
+                        </div>
+                        <div class="report-type-card" id="report-comportamento" data-report="comportamento">
+                            <i class="fas fa-smile"></i>
+                            <span>Análise Comportamental</span>
+                        </div>
+                        <div class="report-type-card" id="report-sexo" data-report="sexo">
+                            <i class="fas fa-venus-mars"></i>
+                            <span>Estatísticas por Sexo</span>
+                        </div>
+                        <div class="report-type-card" id="report-acta" data-report="acta">
+                            <i class="fas fa-file-signature"></i>
+                            <span>Acta do Conselho</span>
+                        </div>
+                    </div>
+
+                    <!-- Report Filters -->
+                    <div class="filter-bar mb-4" id="relatorio-filters">
+                        <select class="form-select" id="filter-relatorio-disciplina">
+                            <option value="">Todas as Disciplinas</option>
+                        </select>
+                        <select class="form-select" id="filter-relatorio-trimestre">
+                            <option value="">Todos os Trimestres</option>
+                            <option value="1">1º Trimestre</option>
+                            <option value="2">2º Trimestre</option>
+                            <option value="3">3º Trimestre</option>
+                        </select>
+                        <button class="btn btn-primary-custom" id="btn-generate-relatorio">
+                            <i class="fas fa-sync me-2"></i>Gerar Relatório
+                        </button>
+                    </div>
+
+                    <!-- Chart Area -->
+                    <div class="card mb-4" id="relatorio-chart-area">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Gráfico do Relatório</h6>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chart-relatorio"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Table Area -->
+                    <div class="card" id="relatorio-table-area">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0"><i class="fas fa-table me-2"></i>Dados do Relatório</h6>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-custom btn-sm" id="btn-export-excel">
+                                    <i class="fas fa-file-excel me-1"></i> Excel
+                                </button>
+                                <button class="btn btn-outline-custom btn-sm" id="btn-export-pdf">
+                                    <i class="fas fa-file-pdf me-1"></i> PDF
+                                </button>
+                                <button class="btn btn-outline-custom btn-sm" id="btn-print-relatorio">
+                                    <i class="fas fa-print me-1"></i> Imprimir
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="table-relatorio" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Nome do Aluno</th>
+                                            <th class="text-center">Nota Exacta</th>
+                                            <th class="text-center">Situação</th>
+                                            <th class="text-center">Comportamento</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acta do Conselho Area -->
+                    <div class="card mb-4" id="relatorio-acta-area" style="display: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center no-print">
+                            <h6 class="mb-0"><i class="fas fa-file-signature me-2"></i>Acta do Conselho de Notas Trimestrais</h6>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-custom btn-sm" id="btn-download-acta">
+                                    <i class="fas fa-file-pdf me-1"></i>Baixar PDF
+                                </button>
+                                <button class="btn btn-primary-custom btn-sm" id="btn-print-acta">
+                                    <i class="fas fa-print me-1"></i>Imprimir Acta
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-4 bg-white text-dark printable-acta">
+                            <!-- Style block specific to the printed layout so it prints beautifully on A4 portrait -->
+                            <style>
+                                .acta-print-container {
+                                    font-family: 'Times New Roman', Times, serif;
+                                    font-size: 13px;
+                                    line-height: 1.5;
+                                    color: #000;
+                                    margin: 0 auto;
+                                    max-width: 800px;
+                                    padding: 10px;
+                                }
+                                .acta-header {
+                                    text-align: center;
+                                    margin-bottom: 20px;
+                                    font-weight: bold;
+                                    text-transform: uppercase;
+                                    border-bottom: 2px solid #000;
+                                    padding-bottom: 5px;
+                                }
+                                .acta-header h4 {
+                                    margin: 0;
+                                    font-size: 16px;
+                                    font-weight: bold;
+                                }
+                                .acta-header p {
+                                    margin: 5px 0 0 0;
+                                    font-size: 14px;
+                                }
+                                .acta-paragraph {
+                                    text-align: justify;
+                                    text-indent: 40px;
+                                    margin-bottom: 15px;
+                                }
+                                .acta-input-inline {
+                                    border: none;
+                                    border-bottom: 1px dotted #000;
+                                    background: transparent;
+                                    text-align: center;
+                                    padding: 0 5px;
+                                    font-weight: bold;
+                                    color: #000;
+                                }
+                                .acta-input-inline:focus {
+                                    outline: none;
+                                    border-bottom: 1px solid #000;
+                                }
+                                .acta-section-title {
+                                    font-weight: bold;
+                                    margin-top: 20px;
+                                    margin-bottom: 8px;
+                                    text-transform: uppercase;
+                                    font-size: 13px;
+                                    border-bottom: 1px solid #000;
+                                    padding-bottom: 2px;
+                                }
+                                .acta-table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    margin-bottom: 15px;
+                                    font-size: 12px;
+                                }
+                                .acta-table th, .acta-table td {
+                                    border: 1px solid #000;
+                                    padding: 4px 6px;
+                                    text-align: center;
+                                }
+                                .acta-table th {
+                                    background-color: #f2f2f2;
+                                    font-weight: bold;
+                                }
+                                .acta-table td.text-left {
+                                    text-align: left;
+                                }
+                                .acta-textarea {
+                                    width: 100%;
+                                    min-height: 80px;
+                                    border: 1px dashed #ccc;
+                                    padding: 8px;
+                                    font-family: inherit;
+                                    font-size: 12px;
+                                    resize: vertical;
+                                    margin-bottom: 15px;
+                                    background-color: #fff;
+                                }
+                                .acta-textarea:focus {
+                                    outline: none;
+                                    border: 1px solid #000;
+                                }
+                                .acta-signatures {
+                                    margin-top: 30px;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    font-size: 12px;
+                                }
+                                .acta-signature-col {
+                                    width: 45%;
+                                    text-align: center;
+                                }
+                                .acta-signature-line {
+                                    margin-top: 40px;
+                                    border-top: 1px solid #000;
+                                    padding-top: 5px;
+                                }
+                                @media print {
+                                    body * {
+                                        visibility: hidden;
+                                    }
+                                    #relatorio-acta-area, #relatorio-acta-area * {
+                                        visibility: visible;
+                                    }
+                                    #relatorio-acta-area {
+                                        position: absolute;
+                                        left: 0;
+                                        top: 0;
+                                        width: 100%;
+                                        margin: 0;
+                                        padding: 0;
+                                        border: none !important;
+                                        box-shadow: none !important;
+                                        background: white !important;
+                                    }
+                                    .no-print {
+                                        display: none !important;
+                                    }
+                                    .printable-acta {
+                                        padding: 0 !important;
+                                    }
+                                    .acta-print-container {
+                                        max-width: 100%;
+                                        padding: 0;
+                                    }
+                                    .acta-textarea {
+                                        border: none;
+                                        background: transparent;
+                                        padding: 0;
+                                    }
+                                }
+                            </style>
+
+                            <div class="acta-print-container">
+                                <div class="acta-header">
+                                    <h4>Escola Básica de Macurunco</h4>
+                                    <p>Acta do Conselho de Notas Trimestrais</p>
+                                </div>
+                                
+                                <p class="acta-paragraph">
+                                    Aos <input type="text" class="acta-input-inline" id="acta-dia" style="width: 40px;" placeholder="dd"> dias do mês de 
+                                    <input type="text" class="acta-input-inline" id="acta-mes" style="width: 100px;" placeholder="mês"> de 
+                                    <input type="text" class="acta-input-inline" id="acta-ano" style="width: 60px;" placeholder="aaaa">, reuniu o Conselho de Notas na sala 
+                                    <input type="text" class="acta-input-inline" id="acta-sala" style="width: 50px;" placeholder="sala">, para analisar o aproveitamento pedagógico e comportamento da turma 
+                                    <span class="fw-bold" id="acta-turma-nome">---</span> do <span class="fw-bold" id="acta-trimestre-nome">---</span> Trimestre.
+                                </p>
+
+                                <div class="acta-section-title">I. Indicadores da Turma</div>
+                                <table class="acta-table" id="table-acta-indicadores">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" class="text-left" style="width: 60%;">Indicadores</th>
+                                            <th colspan="2">Dados Alunos</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 20%;">M (Mulheres)</th>
+                                            <th style="width: 20%;">HM (Total)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-left">Matriculados</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-mat-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-mat-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Início do Trimestre</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ini-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ini-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Desistentes</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-des-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-des-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Transferidos de (Entradas)</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ent-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ent-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Transferidos para (Saídas)</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-sai-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-sai-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left fw-bold">Fim do Trimestre (Frequência)</td>
+                                            <td id="ind-fim-m" class="fw-bold">0</td>
+                                            <td id="ind-fim-hm" class="fw-bold">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Nº de Positivos</td>
+                                            <td id="ind-pos-m" class="fw-bold">0</td>
+                                            <td id="ind-pos-hm" class="fw-bold">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left fw-bold">Aproveitamento (%)</td>
+                                            <td id="ind-aprov-m" class="fw-bold">0%</td>
+                                            <td id="ind-aprov-hm" class="fw-bold">0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="fw-bold mb-1">Causas das Desistências:</div>
+                                <textarea class="acta-textarea" id="acta-causas-desistencias" placeholder="Descreva aqui os motivos das desistências, se houver..."></textarea>
+
+                                <div class="acta-section-title">II. Aproveitamento Pedagógico por Disciplina</div>
+                                <table class="acta-table" id="table-acta-aproveitamento">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" class="text-left" style="width: 20%;">Disciplinas</th>
+                                            <th colspan="3">Nº de Avaliados</th>
+                                            <th colspan="3">Nº de Positivas</th>
+                                            <th colspan="3">Nº de Negativas</th>
+                                            <th colspan="3">Aprov. (%)</th>
+                                            <th colspan="5">Distribuição Qualitativa das Notas (Total)</th>
+                                        </tr>
+                                        <tr>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th style="font-size:10px;">Não S.<br>0-9</th>
+                                            <th style="font-size:10px;">Sat.<br>10-13</th>
+                                            <th style="font-size:10px;">Bom<br>14-16</th>
+                                            <th style="font-size:10px;">M. Bom<br>17-18</th>
+                                            <th style="font-size:10px;">Exc.<br>19-20</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="acta-aproveitamento-body">
+                                        <!-- Dynamic Rows populated by JS -->
+                                    </tbody>
+                                </table>
+
+                                <div class="fw-bold mb-1">Factores que influenciaram no aproveitamento positivo/negativo:</div>
+                                <textarea class="acta-textarea" id="acta-factores-influencia" placeholder="Fatores de sucesso (ex: empenho dos alunos, apoio pedagógico) e insucesso (ex: faltas, dificuldades de aprendizagem)..."></textarea>
+
+                                <div class="acta-signatures">
+                                    <div class="acta-signature-col">
+                                        <p>O Director de Escola / Adjunto</p>
+                                        <div class="acta-signature-line" id="acta-director-nome">--------------------------------------</div>
+                                    </div>
+                                    <div class="acta-signature-col">
+                                        <p>O(A) Director(a) de Turma</p>
+                                        <div class="acta-signature-line" id="acta-professor-nome">--------------------------------------</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== CONFIG PAGE ==================== -->
+                <section id="config-page" class="page-section" style="display: none;">
+
+                    <div class="row g-4">
+                        <!-- School Info -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-school me-2"></i>Informações da Escola</h6>
+                                <div class="config-item">
+                                    <span class="label">Nome da Escola</span>
+                                    <span class="value">Escola Básica de Macurunco</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Localização</span>
+                                    <span class="value">Beira, Sofala, Moçambique</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Classe</span>
+                                    <span class="value">4ª Classe</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Ano Lectivo</span>
+                                    <span class="value">2026</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Director</span>
+                                    <span class="value">---</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Profile -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-user-circle me-2"></i>Perfil do Utilizador</h6>
+                                <div class="text-center mb-4">
+                                    <div class="config-avatar mx-auto mb-3">
+                                        <span id="config-avatar-initials">AD</span>
+                                    </div>
+                                    <h5 class="fw-bold mb-1" id="config-user-name">Administrador</h5>
+                                    <span class="badge badge-comportamento badge-bom" id="config-user-role">Admin</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Email</span>
+                                    <span class="value" id="config-user-email">admin@escola.mz</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Último Acesso</span>
+                                    <span class="value" id="config-last-login">---</span>
+                                </div>
+                                <button class="btn btn-outline-custom w-100 mt-3" id="btn-change-password">
+                                    <i class="fas fa-key me-2"></i>Alterar Senha
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- System Info -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-info-circle me-2"></i>Informações do Sistema</h6>
+                                <div class="config-item">
+                                    <span class="label">Versão</span>
+                                    <span class="value">1.0.0</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Última Sincronização</span>
+                                    <span class="value" id="config-last-sync">---</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Status</span>
+                                    <span class="value">
+                                        <span class="status-indicator status-online"></span>
+                                        <span id="config-status-text">Online</span>
+                                    </span>
+                                </div>
+                                <button class="btn btn-outline-custom w-100 mt-3" id="btn-clear-cache">
+                                    <i class="fas fa-broom me-2"></i>Limpar Cache
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Behavior Scale -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-star me-2"></i>Escala de Comportamento</h6>
+                                <p class="text-secondary small mb-3">Referência dos níveis de comportamento utilizados no sistema.</p>
+                                <table class="behavior-scale-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Classificação</th>
+                                            <th>Intervalo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-excelente">Excelente</span></td>
+                                            <td>18 — 20 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-bom">Bom</span></td>
+                                            <td>14 — 17 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-regular">Regular</span></td>
+                                            <td>10 — 13 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-insatisfatorio">Insatisfatório</span></td>
+                                            <td>7 — 9 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-critico">Crítico</span></td>
+                                            <td>0 — 6 valores</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+            </div><!-- end .content-body -->
+        </main><!-- end .main-content -->
+    </div><!-- end #app-shell -->
+
+    <!-- ==================== MODAL: ALUNO DETAIL ==================== -->
+    <div class="modal fade" id="modal-aluno-detail" tabindex="-1" aria-labelledby="modal-aluno-detail-label" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="student-avatar avatar-1" id="modal-aluno-avatar">
+                            <span>AL</span>
+                        </div>
+                        <div>
+                            <h5 class="modal-title" id="modal-aluno-detail-label">Nome do Aluno</h5>
+                            <small class="opacity-75" id="modal-aluno-subtitle">4ª Classe · 2026</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tab Navigation -->
+                    <ul class="nav nav-tabs nav-tabs-custom mb-4" id="aluno-detail-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-visao-geral" data-bs-toggle="tab" data-bs-target="#pane-visao-geral" type="button" role="tab" aria-controls="pane-visao-geral" aria-selected="true">
+                                <i class="fas fa-user me-2"></i>Visão Geral
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-notas" data-bs-toggle="tab" data-bs-target="#pane-notas" type="button" role="tab" aria-controls="pane-notas" aria-selected="false">
+                                <i class="fas fa-clipboard me-2"></i>Notas por Disciplina
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-comportamento" data-bs-toggle="tab" data-bs-target="#pane-comportamento" type="button" role="tab" aria-controls="pane-comportamento" aria-selected="false">
+                                <i class="fas fa-heart me-2"></i>Comportamento
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-historico" data-bs-toggle="tab" data-bs-target="#pane-historico" type="button" role="tab" aria-controls="pane-historico" aria-selected="false">
+                                <i class="fas fa-history me-2"></i>Histórico
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="aluno-detail-tab-content">
+                        <!-- Visão Geral Tab -->
+                        <div class="tab-pane fade show active" id="pane-visao-geral" role="tabpanel" aria-labelledby="tab-visao-geral">
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="config-card text-center">
+                                        <div class="config-avatar mx-auto mb-3" id="modal-aluno-photo">
+                                            <span id="modal-aluno-initials-lg">AL</span>
+                                        </div>
+                                        <h5 class="fw-bold" id="modal-aluno-full-name">Nome do Aluno</h5>
+                                        <span class="badge badge-comportamento" id="modal-aluno-behavior-badge">---</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="config-card">
+                                        <h6><i class="fas fa-id-card me-2"></i>Dados Pessoais</h6>
+                                        <div class="config-item">
+                                            <span class="label">Nome Completo</span>
+                                            <span class="value" id="modal-aluno-nome">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Sexo</span>
+                                            <span class="value" id="modal-aluno-sexo">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Data de Nascimento</span>
+                                            <span class="value" id="modal-aluno-nascimento">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Média Geral</span>
+                                            <span class="value fw-bold" id="modal-aluno-media">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Comportamento</span>
+                                            <span class="value" id="modal-aluno-comportamento">---</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Mini KPIs -->
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: var(--info);">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-total-disc">0</div>
+                                            <div class="stat-label">Disciplinas</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: var(--success);">
+                                            <i class="fas fa-arrow-up"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-nota-max">0</div>
+                                            <div class="stat-label">Nota Máxima</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(239,68,68,0.1); color: var(--danger);">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-nota-min">0</div>
+                                            <div class="stat-label">Nota Mínima</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-ranking">0</div>
+                                            <div class="stat-label">Posição</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notas Tab -->
+                        <div class="tab-pane fade" id="pane-notas" role="tabpanel" aria-labelledby="tab-notas">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="table-aluno-notas">
+                                    <thead>
+                                        <tr>
+                                            <th>Disciplina</th>
+                                            <th>1º Trim.</th>
+                                            <th>2º Trim.</th>
+                                            <th>3º Trim.</th>
+                                            <th>Média Final</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modal-aluno-notas-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Comportamento Tab -->
+                        <div class="tab-pane fade" id="pane-comportamento" role="tabpanel" aria-labelledby="tab-comportamento">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header"><h6 class="mb-0">Radar de Comportamento</h6></div>
+                                        <div class="card-body">
+                                            <canvas id="chart-aluno-comportamento"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header"><h6 class="mb-0">Detalhes</h6></div>
+                                        <div class="card-body" id="modal-aluno-comportamento-details">
+                                            <p class="text-secondary">Selecione um aluno para ver os detalhes de comportamento.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Histórico Tab -->
+                        <div class="tab-pane fade" id="pane-historico" role="tabpanel" aria-labelledby="tab-historico">
+                            <div class="timeline" id="modal-aluno-historico">
+                                <div class="timeline-item">
+                                    <div class="timeline-dot bg-primary"></div>
+                                    <div class="timeline-content">
+                                        <p class="text-secondary">Nenhum histórico disponível.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-custom" id="btn-edit-aluno">
+                        <i class="fas fa-edit me-2"></i>Editar
+                    </button>
+                    <button type="button" class="btn btn-outline-custom" id="btn-print-aluno">
+                        <i class="fas fa-print me-2"></i>Imprimir
+                    </button>
+                    <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: PAUTA PREVIEW ==================== -->
+    <div class="modal fade" id="modal-pauta-preview" tabindex="-1" aria-labelledby="modal-pauta-preview-label" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-pauta-preview-label">
+                        <i class="fas fa-file-alt me-2"></i>Pré-visualização da Pauta
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-accent btn-sm" id="btn-print-pauta">
+                            <i class="fas fa-print me-2"></i>Imprimir
+                        </button>
+                        <button type="button" class="btn btn-primary-custom btn-sm" id="btn-download-pauta">
+                            <i class="fas fa-download me-2"></i>Baixar PDF
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                </div>
+                <div class="modal-body bg-light">
+                    <div id="pauta-preview-content" class="pauta-preview-wrapper">
+                        <!-- Filled by JS -->
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-alt fa-3x text-light mb-3 d-block"></i>
+                            <p class="text-secondary">Gere uma pauta para pré-visualizar aqui.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
+                    <button type="button" class="btn btn-accent" id="btn-print-pauta-footer">
+                        <i class="fas fa-print me-2"></i>Imprimir
+                    </button>
+                    <button type="button" class="btn btn-primary-custom" id="btn-download-pauta-footer">
+                        <i class="fas fa-download me-2"></i>Baixar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LOADING OVERLAY ==================== -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST CONTAINER ==================== -->
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <!-- jQuery (for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- html2pdf for client-side PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- App JS files -->
+    <?!= include('scripts'); ?>
+    </body>
+</html>

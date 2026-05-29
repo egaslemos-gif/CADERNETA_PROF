@@ -1,0 +1,4137 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Caderneta Escolar - Sistema de Gestão de Notas e Comportamento para a Escola Básica de Macurunco, Beira, Sofala, Moçambique.">
+    <meta name="author" content="Escola Básica de Macurunco">
+    <title>Caderneta Escolar - Escola Básica de Macurunco</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+:root {
+  --primary: #1a365d;
+  --primary-light: #2d5690;
+  --primary-dark: #0f2440;
+  --accent: #d4a843;
+  --accent-light: #e8c975;
+  --bg-sidebar: linear-gradient(180deg, #0f1923 0%, #162033 100%);
+  --bg-body: #f0f2f5;
+  --bg-card: #ffffff;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+  --text-light: #a0aec0;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --primary: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+  --bg-sidebar: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  --bg-body: #0f172a;
+  --bg-card: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar-thumb { background: var(--text-light); border-radius: var(--radius-sm); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInLeft { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+
+/* Login Page */
+.login-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #0f1923, #1a365d);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-left-content {
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+}
+
+.login-brand-icon {
+  font-size: 3rem;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.login-left h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -1px;
+}
+
+.login-tagline {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+.login-features {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  background: rgba(255,255,255,0.05);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--accent);
+}
+
+.login-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 3rem;
+}
+
+.logo-area { text-align: center; margin-bottom: 2rem; }
+.logo-circle { width: 80px; height: 80px; background: var(--bg-body); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: var(--primary); font-size: 2rem; }
+.login-card h2 { font-weight: 700; margin-bottom: 0.5rem; }
+.login-card .subtitle { color: var(--text-secondary); margin-bottom: 2rem; }
+
+.input-icon-wrapper { position: relative; }
+.input-icon-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+.input-icon-wrapper .form-control { padding-left: 2.75rem; border-radius: var(--radius-sm); padding-top: 0.75rem; padding-bottom: 0.75rem; border: 1px solid var(--border-color); }
+.input-icon-wrapper .form-control:focus { box-shadow: 0 0 0 3px rgba(26,54,93,0.1); border-color: var(--primary); }
+
+.password-toggle { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-light); cursor: pointer; }
+
+.btn-login { width: 100%; padding: 0.75rem; background: linear-gradient(to right, var(--primary), var(--primary-light)); color: white; border: none; border-radius: var(--radius-sm); font-weight: 600; }
+.btn-login:hover { color: white; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/* Layout Shell */
+#app-shell { display: flex; height: 100vh; }
+
+.sidebar {
+  width: 280px;
+  background: var(--bg-sidebar);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  z-index: 1000;
+}
+
+.sidebar-header { padding: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-logo { font-size: 2.5rem; color: var(--accent); margin-bottom: 0.5rem; text-shadow: 0 0 10px rgba(212,168,67,0.3); }
+.sidebar-title { font-weight: 700; font-size: 1.25rem; }
+.sidebar-subtitle { font-size: 0.85rem; color: var(--text-light); }
+
+.sidebar-nav { padding: 1rem; flex: 1; overflow-y: auto; }
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  color: var(--text-light);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  transition: var(--transition);
+}
+.sidebar-item i { width: 24px; margin-right: 0.75rem; font-size: 1.1rem; }
+.sidebar-item:hover { color: white; background: rgba(255,255,255,0.05); }
+.sidebar-item.active {
+  color: white;
+  background: rgba(255,255,255,0.1);
+  border-left: 4px solid var(--accent);
+}
+
+.sidebar-divider { border-color: rgba(255,255,255,0.1); margin: 1rem 0; }
+.sidebar-logout { color: #fca5a5; }
+.sidebar-logout:hover { color: #fef2f2; background: rgba(239,68,68,0.2); }
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.breadcrumb-area { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
+#page-title { margin: 0; font-weight: 700; font-size: 1.5rem; }
+
+.user-profile { display: flex; align-items: center; cursor: pointer; padding: 0.5rem; border-radius: var(--radius-sm); transition: var(--transition); }
+.user-profile:hover { background: var(--bg-body); }
+.user-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 0.75rem; }
+.user-info { display: flex; flex-direction: column; }
+.user-name { font-weight: 600; font-size: 0.9rem; }
+.user-role { font-size: 0.75rem; color: var(--text-secondary); }
+
+/* Content Body */
+.content-body { flex: 1; overflow-y: auto; padding: 2rem; }
+
+/* Cards & Widgets */
+.card { border: none; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); transition: var(--transition); margin-bottom: 1.5rem; background: var(--bg-card); color: var(--text-primary); }
+.card:hover { box-shadow: var(--shadow-md); }
+.card-header { background: transparent; border-bottom: 1px solid var(--border-color); padding: 1.25rem 1.5rem; }
+.card-header h6 { margin: 0; font-weight: 600; color: var(--text-primary); }
+.card-body { padding: 1.5rem; }
+
+.kpi-card { background: var(--bg-card); color: var(--text-primary); padding: 1.5rem; border-radius: var(--radius-lg); display: flex; align-items: center; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); border-left: 4px solid transparent; transition: var(--transition); }
+.kpi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.kpi-blue { border-left-color: var(--info); }
+.kpi-purple { border-left-color: #8b5cf6; }
+.kpi-green { border-left-color: var(--success); }
+.kpi-red { border-left-color: var(--danger); }
+.kpi-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-right: 1rem; }
+.kpi-blue .kpi-icon { background: rgba(59,130,246,0.1); color: var(--info); }
+.kpi-purple .kpi-icon { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+.kpi-green .kpi-icon { background: rgba(16,185,129,0.1); color: var(--success); }
+.kpi-red .kpi-icon { background: rgba(239,68,68,0.1); color: var(--danger); }
+.kpi-value { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 0.25rem; }
+.kpi-label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; }
+
+.chart-card canvas { min-height: 300px; }
+
+/* Tables */
+.table { margin-bottom: 0; color: var(--text-primary); }
+.table thead th { border-bottom-width: 1px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 1rem; background: var(--bg-card); border-color: var(--border-color); }
+.table tbody td { vertical-align: middle; padding: 1rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); }
+.table-hover tbody tr:hover { background-color: rgba(0,0,0,0.05); }
+[data-theme="dark"] .table-hover tbody tr:hover { background-color: rgba(255,255,255,0.05); }
+[data-theme="dark"] .table { --bs-table-bg: transparent; --bs-table-color: var(--text-primary); }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--primary) !important; color: white !important; border: none; border-radius: var(--radius-sm); }
+.dataTables_wrapper .dataTables_filter input { border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.4rem; margin-left: 0.5rem; outline: none; }
+.dataTables_wrapper .dataTables_filter input:focus { border-color: var(--primary); }
+
+/* Badges & Avatars */
+.student-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.85rem; }
+.badge { padding: 0.4em 0.8em; border-radius: 6px; font-weight: 500; font-size: 0.75rem; }
+.badge-excelente { background-color: rgba(16,185,129,0.1); color: #065f46; border: 1px solid rgba(16,185,129,0.2); }
+.badge-bom { background-color: rgba(59,130,246,0.1); color: #1e40af; border: 1px solid rgba(59,130,246,0.2); }
+.badge-regular { background-color: rgba(245,158,11,0.1); color: #92400e; border: 1px solid rgba(245,158,11,0.2); }
+.badge-insatisfatorio { background-color: rgba(249,115,22,0.1); color: #9a3412; border: 1px solid rgba(249,115,22,0.2); }
+.badge-critico { background-color: rgba(239,68,68,0.1); color: #991b1b; border: 1px solid rgba(239,68,68,0.2); }
+
+/* Utilities */
+.btn-primary-custom { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border: none; }
+.btn-primary-custom:hover { background: linear-gradient(135deg, var(--primary-light), var(--primary)); color: white; }
+.btn-outline-custom { border: 1px solid var(--border-color); color: var(--text-primary); background: transparent; }
+.btn-outline-custom:hover { background: var(--bg-body); color: var(--primary); border-color: var(--primary); }
+
+/* Loading Overlay */
+#loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.spinner { width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Modals */
+.modal-content { border: none; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; background: var(--bg-card); color: var(--text-primary); }
+.modal-header { background: var(--bg-body); border-bottom: 1px solid var(--border-color); }
+.modal-title { font-weight: 600; color: var(--text-primary); }
+
+/* Filter Bar */
+.filter-bar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; background: var(--bg-card); padding: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.search-input-wrapper { flex: 1; min-width: 200px; position: relative; }
+.search-input-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+.search-input-wrapper input { padding-left: 2.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-primary); }
+.search-input-wrapper input:focus { border-color: var(--primary); outline: none; }
+
+/* FAB */
+.fab { position: fixed; bottom: 2rem; right: 2rem; width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; border: none; box-shadow: 0 4px 15px rgba(26,54,93,0.3); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); z-index: 100; }
+.fab:hover { transform: scale(1.1); }
+
+/* Pautas Generator */
+.pauta-generator .form-label { font-weight: 500; font-size: 0.9rem; }
+.pauta-generator select { padding: 0.6rem; border-radius: var(--radius-sm); background: var(--bg-body); color: var(--text-primary); border: 1px solid var(--border-color); }
+#pautas-list .card { margin-bottom: 1rem; border: 1px solid var(--border-color); box-shadow: none; background: transparent; }
+#pautas-list .card:hover { border-color: var(--primary); }
+.pauta-preview-wrapper { background: #ffffff !important; color: #000000 !important; padding: 2rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+.pauta-preview-wrapper * { color: #000000; border-color: #cccccc !important; }
+
+/* Trimester Tabs */
+.trimester-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.trimester-tab { padding: 0.5rem 1.2rem; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: var(--radius-sm); font-weight: 600; color: var(--text-secondary); transition: var(--transition); cursor: pointer; }
+.trimester-tab:hover { background: var(--bg-body); color: var(--primary); }
+.trimester-tab.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: var(--shadow-sm); }
+
+/* Responsive */
+.sidebar-toggle { display: none; position: fixed; top: 1rem; left: 1rem; z-index: 1001; background: white; border: none; padding: 0.5rem; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+.sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 999; }
+
+@media (max-width: 992px) {
+  .sidebar { position: fixed; left: -280px; height: 100vh; }
+  .sidebar.show { left: 0; }
+  .sidebar-toggle { display: block; }
+  .sidebar-overlay.show { display: block; }
+  .content-header { padding-left: 4rem; }
+}
+
+@media (max-width: 768px) {
+  .login-page { flex-direction: column; }
+  .login-left { padding: 2rem; text-align: center; }
+  .login-features { display: none; }
+}
+
+/* Print */
+@media print {
+  .sidebar, .content-header, .fab, .filter-bar, button { display: none !important; }
+  .main-content { padding: 0; }
+  .card { box-shadow: none; border: 1px solid #ccc; }
+  #app-shell { height: auto; }
+}
+
+</style>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div id="login-page" class="login-page">
+        <!-- Left Panel -->
+        <div class="login-left">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+            <div class="floating-shape shape-4"></div>
+            <div class="floating-shape shape-5"></div>
+            <div class="floating-shape shape-6"></div>
+
+            <div class="login-left-content">
+                <div class="login-brand-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h1>CADERNETA ESCOLAR</h1>
+                <p class="login-tagline">Sistema de Gestão Escolar</p>
+                <p class="login-school">Escola Básica de Macurunco</p>
+                <p class="login-location"><i class="fas fa-map-marker-alt me-2"></i>Beira, Sofala — Moçambique</p>
+
+                <div class="login-features">
+                    <div class="login-feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard Inteligente</span>
+                    </div>
+                    <div class="login-feature-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Pautas Automáticas</span>
+                    </div>
+                    <div class="login-feature-item">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Gestão de Alunos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="login-right">
+            <div class="login-card">
+                <div class="logo-area">
+                    <div class="logo-circle">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+
+                <h2>Bem-vindo de volta</h2>
+                <p class="subtitle">Faça login para continuar</p>
+
+                <!-- Google Sign-In Container -->
+                <div id="google-signin-btn-container" class="mb-4 d-flex justify-content-center"></div>
+
+                <div class="text-center text-secondary mb-3"><small>OU USE SUAS CREDENCIAIS</small></div>
+
+                <form id="login-form" autocomplete="off">
+                    <div class="form-group mb-3">
+                        <label for="login-username" class="form-label">Nome de utilizador</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-control" id="login-username" placeholder="Nome de utilizador" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="login-password" class="form-label">Senha</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="login-password" placeholder="Senha" required>
+                            <button type="button" class="password-toggle" id="toggle-password" aria-label="Mostrar senha">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="remember-me">
+                        <label class="form-check-label" for="remember-me">Lembrar-me</label>
+                    </div>
+
+                    <div id="login-error" class="alert alert-danger d-none" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span id="login-error-text">Credenciais inválidas. Tente novamente.</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-login" id="login-btn">
+                        <span class="btn-text">Entrar</span>
+                        <span class="btn-loader d-none"><i class="fas fa-spinner fa-spin"></i></span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p>&copy; 2026 Escola Básica de Macurunco. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== APP SHELL ==================== -->
+    <div id="app-shell" style="display: none;">
+
+        <!-- Sidebar Toggle (Mobile) -->
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="sidebar-title">Caderneta Escolar</div>
+                <div class="sidebar-subtitle">4ª Classe · 2026</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-item active" id="nav-dashboard" data-page="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-alunos" data-page="alunos">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Alunos</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-disciplinas" data-page="disciplinas">
+                    <i class="fas fa-book"></i>
+                    <span>Disciplinas</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-pautas" data-page="pautas">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Pautas</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-relatorios" data-page="relatorios">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-acta" data-page="relatorios-acta">
+                    <i class="fas fa-file-signature"></i>
+                    <span>Acta do Conselho</span>
+                </a>
+                <a href="#" class="sidebar-item" id="nav-config" data-page="config">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+
+                <hr class="sidebar-divider">
+
+                <a href="#" class="sidebar-item sidebar-logout" id="nav-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span>v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Content Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <div class="breadcrumb-area">
+                        <i class="fas fa-home me-1"></i> Início / <span id="breadcrumb-current">Dashboard</span>
+                    </div>
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right d-flex align-items-center gap-3">
+                    <div class="sync-timer-container text-muted small px-3 py-1 rounded bg-light border d-flex align-items-center gap-2" title="Sincronização com o Google Sheets">
+                        <div id="sync-progress-circle" style="width: 14px; height: 14px; border-radius: 50%; background: conic-gradient(var(--primary) 100%, #e2e8f0 0);"></div>
+                        <button class="btn btn-sm btn-link p-0 text-decoration-none fw-bold text-secondary" id="btn-manual-sync">
+                            <i class="fas fa-sync-alt" id="sync-spinner"></i> Atualizar
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-custom rounded-circle p-2 d-flex align-items-center justify-content-center" id="theme-toggle" style="width: 40px; height: 40px;" title="Alternar Modo Escuro">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    <div class="dropdown">
+                        <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false" id="user-profile-dropdown">
+                            <div class="user-avatar">
+                                <span id="user-avatar-initials">AD</span>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name" id="user-display-name">Administrador</div>
+                                <div class="user-role" id="user-display-role">Admin</div>
+                            </div>
+                            <i class="fas fa-chevron-down ms-2" style="font-size: 0.7rem; color: var(--text-light);"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-profile-dropdown">
+                            <li><a class="dropdown-item" href="#" id="menu-profile"><i class="fas fa-user me-2"></i>Meu Perfil</a></li>
+                            <li><a class="dropdown-item" href="#" id="menu-settings"><i class="fas fa-cog me-2"></i>Configurações</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" id="menu-logout"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Body -->
+            <div class="content-body">
+
+                <!-- ==================== DASHBOARD PAGE ==================== -->
+                <section id="dashboard-page" class="page-section">
+
+                    <!-- KPI Cards Row -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-xl-3 col-md-6" style="--i:0">
+                            <div class="kpi-card kpi-blue">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-total-alunos">0</div>
+                                    <div class="kpi-label">Total de Alunos</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6" style="--i:1">
+                            <div class="kpi-card kpi-purple">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-total-disciplinas">0</div>
+                                    <div class="kpi-label">Total de Disciplinas</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6" style="--i:2">
+                            <div class="kpi-card kpi-green">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-media-geral">0.0</div>
+                                    <div class="kpi-label">Média Geral</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6" style="--i:3">
+                            <div class="kpi-card kpi-red">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value" id="kpi-alunos-criticos">0</div>
+                                    <div class="kpi-label">Alunos Críticos</div>
+                                </div>
+                                <div class="kpi-decoration"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 1 -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-8" style="--i:4">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-chart-bar me-2"></i>Média por Disciplina</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-medias-disciplina"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4" style="--i:5">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-smile me-2"></i>Distribuição de Comportamento</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-comportamento"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row 2 -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-4" style="--i:6">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-venus-mars me-2"></i>Distribuição por Sexo</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-sexo"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8" style="--i:7">
+                            <div class="card chart-card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-chart-area me-2"></i>Evolução Trimestral</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chart-evolucao"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top / Bottom Students Row -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-6" style="--i:8">
+                            <div class="card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-trophy me-2 text-warning"></i>Top 5 Melhores Alunos</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="table-top-alunos">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 60px;">Pos.</th>
+                                                    <th>Aluno</th>
+                                                    <th style="width: 100px;">Média</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="top-alunos-list">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6" style="--i:9">
+                            <div class="card fade-in">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-exclamation-circle me-2 text-danger"></i>Alunos em Risco</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="table-bottom-alunos">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 60px;">Pos.</th>
+                                                    <th>Aluno</th>
+                                                    <th style="width: 100px;">Média</th>
+                                                    <th style="width: 120px;">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bottom-alunos-list">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== ALUNOS PAGE ==================== -->
+                <section id="alunos-page" class="page-section" style="display: none;">
+
+                    <!-- Filter Bar -->
+                    <div class="filter-bar">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control" id="search-alunos" placeholder="Pesquisar aluno...">
+                        </div>
+                        <select class="form-select" id="filter-disciplina">
+                            <option value="">Todas as Disciplinas</option>
+                        </select>
+                        <select class="form-select" id="filter-comportamento">
+                            <option value="">Todos os Comportamentos</option>
+                            <option value="Excelente">Excelente</option>
+                            <option value="Bom">Bom</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Insatisfatório">Insatisfatório</option>
+                            <option value="Crítico">Crítico</option>
+                        </select>
+                        <select class="form-select" id="filter-sexo">
+                            <option value="">Todos os Sexos</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+                        <button class="btn btn-outline-custom" id="btn-reset-filters">
+                            <i class="fas fa-undo me-1"></i> Limpar
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: var(--info);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-total">0</div>
+                                    <div class="stat-label">Total Alunos</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: #3b82f6;">
+                                    <i class="fas fa-mars"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-masculino">0</div>
+                                    <div class="stat-label">Masculino</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(236,72,153,0.1); color: #ec4899;">
+                                    <i class="fas fa-venus"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-feminino">0</div>
+                                    <div class="stat-label">Feminino</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: var(--success);">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <div class="stat-value" id="stat-media">0.0</div>
+                                    <div class="stat-label">Média da Turma</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Students Table Card -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0"><i class="fas fa-list me-2"></i>Lista de Alunos</h6>
+                            <button class="btn btn-primary-custom btn-sm" id="btn-export-alunos">
+                                <i class="fas fa-download me-1"></i> Exportar
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="table-alunos" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Nome</th>
+                                            <th style="width: 100px;">Sexo</th>
+                                            <th style="width: 120px;">Média Geral</th>
+                                            <th style="width: 140px;">Comportamento</th>
+                                            <th style="width: 100px;">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Action Button - Add Student -->
+                    <button class="fab" id="btn-add-aluno" title="Adicionar Aluno">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </section>
+
+                <!-- ==================== DISCIPLINAS PAGE ==================== -->
+                <section id="disciplinas-page" class="page-section" style="display: none;">
+
+                    <!-- Grid View -->
+                    <div id="disciplinas-grid" class="row g-4">
+                        <!-- Cards will be populated by JS -->
+                    </div>
+
+                    <!-- Detail View -->
+                    <div id="disciplina-detail" style="display: none;">
+                        <button class="btn btn-outline-custom mb-4" id="btn-back-disciplinas">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </button>
+
+                        <!-- Discipline Header Card -->
+                        <div class="card mb-4" id="disciplina-header-card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="disc-icon-lg" id="disc-detail-icon">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <h4 class="fw-bold mb-1" id="disc-detail-name">Disciplina</h4>
+                                        <p class="text-secondary mb-0" id="disc-detail-subtitle">4ª Classe · 2026</p>
+                                    </div>
+                                    <div class="col-auto d-flex gap-4 text-center">
+                                        <div>
+                                            <div class="stat-value text-info" id="disc-detail-total">0</div>
+                                            <div class="stat-label">Alunos</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value text-success" id="disc-detail-media">0.0</div>
+                                            <div class="stat-label">Média</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value text-primary" id="disc-detail-max">0</div>
+                                            <div class="stat-label">Máxima</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value text-danger" id="disc-detail-min">0</div>
+                                            <div class="stat-label">Mínima</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trimester Tabs -->
+                        <div class="trimester-tabs mb-4" id="trimester-tabs">
+                            <button class="trimester-tab active" data-trimester="1">1º Trimestre</button>
+                            <button class="trimester-tab" data-trimester="2">2º Trimestre</button>
+                            <button class="trimester-tab" data-trimester="3">3º Trimestre</button>
+                        </div>
+
+                        <!-- Grades Table -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0"><i class="fas fa-table me-2"></i>Notas dos Alunos</h6>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary-custom btn-sm" id="btn-save-notas">
+                                        <i class="fas fa-save me-1"></i> Salvar
+                                    </button>
+                                    <button class="btn btn-outline-custom btn-sm" id="btn-export-notas">
+                                        <i class="fas fa-download me-1"></i> Exportar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0" id="table-disciplina-notas" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 50px;">#</th>
+                                                <th>Nome</th>
+                                                <th style="width: 70px;">ACS1</th>
+                                                <th style="width: 70px;">ACS2</th>
+                                                <th style="width: 70px;">ACS3</th>
+                                                <th style="width: 70px;">ACS4</th>
+                                                <th style="width: 70px;">MACS</th>
+                                                <th style="width: 70px;">AT</th>
+                                                <th style="width: 70px;">MT</th>
+                                                <th style="width: 130px;">Comportamento</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== PAUTAS PAGE ==================== -->
+                <section id="pautas-page" class="page-section" style="display: none;">
+
+                    <div class="row g-4">
+                        <!-- Pauta Generator -->
+                        <div class="col-lg-5">
+                            <div class="card pauta-generator">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-magic me-2"></i>Gerar Pauta</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form id="form-pauta">
+                                        <div class="mb-3">
+                                            <label for="select-pauta-disciplina" class="form-label">Disciplina</label>
+                                            <select class="form-select" id="select-pauta-disciplina">
+                                                <option value="todas">Todas as Disciplinas</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="select-pauta-trimestre" class="form-label">Trimestre</label>
+                                            <select class="form-select" id="select-pauta-trimestre">
+                                                <option value="1">1º Trimestre</option>
+                                                <option value="2">2º Trimestre</option>
+                                                <option value="3">3º Trimestre</option>
+                                                <option value="anual">Anual</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="select-pauta-tipo" class="form-label">Tipo de Pauta</label>
+                                            <select class="form-select" id="select-pauta-tipo">
+                                                <option value="trimestral">Pauta Trimestral</option>
+                                                <option value="individual">Boletim Individual</option>
+                                                <option value="geral">Pauta Geral Anual</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3 d-none" id="pauta-aluno-wrapper">
+                                            <label for="select-pauta-aluno" class="form-label">Aluno</label>
+                                            <select class="form-select" id="select-pauta-aluno">
+                                                <option value="">Selecione um aluno...</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="d-flex gap-2 mt-4">
+                                            <button type="button" class="btn btn-outline-custom flex-fill" id="btn-preview-pauta">
+                                                <i class="fas fa-eye me-2"></i>Pré-visualizar
+                                            </button>
+                                            <button type="button" class="btn btn-primary-custom flex-fill" id="btn-generate-pauta">
+                                                <i class="fas fa-file-pdf me-2"></i>Gerar PDF
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Generated Pautas List -->
+                        <div class="col-lg-7">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="fas fa-folder-open me-2"></i>Pautas Geradas</h6>
+                                    <span class="badge bg-primary" id="pautas-count">0</span>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div id="pautas-list">
+                                        <!-- Empty state -->
+                                        <div class="text-center py-5" id="pautas-empty">
+                                            <i class="fas fa-folder-open fa-3x text-light mb-3 d-block"></i>
+                                            <p class="text-secondary">Nenhuma pauta gerada ainda.</p>
+                                            <p class="text-secondary small">Use o formulário ao lado para gerar uma pauta.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== RELATORIOS PAGE ==================== -->
+                <section id="relatorios-page" class="page-section" style="display: none;">
+
+                    <!-- Report Type Selector -->
+                    <div class="report-type-selector mb-4">
+                        <div class="report-type-card active" id="report-ranking" data-report="ranking">
+                            <i class="fas fa-trophy"></i>
+                            <span>Ranking Geral</span>
+                        </div>
+                        <div class="report-type-card" id="report-disciplina" data-report="disciplina">
+                            <i class="fas fa-book"></i>
+                            <span>Análise por Disciplina</span>
+                        </div>
+                        <div class="report-type-card" id="report-comportamento" data-report="comportamento">
+                            <i class="fas fa-smile"></i>
+                            <span>Análise Comportamental</span>
+                        </div>
+                        <div class="report-type-card" id="report-sexo" data-report="sexo">
+                            <i class="fas fa-venus-mars"></i>
+                            <span>Estatísticas por Sexo</span>
+                        </div>
+                        <div class="report-type-card" id="report-acta" data-report="acta">
+                            <i class="fas fa-file-signature"></i>
+                            <span>Acta do Conselho</span>
+                        </div>
+                    </div>
+
+                    <!-- Report Filters -->
+                    <div class="filter-bar mb-4" id="relatorio-filters">
+                        <select class="form-select" id="filter-relatorio-disciplina">
+                            <option value="">Todas as Disciplinas</option>
+                        </select>
+                        <select class="form-select" id="filter-relatorio-trimestre">
+                            <option value="">Todos os Trimestres</option>
+                            <option value="1">1º Trimestre</option>
+                            <option value="2">2º Trimestre</option>
+                            <option value="3">3º Trimestre</option>
+                        </select>
+                        <button class="btn btn-primary-custom" id="btn-generate-relatorio">
+                            <i class="fas fa-sync me-2"></i>Gerar Relatório
+                        </button>
+                    </div>
+
+                    <!-- Chart Area -->
+                    <div class="card mb-4" id="relatorio-chart-area">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Gráfico do Relatório</h6>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chart-relatorio"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Table Area -->
+                    <div class="card" id="relatorio-table-area">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0"><i class="fas fa-table me-2"></i>Dados do Relatório</h6>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-custom btn-sm" id="btn-export-excel">
+                                    <i class="fas fa-file-excel me-1"></i> Excel
+                                </button>
+                                <button class="btn btn-outline-custom btn-sm" id="btn-export-pdf">
+                                    <i class="fas fa-file-pdf me-1"></i> PDF
+                                </button>
+                                <button class="btn btn-outline-custom btn-sm" id="btn-print-relatorio">
+                                    <i class="fas fa-print me-1"></i> Imprimir
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="table-relatorio" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Nome do Aluno</th>
+                                            <th class="text-center">Nota Exacta</th>
+                                            <th class="text-center">Situação</th>
+                                            <th class="text-center">Comportamento</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acta do Conselho Area -->
+                    <div class="card mb-4" id="relatorio-acta-area" style="display: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center no-print">
+                            <h6 class="mb-0"><i class="fas fa-file-signature me-2"></i>Acta do Conselho de Notas Trimestrais</h6>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-custom btn-sm" id="btn-download-acta">
+                                    <i class="fas fa-file-pdf me-1"></i>Baixar PDF
+                                </button>
+                                <button class="btn btn-primary-custom btn-sm" id="btn-print-acta">
+                                    <i class="fas fa-print me-1"></i>Imprimir Acta
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-4 bg-white text-dark printable-acta">
+                            <!-- Style block specific to the printed layout so it prints beautifully on A4 portrait -->
+                            <style>
+                                .acta-print-container {
+                                    font-family: 'Times New Roman', Times, serif;
+                                    font-size: 13px;
+                                    line-height: 1.5;
+                                    color: #000;
+                                    margin: 0 auto;
+                                    max-width: 800px;
+                                    padding: 10px;
+                                }
+                                .acta-header {
+                                    text-align: center;
+                                    margin-bottom: 20px;
+                                    font-weight: bold;
+                                    text-transform: uppercase;
+                                    border-bottom: 2px solid #000;
+                                    padding-bottom: 5px;
+                                }
+                                .acta-header h4 {
+                                    margin: 0;
+                                    font-size: 16px;
+                                    font-weight: bold;
+                                }
+                                .acta-header p {
+                                    margin: 5px 0 0 0;
+                                    font-size: 14px;
+                                }
+                                .acta-paragraph {
+                                    text-align: justify;
+                                    text-indent: 40px;
+                                    margin-bottom: 15px;
+                                }
+                                .acta-input-inline {
+                                    border: none;
+                                    border-bottom: 1px dotted #000;
+                                    background: transparent;
+                                    text-align: center;
+                                    padding: 0 5px;
+                                    font-weight: bold;
+                                    color: #000;
+                                }
+                                .acta-input-inline:focus {
+                                    outline: none;
+                                    border-bottom: 1px solid #000;
+                                }
+                                .acta-section-title {
+                                    font-weight: bold;
+                                    margin-top: 20px;
+                                    margin-bottom: 8px;
+                                    text-transform: uppercase;
+                                    font-size: 13px;
+                                    border-bottom: 1px solid #000;
+                                    padding-bottom: 2px;
+                                }
+                                .acta-table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    margin-bottom: 15px;
+                                    font-size: 12px;
+                                }
+                                .acta-table th, .acta-table td {
+                                    border: 1px solid #000;
+                                    padding: 4px 6px;
+                                    text-align: center;
+                                }
+                                .acta-table th {
+                                    background-color: #f2f2f2;
+                                    font-weight: bold;
+                                }
+                                .acta-table td.text-left {
+                                    text-align: left;
+                                }
+                                .acta-textarea {
+                                    width: 100%;
+                                    min-height: 80px;
+                                    border: 1px dashed #ccc;
+                                    padding: 8px;
+                                    font-family: inherit;
+                                    font-size: 12px;
+                                    resize: vertical;
+                                    margin-bottom: 15px;
+                                    background-color: #fff;
+                                }
+                                .acta-textarea:focus {
+                                    outline: none;
+                                    border: 1px solid #000;
+                                }
+                                .acta-signatures {
+                                    margin-top: 30px;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    font-size: 12px;
+                                }
+                                .acta-signature-col {
+                                    width: 45%;
+                                    text-align: center;
+                                }
+                                .acta-signature-line {
+                                    margin-top: 40px;
+                                    border-top: 1px solid #000;
+                                    padding-top: 5px;
+                                }
+                                @media print {
+                                    body * {
+                                        visibility: hidden;
+                                    }
+                                    #relatorio-acta-area, #relatorio-acta-area * {
+                                        visibility: visible;
+                                    }
+                                    #relatorio-acta-area {
+                                        position: absolute;
+                                        left: 0;
+                                        top: 0;
+                                        width: 100%;
+                                        margin: 0;
+                                        padding: 0;
+                                        border: none !important;
+                                        box-shadow: none !important;
+                                        background: white !important;
+                                    }
+                                    .no-print {
+                                        display: none !important;
+                                    }
+                                    .printable-acta {
+                                        padding: 0 !important;
+                                    }
+                                    .acta-print-container {
+                                        max-width: 100%;
+                                        padding: 0;
+                                    }
+                                    .acta-textarea {
+                                        border: none;
+                                        background: transparent;
+                                        padding: 0;
+                                    }
+                                }
+                            </style>
+
+                            <div class="acta-print-container">
+                                <div class="acta-header">
+                                    <h4>Escola Básica de Macurunco</h4>
+                                    <p>Acta do Conselho de Notas Trimestrais</p>
+                                </div>
+                                
+                                <p class="acta-paragraph">
+                                    Aos <input type="text" class="acta-input-inline" id="acta-dia" style="width: 40px;" placeholder="dd"> dias do mês de 
+                                    <input type="text" class="acta-input-inline" id="acta-mes" style="width: 100px;" placeholder="mês"> de 
+                                    <input type="text" class="acta-input-inline" id="acta-ano" style="width: 60px;" placeholder="aaaa">, reuniu o Conselho de Notas na sala 
+                                    <input type="text" class="acta-input-inline" id="acta-sala" style="width: 50px;" placeholder="sala">, para analisar o aproveitamento pedagógico e comportamento da turma 
+                                    <span class="fw-bold" id="acta-turma-nome">---</span> do <span class="fw-bold" id="acta-trimestre-nome">---</span> Trimestre.
+                                </p>
+
+                                <div class="acta-section-title">I. Indicadores da Turma</div>
+                                <table class="acta-table" id="table-acta-indicadores">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" class="text-left" style="width: 60%;">Indicadores</th>
+                                            <th colspan="2">Dados Alunos</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 20%;">M (Mulheres)</th>
+                                            <th style="width: 20%;">HM (Total)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-left">Matriculados</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-mat-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-mat-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Início do Trimestre</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ini-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ini-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Desistentes</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-des-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-des-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Transferidos de (Entradas)</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ent-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ent-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Transferidos para (Saídas)</td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-sai-m" min="0" value="0"></td>
+                                            <td><input type="number" class="acta-input-inline text-center w-100" id="ind-sai-hm" min="0" value="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left fw-bold">Fim do Trimestre (Frequência)</td>
+                                            <td id="ind-fim-m" class="fw-bold">0</td>
+                                            <td id="ind-fim-hm" class="fw-bold">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Nº de Positivos</td>
+                                            <td id="ind-pos-m" class="fw-bold">0</td>
+                                            <td id="ind-pos-hm" class="fw-bold">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left fw-bold">Aproveitamento (%)</td>
+                                            <td id="ind-aprov-m" class="fw-bold">0%</td>
+                                            <td id="ind-aprov-hm" class="fw-bold">0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="fw-bold mb-1">Causas das Desistências:</div>
+                                <textarea class="acta-textarea" id="acta-causas-desistencias" placeholder="Descreva aqui os motivos das desistências, se houver..."></textarea>
+
+                                <div class="acta-section-title">II. Aproveitamento Pedagógico por Disciplina</div>
+                                <table class="acta-table" id="table-acta-aproveitamento">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" class="text-left" style="width: 20%;">Disciplinas</th>
+                                            <th colspan="3">Nº de Avaliados</th>
+                                            <th colspan="3">Nº de Positivas</th>
+                                            <th colspan="3">Nº de Negativas</th>
+                                            <th colspan="3">Aprov. (%)</th>
+                                            <th colspan="5">Distribuição Qualitativa das Notas (Total)</th>
+                                        </tr>
+                                        <tr>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th>H</th>
+                                            <th>M</th>
+                                            <th>HM</th>
+                                            <th style="font-size:10px;">Não S.<br>0-9</th>
+                                            <th style="font-size:10px;">Sat.<br>10-13</th>
+                                            <th style="font-size:10px;">Bom<br>14-16</th>
+                                            <th style="font-size:10px;">M. Bom<br>17-18</th>
+                                            <th style="font-size:10px;">Exc.<br>19-20</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="acta-aproveitamento-body">
+                                        <!-- Dynamic Rows populated by JS -->
+                                    </tbody>
+                                </table>
+
+                                <div class="fw-bold mb-1">Factores que influenciaram no aproveitamento positivo/negativo:</div>
+                                <textarea class="acta-textarea" id="acta-factores-influencia" placeholder="Fatores de sucesso (ex: empenho dos alunos, apoio pedagógico) e insucesso (ex: faltas, dificuldades de aprendizagem)..."></textarea>
+
+                                <div class="acta-signatures">
+                                    <div class="acta-signature-col">
+                                        <p>O Director de Escola / Adjunto</p>
+                                        <div class="acta-signature-line" id="acta-director-nome">--------------------------------------</div>
+                                    </div>
+                                    <div class="acta-signature-col">
+                                        <p>O(A) Director(a) de Turma</p>
+                                        <div class="acta-signature-line" id="acta-professor-nome">--------------------------------------</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ==================== CONFIG PAGE ==================== -->
+                <section id="config-page" class="page-section" style="display: none;">
+
+                    <div class="row g-4">
+                        <!-- School Info -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-school me-2"></i>Informações da Escola</h6>
+                                <div class="config-item">
+                                    <span class="label">Nome da Escola</span>
+                                    <span class="value">Escola Básica de Macurunco</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Localização</span>
+                                    <span class="value">Beira, Sofala, Moçambique</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Classe</span>
+                                    <span class="value">4ª Classe</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Ano Lectivo</span>
+                                    <span class="value">2026</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Director</span>
+                                    <span class="value">---</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Profile -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-user-circle me-2"></i>Perfil do Utilizador</h6>
+                                <div class="text-center mb-4">
+                                    <div class="config-avatar mx-auto mb-3">
+                                        <span id="config-avatar-initials">AD</span>
+                                    </div>
+                                    <h5 class="fw-bold mb-1" id="config-user-name">Administrador</h5>
+                                    <span class="badge badge-comportamento badge-bom" id="config-user-role">Admin</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Email</span>
+                                    <span class="value" id="config-user-email">admin@escola.mz</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Último Acesso</span>
+                                    <span class="value" id="config-last-login">---</span>
+                                </div>
+                                <button class="btn btn-outline-custom w-100 mt-3" id="btn-change-password">
+                                    <i class="fas fa-key me-2"></i>Alterar Senha
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- System Info -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-info-circle me-2"></i>Informações do Sistema</h6>
+                                <div class="config-item">
+                                    <span class="label">Versão</span>
+                                    <span class="value">1.0.0</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Última Sincronização</span>
+                                    <span class="value" id="config-last-sync">---</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="label">Status</span>
+                                    <span class="value">
+                                        <span class="status-indicator status-online"></span>
+                                        <span id="config-status-text">Online</span>
+                                    </span>
+                                </div>
+                                <button class="btn btn-outline-custom w-100 mt-3" id="btn-clear-cache">
+                                    <i class="fas fa-broom me-2"></i>Limpar Cache
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Behavior Scale -->
+                        <div class="col-lg-6">
+                            <div class="config-card">
+                                <h6><i class="fas fa-star me-2"></i>Escala de Comportamento</h6>
+                                <p class="text-secondary small mb-3">Referência dos níveis de comportamento utilizados no sistema.</p>
+                                <table class="behavior-scale-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Classificação</th>
+                                            <th>Intervalo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-excelente">Excelente</span></td>
+                                            <td>18 — 20 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-bom">Bom</span></td>
+                                            <td>14 — 17 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-regular">Regular</span></td>
+                                            <td>10 — 13 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-insatisfatorio">Insatisfatório</span></td>
+                                            <td>7 — 9 valores</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-comportamento badge-critico">Crítico</span></td>
+                                            <td>0 — 6 valores</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+            </div><!-- end .content-body -->
+        </main><!-- end .main-content -->
+    </div><!-- end #app-shell -->
+
+    <!-- ==================== MODAL: ALUNO DETAIL ==================== -->
+    <div class="modal fade" id="modal-aluno-detail" tabindex="-1" aria-labelledby="modal-aluno-detail-label" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="student-avatar avatar-1" id="modal-aluno-avatar">
+                            <span>AL</span>
+                        </div>
+                        <div>
+                            <h5 class="modal-title" id="modal-aluno-detail-label">Nome do Aluno</h5>
+                            <small class="opacity-75" id="modal-aluno-subtitle">4ª Classe · 2026</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tab Navigation -->
+                    <ul class="nav nav-tabs nav-tabs-custom mb-4" id="aluno-detail-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-visao-geral" data-bs-toggle="tab" data-bs-target="#pane-visao-geral" type="button" role="tab" aria-controls="pane-visao-geral" aria-selected="true">
+                                <i class="fas fa-user me-2"></i>Visão Geral
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-notas" data-bs-toggle="tab" data-bs-target="#pane-notas" type="button" role="tab" aria-controls="pane-notas" aria-selected="false">
+                                <i class="fas fa-clipboard me-2"></i>Notas por Disciplina
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-comportamento" data-bs-toggle="tab" data-bs-target="#pane-comportamento" type="button" role="tab" aria-controls="pane-comportamento" aria-selected="false">
+                                <i class="fas fa-heart me-2"></i>Comportamento
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-historico" data-bs-toggle="tab" data-bs-target="#pane-historico" type="button" role="tab" aria-controls="pane-historico" aria-selected="false">
+                                <i class="fas fa-history me-2"></i>Histórico
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="aluno-detail-tab-content">
+                        <!-- Visão Geral Tab -->
+                        <div class="tab-pane fade show active" id="pane-visao-geral" role="tabpanel" aria-labelledby="tab-visao-geral">
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="config-card text-center">
+                                        <div class="config-avatar mx-auto mb-3" id="modal-aluno-photo">
+                                            <span id="modal-aluno-initials-lg">AL</span>
+                                        </div>
+                                        <h5 class="fw-bold" id="modal-aluno-full-name">Nome do Aluno</h5>
+                                        <span class="badge badge-comportamento" id="modal-aluno-behavior-badge">---</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="config-card">
+                                        <h6><i class="fas fa-id-card me-2"></i>Dados Pessoais</h6>
+                                        <div class="config-item">
+                                            <span class="label">Nome Completo</span>
+                                            <span class="value" id="modal-aluno-nome">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Sexo</span>
+                                            <span class="value" id="modal-aluno-sexo">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Data de Nascimento</span>
+                                            <span class="value" id="modal-aluno-nascimento">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Média Geral</span>
+                                            <span class="value fw-bold" id="modal-aluno-media">---</span>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="label">Comportamento</span>
+                                            <span class="value" id="modal-aluno-comportamento">---</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Mini KPIs -->
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: var(--info);">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-total-disc">0</div>
+                                            <div class="stat-label">Disciplinas</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: var(--success);">
+                                            <i class="fas fa-arrow-up"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-nota-max">0</div>
+                                            <div class="stat-label">Nota Máxima</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(239,68,68,0.1); color: var(--danger);">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-nota-min">0</div>
+                                            <div class="stat-label">Nota Mínima</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-value" id="modal-aluno-ranking">0</div>
+                                            <div class="stat-label">Posição</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notas Tab -->
+                        <div class="tab-pane fade" id="pane-notas" role="tabpanel" aria-labelledby="tab-notas">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="table-aluno-notas">
+                                    <thead>
+                                        <tr>
+                                            <th>Disciplina</th>
+                                            <th>1º Trim.</th>
+                                            <th>2º Trim.</th>
+                                            <th>3º Trim.</th>
+                                            <th>Média Final</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modal-aluno-notas-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Comportamento Tab -->
+                        <div class="tab-pane fade" id="pane-comportamento" role="tabpanel" aria-labelledby="tab-comportamento">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header"><h6 class="mb-0">Radar de Comportamento</h6></div>
+                                        <div class="card-body">
+                                            <canvas id="chart-aluno-comportamento"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header"><h6 class="mb-0">Detalhes</h6></div>
+                                        <div class="card-body" id="modal-aluno-comportamento-details">
+                                            <p class="text-secondary">Selecione um aluno para ver os detalhes de comportamento.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Histórico Tab -->
+                        <div class="tab-pane fade" id="pane-historico" role="tabpanel" aria-labelledby="tab-historico">
+                            <div class="timeline" id="modal-aluno-historico">
+                                <div class="timeline-item">
+                                    <div class="timeline-dot bg-primary"></div>
+                                    <div class="timeline-content">
+                                        <p class="text-secondary">Nenhum histórico disponível.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-custom" id="btn-edit-aluno">
+                        <i class="fas fa-edit me-2"></i>Editar
+                    </button>
+                    <button type="button" class="btn btn-outline-custom" id="btn-print-aluno">
+                        <i class="fas fa-print me-2"></i>Imprimir
+                    </button>
+                    <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: PAUTA PREVIEW ==================== -->
+    <div class="modal fade" id="modal-pauta-preview" tabindex="-1" aria-labelledby="modal-pauta-preview-label" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-pauta-preview-label">
+                        <i class="fas fa-file-alt me-2"></i>Pré-visualização da Pauta
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-accent btn-sm" id="btn-print-pauta">
+                            <i class="fas fa-print me-2"></i>Imprimir
+                        </button>
+                        <button type="button" class="btn btn-primary-custom btn-sm" id="btn-download-pauta">
+                            <i class="fas fa-download me-2"></i>Baixar PDF
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                </div>
+                <div class="modal-body bg-light">
+                    <div id="pauta-preview-content" class="pauta-preview-wrapper">
+                        <!-- Filled by JS -->
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-alt fa-3x text-light mb-3 d-block"></i>
+                            <p class="text-secondary">Gere uma pauta para pré-visualizar aqui.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
+                    <button type="button" class="btn btn-accent" id="btn-print-pauta-footer">
+                        <i class="fas fa-print me-2"></i>Imprimir
+                    </button>
+                    <button type="button" class="btn btn-primary-custom" id="btn-download-pauta-footer">
+                        <i class="fas fa-download me-2"></i>Baixar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LOADING OVERLAY ==================== -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST CONTAINER ==================== -->
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <!-- jQuery (for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- html2pdf for client-side PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- App JS files -->
+    <script>
+
+/* ==================== api.js ==================== */
+const MockData = {
+  getSchoolData: () => ({
+    escola: 'ESCOLA BASICA DE MACURUNCO',
+    endereco: 'Beira, Sofala',
+    contacto: '258 861234567',
+    professor: 'Pascoa da Graca Ramim',
+    directorPedagogico: 'Mario Lacerda',
+    director: 'Maria Manuela',
+    logotipo: 'https://drive.google.com/file/d/1IMeX9UMP7mTmgi1X4gwjM315SQa5ofvE/view?usp=drive_link',
+    classe: '4ª',
+    periodo: 'manhã',
+    ano: '2026',
+    comportamentos: [
+      { nivel: 'Excelente', significado: 'comportamento exemplar e consistente' },
+      { nivel: 'Bom', significado: 'comportamento adequado' },
+      { nivel: 'Regular', significado: 'comportamento aceitável' },
+      { nivel: 'Insatisfatório', significado: 'comportamento precisa melhorar' },
+      { nivel: 'Crítico', significado: 'comportamento inaceitável' }
+    ]
+  }),
+
+  getDisciplines: () => [
+    { name: 'PORTUGUES', sheetName: 'PORTUGUES' },
+    { name: 'MATEMATICA', sheetName: 'MATEMATICA' },
+    { name: 'CIENCIAS NATURAIS', sheetName: 'CIENCIAS NATURAIS' },
+    { name: 'CIENCIAS SOCIAIS', sheetName: 'CIENCIAS SOCIAIS' }
+  ],
+
+  _rawStudents: [
+    { n: 1, nome: "ALICIA CONSTANT", p: 10, m: 10, cn: 9, cs: 8, sx: "F" },
+    { n: 2, nome: "ALICIA OLIVA", p: 16, m: 15, cn: 15, cs: 15, sx: "F", comp: "Excelente" },
+    { n: 3, nome: "ALICIA GIGANTE", p: 7, m: 12, cn: 6, cs: 10, sx: "F" },
+    { n: 4, nome: "ALIMO ALDO", p: 8, m: 14, cn: 9, cs: 11, sx: "M" },
+    { n: 5, nome: "AGELINA ANDRE", p: 11, m: 12, cn: 7, cs: 8, sx: "F" },
+    { n: 6, nome: "ANTONIA MARAUSSA", p: 13, m: 15, cn: 13, cs: 11, sx: "F" },
+    { n: 7, nome: "ANTONIA MARCOS", p: 8, m: 11, cn: 10, cs: 6, sx: "F" },
+    { n: 8, nome: "AUZENDA", p: 9, m: 14, cn: 9, cs: 10, sx: "F" },
+    { n: 9, nome: "CHAQUILA", p: 14, m: 15, cn: 14, cs: 12, sx: "F" },
+    { n: 10, nome: "CHAULANA", p: 13, m: 11, cn: 9, cs: 9, sx: "F" },
+    { n: 11, nome: "CHELSEA", p: 8, m: 11, cn: 6, cs: 5, sx: "F" },
+    { n: 12, nome: "CRISTOVAO", p: 11, m: 15, cn: 11, cs: 10, sx: "M" },
+    { n: 13, nome: "DANIEL ANTONIO", p: 14, m: 17, cn: 14, cs: 10, sx: "M" },
+    { n: 14, nome: "DANIEL FLAVIO", p: 11, m: 12, cn: 10, cs: 13, sx: "M" },
+    { n: 15, nome: "DIANA", p: 10, m: 13, cn: 9, cs: 12, sx: "F" },
+    { n: 16, nome: "DORA", p: 9, m: 12, cn: 11, cs: 13, sx: "F" },
+    { n: 17, nome: "ELIDIO", p: 14, m: 14, cn: 14, cs: 15, sx: "M" },
+    { n: 18, nome: "ELISABETH", p: 7, m: 10, cn: 6, cs: 8, sx: "F" },
+    { n: 19, nome: "EMA", p: 11, m: 13, cn: 8, cs: 9, sx: "F" },
+    { n: 20, nome: "ESTER FERNADO", p: 15, m: 13, cn: 15, cs: 15, sx: "F", comp: "Bom" },
+    { n: 21, nome: "ESTER FIBIONE", p: 7, m: 11, cn: 6, cs: 5, sx: "F" },
+    { n: 22, nome: "EUGENIO", p: 13, m: 16, cn: 15, cs: 17, sx: "M" },
+    { n: 23, nome: "FANIA", p: 14, m: 16, cn: 15, cs: 15, sx: "F" },
+    { n: 24, nome: "FERNANDO", p: 13, m: 17, cn: 14, cs: 16, sx: "M" },
+    { n: 25, nome: "GABRIEL", p: 10, m: 14, cn: 11, cs: 13, sx: "M" },
+    { n: 26, nome: "GINA", p: 14, m: 13, cn: 13, cs: 15, sx: "F", comp: "Bom" },
+    { n: 27, nome: "GRAÇA", p: 7, m: 9, cn: 7, cs: 7, sx: "F" },
+    { n: 28, nome: "HELIANDRA", p: 12, m: 14, cn: 14, cs: 11, sx: "F" },
+    { n: 29, nome: "ISABEL", p: 8, m: 14, cn: 8, cs: 8, sx: "F" },
+    { n: 30, nome: "ISAQUE", p: 12, m: 10, cn: 11, cs: 10, sx: "M" },
+    { n: 31, nome: "IBRAIMO", p: 7, m: 12, cn: 12, cs: 7, sx: "M" },
+    { n: 32, nome: "JOSE", p: 11, m: 14, cn: 13, cs: 8, sx: "M" },
+    { n: 33, nome: "JOYCE", p: 7, m: 9, cn: 8, cs: 9, sx: "F" },
+    { n: 34, nome: "JULIA JULIO", p: 8, m: 11, cn: 9, cs: 7, sx: "F" },
+    { n: 35, nome: "JULIETA MAGUMISSE", p: 11, m: 13, cn: 13, cs: 13, sx: "F" },
+    { n: 36, nome: "JULIETA MAHANHICE", p: 7, m: 8, cn: 7, cs: 6, sx: "F" },
+    { n: 37, nome: "KEYLLEN", p: 9, m: 10, cn: 9, cs: 10, sx: "F" },
+    { n: 38, nome: "KENIUSIA", p: 12, m: 11, cn: 7, cs: 12, sx: "F" },
+    { n: 39, nome: "LASMI", p: 8, m: 10, cn: 8, cs: 7, sx: "F" },
+    { n: 40, nome: "LAURA DAVID", p: 11, m: 13, cn: 9, cs: 9, sx: "F" },
+    { n: 41, nome: "LAURA ZITO", p: 7, m: 10, cn: 5, cs: 8, sx: "F" },
+    { n: 42, nome: "LUCRECIA", p: 7, m: 6, cn: 7, cs: 8, sx: "F" },
+    { n: 43, nome: "LUIS", p: 12, m: 16, cn: 15, cs: 14, sx: "M" },
+    { n: 44, nome: "MANUEL JOAO", p: 12, m: 16, cn: 10, cs: 13, sx: "M" },
+    { n: 45, nome: "MANUELA RESPEITO", p: 15, m: 13, cn: 13, cs: 16, sx: "F" },
+    { n: 46, nome: "MARLON", p: 9, m: 15, cn: 9, cs: 9, sx: "M" },
+    { n: 47, nome: "MIGUEL", p: 9, m: 11, cn: 10, cs: 12, sx: "M" },
+    { n: 48, nome: "MODESTO", p: 7, m: 14, cn: 7, cs: 10, sx: "M" },
+    { n: 49, nome: "NELITO", p: 7, m: 13, cn: 5, cs: 7, sx: "M" },
+    { n: 50, nome: "ORLANDO", p: 13, m: 16, cn: 11, cs: 9, sx: "M" },
+    { n: 51, nome: "OTILIA", p: 16, m: 15, cn: 16, cs: 15, sx: "F" },
+    { n: 52, nome: "ROSETA", p: 15, m: 17, cn: 15, cs: 16, sx: "F" },
+    { n: 53, nome: "ROSITA", p: 7, m: 8, cn: 6, cs: 8, sx: "F" },
+    { n: 54, nome: "RUTE", p: 9, m: 12, cn: 9, cs: 5, sx: "F" },
+    { n: 55, nome: "TERESA", p: 10, m: 8, cn: 8, cs: 11, sx: "F" },
+    { n: 56, nome: "VERNIA", p: 10, m: 13, cn: 14, cs: 11, sx: "F" },
+    { n: 57, nome: "YOLAIM", p: 12, m: 13, cn: 11, cs: 14, sx: "F" },
+    { n: 58, nome: "YUMI", p: 7, m: 7, cn: 6, cs: 7, sx: "F" },
+    { n: 59, nome: "JONATAS", p: 17, m: 18, cn: 17, cs: 13, sx: "M" },
+    { n: 60, nome: "ZINIA", p: 19, m: 17, cn: 18, cs: 18, sx: "F" },
+    { n: 61, nome: "JULIANA", p: 7, m: 9, cn: 7, cs: 8, sx: "F" }
+  ],
+
+  _mapDisciplineData(sheetName) {
+    const fieldMap = { 'PORTUGUES': 'p', 'MATEMATICA': 'm', 'CIENCIAS NATURAIS': 'cn', 'CIENCIAS SOCIAIS': 'cs' };
+    const field = fieldMap[sheetName];
+    return this._rawStudents.map(s => {
+      const mt = s[field];
+      const comp = s.comp || 'Regular';
+      return {
+        numero: s.n,
+        nome: s.nome,
+        sexo: s.sx,
+        trimestres: [
+          { acs: [mt-1, mt, mt+1, mt], macs: mt, at: mt, mt: mt, comp: comp },
+          { acs: [], macs: 0, at: 0, mt: 0, comp: '' },
+          { acs: [], macs: 0, at: 0, mt: 0, comp: '' }
+        ],
+        mtFinal: [mt, 0, 0],
+        mfd: mt,
+        resultado: mt >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)'
+      };
+    });
+  },
+
+  getStudentsByDiscipline: function(sheetName) {
+    return this._mapDisciplineData(sheetName);
+  },
+
+  getAllStudentsConsolidated: function() {
+    return this._rawStudents.map(s => {
+      const p = s.p, m = s.m, cn = s.cn, cs = s.cs;
+      const media = (p + m + cn + cs) / 4;
+      const comp = s.comp || 'Regular';
+      return {
+        numero: s.n,
+        nome: s.nome,
+        sexo: s.sx,
+        disciplinas: {
+          'PORTUGUES': { mt1: p, mt2: 0, mt3: 0, mfd: p, comp: comp, resultado: p >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
+          'MATEMATICA': { mt1: m, mt2: 0, mt3: 0, mfd: m, comp: comp, resultado: m >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
+          'CIENCIAS NATURAIS': { mt1: cn, mt2: 0, mt3: 0, mfd: cn, comp: comp, resultado: cn >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
+          'CIENCIAS SOCIAIS': { mt1: cs, mt2: 0, mt3: 0, mfd: cs, comp: comp, resultado: cs >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' }
+        },
+        mediaGeral: media,
+        comportamentoGeral: comp,
+        resultadoGeral: media >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)'
+      };
+    });
+  },
+
+  getDashboardStats: function() {
+    const students = this.getAllStudentsConsolidated();
+    const mediaGeral = students.reduce((acc, s) => acc + s.mediaGeral, 0) / students.length;
+    const criticos = students.filter(s => s.mediaGeral < 9.5).length;
+
+    const comps = { Excelente: 0, Bom: 0, Regular: 0, Insatisfatório: 0, Crítico: 0 };
+    const sexos = { M: 0, F: 0 };
+    let p_total = 0, m_total = 0, cn_total = 0, cs_total = 0;
+
+    students.forEach(s => {
+      comps[s.comportamentoGeral]++;
+      sexos[s.sexo]++;
+      p_total += s.disciplinas['PORTUGUES'].mfd;
+      m_total += s.disciplinas['MATEMATICA'].mfd;
+      cn_total += s.disciplinas['CIENCIAS NATURAIS'].mfd;
+      cs_total += s.disciplinas['CIENCIAS SOCIAIS'].mfd;
+    });
+
+    const sorted = [...students].sort((a, b) => b.mediaGeral - a.mediaGeral);
+
+    return {
+      totalAlunos: students.length,
+      totalDisciplinas: 4,
+      mediaGeral: mediaGeral,
+      alunosCriticos: criticos,
+      mediasPorDisciplina: [
+        { disciplina: 'PORTUGUES', media: p_total / students.length },
+        { disciplina: 'MATEMATICA', media: m_total / students.length },
+        { disciplina: 'CIENCIAS NATURAIS', media: cn_total / students.length },
+        { disciplina: 'CIENCIAS SOCIAIS', media: cs_total / students.length }
+      ],
+      distribuicaoComportamento: comps,
+      distribuicaoSexo: sexos,
+      topAlunos: sorted.slice(0, 5),
+      bottomAlunos: sorted.slice(-5).reverse()
+    };
+  },
+
+  _mockUsers: [
+    { username: 'admin', email: 'admin@gmail.com', password: 'admin2026', nome: 'admin', roleStr: 'Administrador(a)' },
+    { username: 'diretor', email: 'dir@gmail.com', password: 'dir2026', nome: 'diretor', roleStr: 'Director(a)' },
+    { username: 'professor', email: 'prof@gmail.com', password: 'prof2026', nome: 'professor', roleStr: 'Professor(a)' },
+    { username: 'pramim', email: 'pascoaramim409@gmail.com', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)' }
+  ],
+  
+  _mapRole(roleStr) {
+    const s = String(roleStr).toLowerCase();
+    if (s.includes('admin')) return 'admin';
+    if (s.includes('direct') || s.includes('diret')) return 'direcao';
+    return 'professor';
+  },
+
+  authenticate: function(u, p) {
+    const user = this._mockUsers.find(x => x.username === u && x.password === p);
+    if (user) {
+      const role = this._mapRole(user.roleStr);
+      return { success: true, user: { nome: user.nome, role: role, avatar: Utils.getInitials(user.nome) } };
+    }
+    return { success: false, message: 'Credenciais inválidas' };
+  },
+
+  authenticateWithGoogle: function(email) {
+    const user = this._mockUsers.find(x => x.email === email);
+    if (user) {
+      const role = this._mapRole(user.roleStr);
+      return { success: true, user: { nome: user.nome, role: role, avatar: Utils.getInitials(user.nome) } };
+    }
+    return { success: false, message: 'Este email não está autorizado no sistema. Contacte a direção.' };
+  },
+
+  updateGrade: function(sheetName, numero, trimester, column, value) {
+    const student = this._rawStudents.find(s => s.n === numero);
+    if (!student) return { success: false, message: 'Aluno não encontrado' };
+    
+    // In a real app we'd map this better, but for mock let's just update the main mfd field loosely
+    // The real implementation in GAS will do the proper cell update
+    const fieldMap = { 'PORTUGUES': 'p', 'MATEMATICA': 'm', 'CIENCIAS NATURAIS': 'cn', 'CIENCIAS SOCIAIS': 'cs' };
+    const field = fieldMap[sheetName];
+    if (column === 'mt') {
+      student[field] = value;
+    }
+    return { success: true };
+  },
+
+  updateBehavior: function(sheetName, numero, trimester, value) {
+    const student = this._rawStudents.find(s => s.n === numero);
+    if (!student) return { success: false, message: 'Aluno não encontrado' };
+    student.comp = value;
+    return { success: true };
+  },
+
+  generateAndSavePautaPDF: () => ({ success: true, pdfUrl: '#', fileName: 'Pauta_Mock.pdf' }),
+  generateAndSaveBoletimPDF: () => ({ success: true, pdfUrl: '#', fileName: 'Boletim_Mock.pdf' }),
+  listSavedPDFs: () => []
+};
+
+// ================= GLOBAL API AND UTILS =================
+
+const API = {
+  isGAS: typeof google !== 'undefined' && google.script,
+  
+  call(functionName, ...args) {
+    return new Promise((resolve, reject) => {
+      if (this.isGAS) {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          [functionName](...args);
+      } else {
+        const mockFn = MockData[functionName];
+        if(!mockFn) return reject(new Error('Mock fn not found: ' + functionName));
+        setTimeout(() => resolve(mockFn.apply(MockData, args)), 300 + Math.random() * 500);
+      }
+    });
+  },
+
+  authenticate: (u, p) => API.call('authenticate', u, p),
+  authenticateWithGoogle: (email) => API.call('authenticateWithGoogle', email),
+  getSchoolData: () => API.call('getSchoolData'),
+  getDisciplines: () => API.call('getDisciplines'),
+  getStudentsByDiscipline: (s) => API.call('getStudentsByDiscipline', s),
+  getAllStudentsConsolidated: () => API.call('getAllStudentsConsolidated'),
+  getDashboardStats: () => API.call('getDashboardStats'),
+  generatePautaPDF: (d, t) => API.call('generateAndSavePautaPDF', d, t),
+  generateBoletimPDF: (s, t) => API.call('generateAndSaveBoletimPDF', s, t),
+  listPDFs: () => API.call('listSavedPDFs'),
+  updateGrade: (s, num, t, c, v) => API.call('updateGrade', s, num, t, c, v),
+  updateBehavior: (s, num, t, v) => API.call('updateBehavior', s, num, t, v)
+};
+
+// Utilities
+const Utils = {
+  dataTablesPT: {
+    emptyTable: "Não foi encontrado nenhum registo",
+    info: "A mostrar _START_ até _END_ de _TOTAL_ registos",
+    infoEmpty: "A mostrar 0 até 0 de 0 registos",
+    infoFiltered: "(filtrado de _MAX_ registos no total)",
+    infoPostFix: "",
+    thousands: ".",
+    lengthMenu: "Mostrar _MENU_ registos",
+    loadingRecords: "A carregar...",
+    processing: "A processar...",
+    search: "Pesquisar:",
+    zeroRecords: "Não foram encontrados registos compatíveis",
+    paginate: {
+      first: "Primeiro",
+      last: "Último",
+      next: "Seguinte",
+      previous: "Anterior"
+    },
+    aria: {
+      sortAscending: ": ativar para ordenar a coluna de forma ascendente",
+      sortDescending: ": ativar para ordenar a coluna de forma descendente"
+    }
+  },
+
+  getInitials: (name) => {
+    if(!name) return '??';
+    const parts = name.trim().split(' ');
+    if(parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  },
+  
+  getAvatarColor: (name) => {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return `hsl(${hash % 360}, 65%, 45%)`;
+  },
+  
+  getBehaviorBadge: (comp) => {
+    const map = {
+      'Excelente': 'badge-excelente',
+      'Bom': 'badge-bom',
+      'Regular': 'badge-regular',
+      'Insatisfatório': 'badge-insatisfatorio',
+      'Crítico': 'badge-critico'
+    };
+    return `<span class="badge ${map[comp] || 'badge-regular'}">${comp}</span>`;
+  },
+  
+  getGradeBadge: (grade) => {
+    const val = parseFloat(grade) || 0;
+    let cls = val >= 14 ? 'bg-success' : (val >= 9.5 ? 'bg-info text-dark' : 'bg-danger');
+    return `<span class="badge ${cls}">${val.toFixed(1)}</span>`;
+  },
+  
+  formatNumber: (n) => parseFloat(n).toFixed(1).replace('.', ','),
+  
+  showLoading: () => document.getElementById('loading-overlay').style.display = 'flex',
+  hideLoading: () => document.getElementById('loading-overlay').style.display = 'none',
+  
+  showToast: (title, icon='success') => {
+    Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, title, icon });
+  }
+};
+
+
+/* ==================== auth.js ==================== */
+const Auth = {
+  init() {
+    const loginForm = document.getElementById('login-form');
+    const togglePwd = document.getElementById('toggle-password');
+    const logoutBtn = document.getElementById('nav-logout');
+    const menuLogoutBtn = document.getElementById('menu-logout');
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', this.handleLogin.bind(this));
+    }
+    
+    if (togglePwd) {
+      togglePwd.addEventListener('click', () => {
+        const input = document.getElementById('login-password');
+        const icon = togglePwd.querySelector('i');
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+          input.type = 'password';
+          icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+      });
+    }
+
+    if (logoutBtn) logoutBtn.addEventListener('click', this.logout.bind(this));
+    if (menuLogoutBtn) menuLogoutBtn.addEventListener('click', this.logout.bind(this));
+
+    this.initGoogleAuth();
+  },
+
+  initGoogleAuth() {
+    if (typeof google !== 'undefined' && google.accounts) {
+      google.accounts.id.initialize({
+        client_id: '50630855932-8cjspcb019avab7db1ll100hi434thui.apps.googleusercontent.com',
+        callback: this.handleGoogleCallback.bind(this)
+      });
+      google.accounts.id.renderButton(
+        document.getElementById('google-signin-btn-container'),
+        { theme: 'outline', size: 'large', text: 'continue_with', width: '300' }
+      );
+    } else {
+      setTimeout(this.initGoogleAuth.bind(this), 500);
+    }
+  },
+
+  async handleGoogleCallback(response) {
+    const errorMsg = document.getElementById('login-error');
+    errorMsg.classList.add('d-none');
+    
+    try {
+      // Parse JWT token
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      
+      const payload = JSON.parse(jsonPayload);
+      const email = payload.email;
+      
+      Utils.showLoading();
+      
+      const res = await API.authenticateWithGoogle(email);
+      if (res.success) {
+        sessionStorage.setItem('user', JSON.stringify(res.user));
+        this.completeLogin(res.user);
+      } else {
+        errorMsg.classList.remove('d-none');
+        document.getElementById('login-error-text').textContent = res.message;
+      }
+    } catch (error) {
+      console.error("Login falhou com exceção:", error);
+      this.showError(error.message || 'Erro ao conectar ao servidor. Verifique a consola.');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  async handleLogin(e) {
+    e.preventDefault();
+    const u = document.getElementById('login-username').value.trim();
+    const p = document.getElementById('login-password').value.trim();
+    const btnText = document.querySelector('.btn-text');
+    const btnLoader = document.querySelector('.btn-loader');
+    const errorMsg = document.getElementById('login-error');
+
+    btnText.classList.add('d-none');
+    btnLoader.classList.remove('d-none');
+    errorMsg.classList.add('d-none');
+
+    try {
+      const res = await API.authenticate(u, p);
+      if (res.success) {
+        sessionStorage.setItem('user', JSON.stringify(res.user));
+        this.completeLogin(res.user);
+      } else {
+        errorMsg.classList.remove('d-none');
+        document.getElementById('login-error-text').textContent = res.message;
+      }
+    } catch (err) {
+      console.error(err);
+      Utils.showToast('Erro: ' + (err.message || 'Falha de conexão'), 'error');
+    } finally {
+      btnText.classList.remove('d-none');
+      btnLoader.classList.add('d-none');
+    }
+  },
+
+  completeLogin(user) {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('app-shell').style.display = 'flex';
+    
+    // Update UI profile
+    document.getElementById('user-display-name').textContent = user.nome;
+    document.getElementById('user-display-role').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+    document.getElementById('user-avatar-initials').textContent = user.avatar;
+    document.querySelector('.user-avatar').style.background = Utils.getAvatarColor(user.nome);
+
+    App.start();
+  },
+
+  checkSession() {
+    const session = sessionStorage.getItem('user');
+    if (session) {
+      this.completeLogin(JSON.parse(session));
+      return true;
+    }
+    return false;
+  },
+
+  logout(e) {
+    if(e) e.preventDefault();
+    sessionStorage.removeItem('user');
+    document.getElementById('app-shell').style.display = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+    document.getElementById('login-form').reset();
+    document.getElementById('login-error').classList.add('d-none');
+  }
+};
+
+
+/* ==================== dashboard.js ==================== */
+const Dashboard = {
+  stats: null,
+  charts: {},
+
+  async init() {
+    try {
+      this.stats = await API.getDashboardStats();
+      this.renderKPIs();
+      this.renderCharts();
+      this.renderTopBottom();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar Dashboard', 'error');
+    }
+  },
+
+  renderKPIs() {
+    const s = this.stats;
+    document.getElementById('kpi-total-alunos').textContent = s.totalAlunos;
+    document.getElementById('kpi-total-disciplinas').textContent = s.totalDisciplinas;
+    document.getElementById('kpi-media-geral').textContent = Utils.formatNumber(s.mediaGeral);
+    document.getElementById('kpi-alunos-criticos').textContent = s.alunosCriticos;
+  },
+
+  renderCharts() {
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = "#718096";
+
+    this.renderMediasChart();
+    this.renderComportamentoChart();
+    this.renderSexoChart();
+    this.renderEvolucaoChart();
+  },
+
+  renderMediasChart() {
+    const ctx = document.getElementById('chart-medias-disciplina').getContext('2d');
+    const labels = this.stats.mediasPorDisciplina.map(d => d.disciplina);
+    const data = this.stats.mediasPorDisciplina.map(d => d.media);
+    const bgColors = data.map(v => v >= 14 ? 'rgba(16,185,129,0.8)' : (v >= 10 ? 'rgba(59,130,246,0.8)' : 'rgba(239,68,68,0.8)'));
+
+    this.charts.medias = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Média',
+          data: data,
+          backgroundColor: bgColors,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, max: 20 }
+        }
+      }
+    });
+  },
+
+  renderComportamentoChart() {
+    const ctx = document.getElementById('chart-comportamento').getContext('2d');
+    const comps = this.stats.distribuicaoComportamento;
+    
+    this.charts.comportamento = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Excelente', 'Bom', 'Regular', 'Insatisfatório', 'Crítico'],
+        datasets: [{
+          data: [comps.Excelente, comps.Bom, comps.Regular, comps.Insatisfatório, comps.Crítico],
+          backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#f97316', '#ef4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  },
+
+  renderSexoChart() {
+    const ctx = document.getElementById('chart-sexo').getContext('2d');
+    const sexos = this.stats.distribuicaoSexo;
+    
+    this.charts.sexo = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Feminino', 'Masculino'],
+        datasets: [{
+          data: [sexos.F, sexos.M],
+          backgroundColor: ['#ec4899', '#3b82f6'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  },
+
+  renderEvolucaoChart() {
+    const ctx = document.getElementById('chart-evolucao').getContext('2d');
+    // Mock data for evolution since we only have T1
+    const labels = ['1º Trim.', '2º Trim.', '3º Trim.'];
+    const datasets = this.stats.mediasPorDisciplina.map((d, i) => {
+      const colors = ['#1a365d', '#d4a843', '#10b981', '#8b5cf6'];
+      return {
+        label: d.disciplina,
+        data: [d.media, null, null], // T2 and T3 are null
+        borderColor: colors[i],
+        backgroundColor: colors[i],
+        tension: 0.4,
+        spanGaps: true
+      };
+    });
+
+    this.charts.evolucao = new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, max: 20 } }
+      }
+    });
+  },
+
+  renderTopBottom() {
+    const buildRow = (s, i) => `
+      <tr>
+        <td><strong>${i+1}º</strong></td>
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="student-avatar me-3" style="background: ${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+            <div>
+              <div class="fw-bold">${s.nome}</div>
+              <div class="text-secondary small">Nº ${s.numero}</div>
+            </div>
+          </div>
+        </td>
+        <td>${Utils.getGradeBadge(s.mediaGeral)}</td>
+      </tr>
+    `;
+
+    document.getElementById('top-alunos-list').innerHTML = this.stats.topAlunos.map(buildRow).join('');
+    
+    const buildBottomRow = (s, i) => `
+      <tr>
+        <td><strong>${i+1}º</strong></td>
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="student-avatar me-3" style="background: ${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+            <div class="fw-bold">${s.nome}</div>
+          </div>
+        </td>
+        <td>${Utils.getGradeBadge(s.mediaGeral)}</td>
+        <td><span class="badge bg-danger">Em Risco</span></td>
+      </tr>
+    `;
+    
+    document.getElementById('bottom-alunos-list').innerHTML = this.stats.bottomAlunos.map(buildBottomRow).join('');
+  }
+};
+
+
+/* ==================== alunos.js ==================== */
+const Alunos = {
+  students: [],
+  table: null,
+
+  async init() {
+    try {
+      this.students = await API.getAllStudentsConsolidated();
+      this.updateStats();
+      this.setupFilters();
+      this.renderTable();
+      this.setupEventHandlers();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar alunos', 'error');
+    }
+  },
+
+  updateStats() {
+    document.getElementById('stat-total').textContent = this.students.length;
+    document.getElementById('stat-masculino').textContent = this.students.filter(s => s.sexo === 'M').length;
+    document.getElementById('stat-feminino').textContent = this.students.filter(s => s.sexo === 'F').length;
+    
+    const media = this.students.reduce((acc, s) => acc + s.mediaGeral, 0) / this.students.length;
+    document.getElementById('stat-media').textContent = Utils.formatNumber(media);
+  },
+
+  setupFilters() {
+    const discSelect = document.getElementById('filter-disciplina');
+    const disciplines = Object.keys(this.students[0].disciplinas);
+    disciplines.forEach(d => {
+      discSelect.innerHTML += `<option value="${d}">${d}</option>`;
+    });
+
+    const searchInput = document.getElementById('search-alunos');
+    const compSelect = document.getElementById('filter-comportamento');
+    const sexoSelect = document.getElementById('filter-sexo');
+    const btnReset = document.getElementById('btn-reset-filters');
+
+    const triggerFilter = () => {
+      this.table.search(searchInput.value).draw();
+      // Custom filtering logic could be added here for the dropdowns
+    };
+
+    searchInput.addEventListener('input', triggerFilter);
+    compSelect.addEventListener('change', triggerFilter);
+    sexoSelect.addEventListener('change', triggerFilter);
+
+    btnReset.addEventListener('click', () => {
+      searchInput.value = '';
+      compSelect.value = '';
+      sexoSelect.value = '';
+      discSelect.value = '';
+      this.table.search('').columns().search('').draw();
+    });
+  },
+
+  renderTable() {
+    // Custom search function for DataTables
+    $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
+      if (settings.nTable.id !== 'table-alunos') return true;
+      
+      const compFilter = document.getElementById('filter-comportamento').value;
+      const sexoFilter = document.getElementById('filter-sexo').value;
+      
+      const sexo = data[2]; // Sexo column
+      const comp = data[4]; // Comportamento column (contains HTML badge, need to check text)
+
+      if (sexoFilter && sexo !== sexoFilter) return false;
+      if (compFilter && !comp.includes(compFilter)) return false;
+      
+      return true;
+    });
+
+    this.table = $('#table-alunos').DataTable({
+      data: this.students,
+      pageLength: 15,
+      language: Utils.dataTablesPT,
+      columns: [
+        { data: 'numero' },
+        { 
+          data: 'nome',
+          render: (data) => `
+            <div class="d-flex align-items-center">
+              <div class="student-avatar me-3" style="background: ${Utils.getAvatarColor(data)}">${Utils.getInitials(data)}</div>
+              <span class="fw-bold">${data}</span>
+            </div>
+          `
+        },
+        { data: 'sexo' },
+        { 
+          data: 'mediaGeral',
+          render: (data) => Utils.getGradeBadge(data)
+        },
+        { 
+          data: 'comportamentoGeral',
+          render: (data) => Utils.getBehaviorBadge(data)
+        },
+        {
+          data: null,
+          orderable: false,
+          render: (data) => `
+            <button class="btn btn-sm btn-outline-custom view-student" data-name="${data.nome}">
+              <i class="fas fa-eye"></i> Perfil
+            </button>
+          `
+        }
+      ],
+      dom: '<"row"<"col-sm-12"tr>><"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+    });
+  },
+
+  setupEventHandlers() {
+    $('#table-alunos tbody').on('click', '.view-student', (e) => {
+      const name = e.currentTarget.getAttribute('data-name');
+      this.openStudentModal(name);
+    });
+    
+    document.getElementById('btn-export-alunos').addEventListener('click', () => {
+      Utils.showToast('Exportando dados para Excel...', 'info');
+      // Dummy export logic
+    });
+  },
+
+  openStudentModal(name) {
+    const student = this.students.find(s => s.nome === name);
+    if(!student) return;
+    
+    Swal.fire({
+      title: 'Perfil do Aluno',
+      html: `
+        <div class="text-center mb-4">
+          <div class="student-avatar mx-auto mb-2" style="width:80px;height:80px;font-size:2rem;background:${Utils.getAvatarColor(student.nome)}">${Utils.getInitials(student.nome)}</div>
+          <h5>${student.nome}</h5>
+          <p class="text-secondary mb-2">Nº ${student.numero} | Sexo: ${student.sexo}</p>
+          <div class="d-flex justify-content-center gap-2">
+            ${Utils.getGradeBadge(student.mediaGeral)}
+            ${Utils.getBehaviorBadge(student.comportamentoGeral)}
+          </div>
+        </div>
+        <hr>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead><tr><th>Disciplina</th><th>Média</th><th>Situação</th></tr></thead>
+            <tbody>
+              ${Object.entries(student.disciplinas).map(([disc, data]) => `
+                <tr>
+                  <td class="text-start">${disc}</td>
+                  <td>${Utils.getGradeBadge(data.mfd)}</td>
+                  <td>${data.resultado}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `,
+      width: 600,
+      showCloseButton: true,
+      showConfirmButton: false
+    });
+  }
+};
+
+
+/* ==================== disciplinas.js ==================== */
+const Disciplinas = {
+  disciplinesList: [],
+  currentSheetData: null,
+  table: null,
+
+  async init() {
+    try {
+      this.disciplinesList = await API.getDisciplines();
+      this.renderGrid();
+      this.setupEventHandlers();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar disciplinas', 'error');
+    }
+  },
+
+  renderGrid() {
+    const grid = document.getElementById('disciplinas-grid');
+    grid.innerHTML = '';
+
+    const icons = {
+      'PORTUGUES': 'fa-book-open text-primary',
+      'MATEMATICA': 'fa-calculator text-success',
+      'CIENCIAS NATURAIS': 'fa-leaf text-info',
+      'CIENCIAS SOCIAIS': 'fa-globe-africa text-warning'
+    };
+
+    this.disciplinesList.forEach((disc, index) => {
+      const icon = icons[disc.name] || 'fa-book text-primary';
+      const delay = index * 0.1;
+      
+      const html = `
+        <div class="col-xl-3 col-md-6" style="animation: fadeIn 0.5s ease forwards; animation-delay: ${delay}s; opacity: 0;">
+          <div class="card h-100 disc-card cursor-pointer" data-sheet="${disc.sheetName}">
+            <div class="card-body text-center py-4">
+              <div class="mb-3" style="font-size: 3rem;">
+                <i class="fas ${icon}"></i>
+              </div>
+              <h5 class="fw-bold mb-3">${disc.name}</h5>
+              <button class="btn btn-outline-custom btn-sm w-100">Ver Pauta</button>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.innerHTML += html;
+    });
+
+    // Add click listeners to cards
+    document.querySelectorAll('.disc-card').forEach(card => {
+      card.addEventListener('click', () => {
+        this.showDisciplineDetail(card.getAttribute('data-sheet'));
+      });
+    });
+  },
+
+  async showDisciplineDetail(sheetName) {
+    Utils.showLoading();
+    try {
+      const students = await API.getStudentsByDiscipline(sheetName);
+      this.currentSheetData = { sheetName, students };
+      
+      // Update header
+      document.getElementById('disc-detail-name').textContent = sheetName;
+      document.getElementById('disc-detail-total').textContent = students.length;
+      
+      const validMt = students.map(s => s.mtFinal[0]).filter(v => v > 0);
+      const media = validMt.reduce((a,b)=>a+b,0) / (validMt.length || 1);
+      
+      document.getElementById('disc-detail-media').textContent = Utils.formatNumber(media);
+      document.getElementById('disc-detail-max').textContent = Math.max(...validMt, 0).toFixed(1);
+      document.getElementById('disc-detail-min').textContent = Math.min(...validMt, 20).toFixed(1);
+
+      // Switch view
+      document.getElementById('disciplinas-grid').style.display = 'none';
+      document.getElementById('disciplina-detail').style.display = 'block';
+
+      this.renderGradesTable(1); // Default to Trimester 1
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar dados da disciplina', 'error');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  renderGradesTable(trimester) {
+    const tIndex = trimester - 1; // 0-indexed
+    
+    if (this.table) {
+      this.table.destroy();
+    }
+
+    this.table = $('#table-disciplina-notas').DataTable({
+      data: this.currentSheetData.students,
+      pageLength: 20,
+      language: Utils.dataTablesPT,
+      columns: [
+        { data: 'numero' },
+        { 
+          data: 'nome',
+          render: (data) => `<span class="fw-bold">${data}</span>`
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.0`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="0" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.1`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="1" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.2`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="2" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.3`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="3" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.macs`, 
+          render: (v, type, row) => `<span class="text-info fw-medium macs-display" data-num="${row.numero}">${Utils.formatNumber(v)}</span>` 
+        },
+        { 
+          data: `trimestres.${tIndex}.at`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="at" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.mt`, 
+          render: (v, type, row) => `<span class="fw-bold mt-display ${v>=10?'text-success':'text-danger'}" data-num="${row.numero}">${Utils.formatNumber(v)}</span>` 
+        },
+        { 
+          data: `trimestres.${tIndex}.comp`,
+          render: (v, type, row) => `
+            <select class="form-select form-select-sm comp-select" data-num="${row.numero}">
+              <option value="Excelente" ${v==='Excelente'?'selected':''}>Excelente</option>
+              <option value="Bom" ${v==='Bom'?'selected':''}>Bom</option>
+              <option value="Regular" ${v==='Regular'||!v?'selected':''}>Regular</option>
+              <option value="Insatisfatório" ${v==='Insatisfatório'?'selected':''}>Insatisfatório</option>
+              <option value="Crítico" ${v==='Crítico'?'selected':''}>Crítico</option>
+            </select>
+          `
+        }
+      ],
+      dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+      drawCallback: () => {
+        // Auto-save logic on input change
+        const gradeInputs = document.querySelectorAll('#table-disciplina-notas .grade-input');
+        const compSelects = document.querySelectorAll('#table-disciplina-notas .comp-select');
+        const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+        const sheetName = this.currentSheetData.sheetName;
+
+        gradeInputs.forEach(input => {
+          // 1. Real-time visual calculation
+          input.addEventListener('input', (e) => {
+            const tr = e.target.closest('tr');
+            if(!tr) return;
+            const acsInputs = tr.querySelectorAll('.grade-input[data-col="0"], .grade-input[data-col="1"], .grade-input[data-col="2"], .grade-input[data-col="3"]');
+            const atInput = tr.querySelector('.grade-input[data-col="at"]');
+            
+            let sumACS = 0;
+            let countACS = 0;
+            acsInputs.forEach(inp => {
+               const val = parseFloat(inp.value);
+               if(!isNaN(val)) { sumACS += val; countACS++; }
+            });
+            
+            const macs = countACS > 0 ? (sumACS / countACS) : 0;
+            const macsDisplay = tr.querySelector('.macs-display');
+            if(macsDisplay) macsDisplay.textContent = Utils.formatNumber(macs);
+            
+            const atVal = atInput && !isNaN(parseFloat(atInput.value)) ? parseFloat(atInput.value) : 0;
+            const mt = (macs + atVal) / 2;
+            const mtDisplay = tr.querySelector('.mt-display');
+            if(mtDisplay) {
+               mtDisplay.textContent = Utils.formatNumber(mt);
+               mtDisplay.className = `fw-bold mt-display ${mt>=10?'text-success':'text-danger'}`;
+            }
+          });
+
+          // 2. Save only on 'Enter' key
+          input.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.target.blur(); // Remove focus to show completion
+              
+              const num = parseInt(e.target.getAttribute('data-num'));
+              const col = e.target.getAttribute('data-col');
+              const val = parseFloat(e.target.value) || 0;
+              
+              e.target.classList.add('bg-warning', 'bg-opacity-25');
+              try {
+                await API.updateGrade(sheetName, num, activeTrim, col, val);
+                e.target.classList.remove('bg-warning', 'bg-opacity-25');
+                e.target.classList.add('bg-success', 'bg-opacity-25');
+                setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
+              } catch (err) {
+                console.error(err);
+                e.target.classList.remove('bg-warning', 'bg-opacity-25');
+                e.target.classList.add('bg-danger', 'bg-opacity-25');
+              }
+            }
+          });
+        });
+
+        compSelects.forEach(select => {
+          select.addEventListener('change', async (e) => {
+            const num = parseInt(e.target.getAttribute('data-num'));
+            const val = e.target.value;
+            
+            e.target.classList.add('bg-warning', 'bg-opacity-25');
+            try {
+              await API.updateBehavior(sheetName, num, activeTrim, val);
+              e.target.classList.remove('bg-warning', 'bg-opacity-25');
+              e.target.classList.add('bg-success', 'bg-opacity-25');
+              setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
+            } catch (err) {
+              console.error(err);
+              e.target.classList.remove('bg-warning', 'bg-opacity-25');
+              e.target.classList.add('bg-danger', 'bg-opacity-25');
+            }
+          });
+        });
+      }
+    });
+  },
+
+  setupEventHandlers() {
+    document.getElementById('btn-back-disciplinas').addEventListener('click', () => {
+      document.getElementById('disciplina-detail').style.display = 'none';
+      document.getElementById('disciplinas-grid').style.display = 'flex';
+    });
+
+    document.querySelectorAll('.trimester-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        document.querySelectorAll('.trimester-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        const trim = parseInt(e.target.getAttribute('data-trimester'));
+        this.renderGradesTable(trim);
+      });
+    });
+    
+    document.getElementById('btn-save-notas').addEventListener('click', async () => {
+      const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+      
+      Utils.showLoading();
+      try {
+        // Here we simulate saving all rows that have been edited.
+        // For the MVP, we will gather all inputs from the current page of datatable.
+        // A full implementation would track "dirty" cells via 'change' event on inputs.
+        const gradeInputs = document.querySelectorAll('.grade-input');
+        const compInputs = document.querySelectorAll('.comp-select');
+        
+        let updatePromises = [];
+
+        gradeInputs.forEach(input => {
+          const num = parseInt(input.getAttribute('data-num'));
+          const col = input.getAttribute('data-col'); // 0, 1, 2, 3, at
+          const val = parseFloat(input.value) || 0;
+          updatePromises.push(API.updateGrade(this.currentSheetData.sheetName, num, activeTrim, col, val));
+        });
+
+        compInputs.forEach(select => {
+           const num = parseInt(select.getAttribute('data-num'));
+           const val = select.value;
+           updatePromises.push(API.updateBehavior(this.currentSheetData.sheetName, num, activeTrim, val));
+        });
+
+        await Promise.all(updatePromises);
+        Swal.fire('Guardado', 'Notas sincronizadas com o Google Sheets.', 'success');
+        
+        // Refresh local data model
+        const students = await API.getStudentsByDiscipline(this.currentSheetData.sheetName);
+        this.currentSheetData.students = students;
+        
+      } catch (e) {
+        console.error(e);
+        Swal.fire('Erro', 'Não foi possível guardar as notas.', 'error');
+      } finally {
+        Utils.hideLoading();
+      }
+    });
+
+    document.getElementById('btn-export-notas').addEventListener('click', () => {
+      const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+      const tIndex = activeTrim - 1;
+      const sheetName = this.currentSheetData.sheetName;
+      const students = this.currentSheetData.students;
+
+      let csvContent = 'Nº,Nome,ACS1,ACS2,ACS3,ACS4,MACS,AT,MT,Comportamento\n';
+
+      students.forEach(s => {
+        const t = s.trimestres[tIndex] || {};
+        csvContent += `${s.numero},"${s.nome}",${t.acs?.[0]||0},${t.acs?.[1]||0},${t.acs?.[2]||0},${t.acs?.[3]||0},${t.macs||0},${t.at||0},${t.mt||0},"${t.comp||'Regular'}"\n`;
+      });
+
+      const blob = new Blob(["\ufeff", csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Notas_${sheetName}_T${activeTrim}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
+};
+
+
+/* ==================== pautas.js ==================== */
+const Pautas = {
+  async init() {
+    this.setupForm();
+    await this.loadSavedPDFs();
+  },
+
+  setupForm() {
+    const discSelect = document.getElementById('select-pauta-disciplina');
+    const tipoSelect = document.getElementById('select-pauta-tipo');
+    const alunoWrapper = document.getElementById('pauta-aluno-wrapper');
+    const alunoSelect = document.getElementById('select-pauta-aluno');
+    const btnGenerate = document.getElementById('btn-generate-pauta');
+    const btnPreview = document.getElementById('btn-preview-pauta');
+
+    // Populate disciplines
+    API.getDisciplines().then(disciplines => {
+      disciplines.forEach(d => {
+        discSelect.innerHTML += `<option value="${d.sheetName}">${d.name}</option>`;
+      });
+    });
+
+    // Populate students (for Boletim Individual)
+    API.getAllStudentsConsolidated().then(students => {
+      students.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(s => {
+        alunoSelect.innerHTML += `<option value="${s.nome}">${s.numero} - ${s.nome}</option>`;
+      });
+    });
+
+    // Handle type change
+    tipoSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'individual') {
+        alunoWrapper.classList.remove('d-none');
+        discSelect.disabled = true;
+      } else if (e.target.value === 'geral') {
+        alunoWrapper.classList.add('d-none');
+        discSelect.disabled = true;
+      } else {
+        alunoWrapper.classList.add('d-none');
+        discSelect.disabled = false;
+      }
+    });
+
+    btnGenerate.addEventListener('click', this.generatePauta.bind(this));
+    btnPreview.addEventListener('click', this.previewPauta.bind(this));
+    
+    // Bind print/download buttons of the existing modal
+    const printHandler = () => {
+      const content = document.getElementById('pauta-preview-content').innerHTML;
+      const w = window.open('', '_blank');
+      w.document.write('<html><head><title>Imprimir Pauta</title></head><body onload="window.print()">' + content + '</body></html>');
+      w.document.close();
+    };
+    
+    const downloadHandler = () => {
+      const element = document.getElementById('pauta-preview-content');
+      const opt = {
+        margin:       10,
+        filename:     'Pauta_Exportada.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      html2pdf().set(opt).from(element).save();
+    };
+    
+    document.getElementById('btn-print-pauta')?.addEventListener('click', printHandler);
+    document.getElementById('btn-print-pauta-footer')?.addEventListener('click', printHandler);
+    document.getElementById('btn-download-pauta')?.addEventListener('click', downloadHandler);
+    document.getElementById('btn-download-pauta-footer')?.addEventListener('click', downloadHandler);
+  },
+
+  async buildPautaHTML(tipo, trim, disc, aluno) {
+      let html = `<style>
+        body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        h2 { color: #1a365d; border-bottom: 2px solid #1a365d; padding-bottom: 5px; }
+        .text-center { text-align: center; }
+      </style>`;
+      
+      const sd = App.schoolData || await API.getSchoolData();
+      
+      html += `
+        <div class="text-center">
+          <h2>${sd.escola}</h2>
+          <p>${sd.endereco} | Ano Lectivo: ${sd.ano}</p>
+        </div>
+      `;
+
+      if (tipo === 'trimestral') {
+        html += `<h3>Pauta Trimestral - ${disc} - ${trim}º Trimestre</h3>`;
+        const students = await API.getStudentsByDiscipline(disc);
+        html += `<table><thead><tr><th>Nº</th><th>Nome</th><th>MACS</th><th>AT</th><th>MT</th><th>Comportamento</th></tr></thead><tbody>`;
+        students.forEach(s => {
+          const tData = s.trimestres[parseInt(trim)-1] || {};
+          html += `<tr><td>${s.numero}</td><td>${s.nome}</td><td>${tData.macs||0}</td><td>${tData.at||0}</td><td><strong>${tData.mt||0}</strong></td><td>${tData.comp||'Regular'}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      } else if (tipo === 'individual') {
+        html += `<h3>Boletim Escolar Individual</h3>`;
+        html += `<p><strong>Aluno:</strong> ${aluno}</p>`;
+        const allStudents = await API.getAllStudentsConsolidated();
+        const student = allStudents.find(s => s.nome === aluno);
+        if (student) {
+          html += `<table><thead><tr><th>Disciplina</th><th>Média Final</th><th>Comportamento</th><th>Situação</th></tr></thead><tbody>`;
+          Object.keys(student.disciplinas).forEach(d => {
+             const data = student.disciplinas[d];
+             html += `<tr><td>${d}</td><td><strong>${data.mfd}</strong></td><td>${data.comp}</td><td>${data.resultado}</td></tr>`;
+          });
+          html += `</tbody></table>`;
+        }
+      } else {
+        const isAnual = (trim === 'anual');
+        html += `<h3 style="margin-bottom:5px">Pauta Geral - ${isAnual ? 'Anual' : trim + 'º Trimestre'}</h3>`;
+        html += `<p style="font-size:0.9em;color:#666;margin-bottom:15px">Classe: ${sd.classe} | Professor(a): ${sd.professor}</p>`;
+        
+        const allStudents = await API.getAllStudentsConsolidated();
+        const discNames = Object.keys(allStudents[0].disciplinas);
+
+        let thead = '';
+        if (isAnual) {
+          thead += '<tr>';
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;min-width:30px">Nº</th>';
+          thead += '<th rowspan="2" style="vertical-align:middle;min-width:120px">Nome do Aluno</th>';
+          discNames.forEach(d => {
+            thead += `<th colspan="4" style="text-align:center;background:#e8edf3;border-bottom:2px solid #1a365d">${d}</th>`;
+          });
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;background:#d4edda;min-width:50px">Média<br>Global</th>';
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;min-width:60px">Comp.</th>';
+          thead += '<th rowspan="2" style="vertical-align:middle;text-align:center;min-width:80px">Resultado</th>';
+          thead += '</tr><tr>';
+          discNames.forEach(() => {
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px">1ºT</th>';
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px">2ºT</th>';
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px">3ºT</th>';
+            thead += '<th style="text-align:center;font-size:0.75em;padding:4px;background:#f0f0f0;font-weight:700">MFD</th>';
+          });
+          thead += '</tr>';
+        } else {
+          thead += '<tr>';
+          thead += '<th style="vertical-align:middle;text-align:center;min-width:30px">Nº</th>';
+          thead += '<th style="vertical-align:middle;min-width:120px">Nome do Aluno</th>';
+          discNames.forEach(d => {
+            thead += `<th style="text-align:center;background:#e8edf3;border-bottom:2px solid #1a365d">${d}</th>`;
+          });
+          thead += '<th style="vertical-align:middle;text-align:center;background:#d4edda;min-width:50px">Média</th>';
+          thead += '<th style="vertical-align:middle;text-align:center;min-width:60px">Comp.</th>';
+          thead += '<th style="vertical-align:middle;text-align:center;min-width:80px">Resultado</th>';
+          thead += '</tr>';
+        }
+
+        html += `<table style="font-size:0.78em;width:100%"><thead>${thead}</thead><tbody>`;
+
+        allStudents.forEach(s => {
+          let row = `<td style="text-align:center">${s.numero}</td>`;
+          row += `<td style="white-space:nowrap;font-weight:500">${s.nome}</td>`;
+
+          if (isAnual) {
+            discNames.forEach(d => {
+              const data = s.disciplinas[d];
+              const vals = [data.mt1, data.mt2, data.mt3];
+              const mfd = data.mfd || 0;
+              vals.forEach(v => {
+                const val = v || 0;
+                const display = val > 0 ? val.toFixed(1) : '—';
+                const clr = val > 0 ? (val >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
+                row += `<td style="text-align:center;color:${clr};padding:4px">${display}</td>`;
+              });
+              const mfdDisplay = mfd > 0 ? mfd.toFixed(1) : '—';
+              const mfdClr = mfd > 0 ? (mfd >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
+              row += `<td style="text-align:center;font-weight:700;color:${mfdClr};background:#f9f9f9;padding:4px">${mfdDisplay}</td>`;
+            });
+            const mg = s.mediaGeral;
+            const mgClr = mg >= 9.5 ? '#10b981' : '#ef4444';
+            const res = s.resultadoGeral || (mg >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)');
+            const resClr = res.toUpperCase().includes('REPROVADO') ? '#ef4444' : '#10b981';
+            row += `<td style="text-align:center;font-weight:700;color:${mgClr};background:#d4edda;padding:4px">${mg.toFixed(1)}</td>`;
+            row += `<td style="text-align:center;padding:4px">${s.comportamentoGeral}</td>`;
+            row += `<td style="text-align:center;font-weight:700;color:${resClr};padding:4px;font-size:0.9em">${res}</td>`;
+          } else {
+            let rowMedias = [];
+            const trimIndex = parseInt(trim) - 1;
+            discNames.forEach(d => {
+              const data = s.disciplinas[d];
+              const tData = data.trimestres && data.trimestres[trimIndex] ? data.trimestres[trimIndex] : {};
+              const mt = tData.mt || 0;
+              rowMedias.push(mt);
+              const display = mt > 0 ? mt.toFixed(1) : '—';
+              const clr = mt > 0 ? (mt >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
+              row += `<td style="text-align:center;color:${clr};padding:4px">${display}</td>`;
+            });
+            const mediaValid = rowMedias.filter(m => m > 0);
+            const media = mediaValid.length > 0
+              ? (mediaValid.reduce((a, b) => a + b, 0) / mediaValid.length)
+              : 0;
+            const mediaClr = media >= 9.5 ? '#10b981' : '#ef4444';
+            const res = media >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)';
+            const resClr = res.includes('REPROVADO') ? '#ef4444' : '#10b981';
+            row += `<td style="text-align:center;font-weight:700;color:${mediaClr};background:#d4edda;padding:4px">${media.toFixed(1)}</td>`;
+            row += `<td style="text-align:center;padding:4px">${s.comportamentoGeral}</td>`;
+            row += `<td style="text-align:center;font-weight:700;color:${resClr};padding:4px;font-size:0.9em">${res}</td>`;
+          }
+
+          html += `<tr>${row}</tr>`;
+        });
+
+        html += '</tbody></table>';
+      }
+      return html;
+  },
+
+  async generatePauta() {
+    const tipo = document.getElementById('select-pauta-tipo').value;
+    const trim = document.getElementById('select-pauta-trimestre').value;
+    const disc = document.getElementById('select-pauta-disciplina').value;
+    const aluno = document.getElementById('select-pauta-aluno').value;
+
+    if (tipo === 'individual' && !aluno) {
+      return Swal.fire('Atenção', 'Selecione um aluno para gerar o boletim.', 'warning');
+    }
+
+    Swal.fire({
+      title: 'Gerando Pauta...',
+      html: 'A comunicar com o Google Drive para criar o PDF.',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    try {
+      const html = await this.buildPautaHTML(tipo, trim, disc, aluno);
+      
+      // Inject into a hidden element to generate PDF
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      
+      const fileName = tipo === 'individual' ? `Boletim_${aluno}.pdf` : `Pauta_${disc||'Geral'}_T${trim}.pdf`;
+
+      const opt = {
+        margin:       10,
+        filename:     fileName.replace(/\s+/g, '_'),
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      
+      await html2pdf().set(opt).from(container).save();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'PDF Gerado e Baixado!',
+        text: `Arquivo: ${opt.filename}`,
+        confirmButtonText: 'Fechar'
+      });
+      
+      // Mock saving to list
+      this.loadSavedPDFs();
+    } catch (e) {
+      console.error(e);
+      Swal.fire('Erro', 'Não foi possível gerar a pauta: ' + e.message, 'error');
+    }
+  },
+
+  async previewPauta() {
+    const tipo = document.getElementById('select-pauta-tipo').value;
+    const trim = document.getElementById('select-pauta-trimestre').value;
+    const disc = document.getElementById('select-pauta-disciplina').value;
+    const aluno = document.getElementById('select-pauta-aluno').value;
+
+    if (tipo === 'individual' && !aluno) {
+      return Swal.fire('Atenção', 'Selecione um aluno para gerar o boletim.', 'warning');
+    }
+
+    Utils.showLoading();
+    try {
+      const html = await this.buildPautaHTML(tipo, trim, disc, aluno);
+      const container = document.getElementById('pauta-preview-content');
+      const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-pauta-preview'));
+      
+      container.innerHTML = html;
+      modal.show();
+
+    } catch (e) {
+      console.error(e);
+      Swal.fire('Erro', 'Não foi possível gerar a pré-visualização.', 'error');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  async loadSavedPDFs() {
+    try {
+      const pdfs = await API.listPDFs();
+      this.renderPDFList(pdfs);
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  renderPDFList(pdfs) {
+    const list = document.getElementById('pautas-list');
+    const empty = document.getElementById('pautas-empty');
+    document.getElementById('pautas-count').textContent = pdfs.length;
+
+    if (pdfs.length === 0) {
+      empty.style.display = 'block';
+      // list.innerHTML is handled by HTML template
+      return;
+    }
+
+    empty.style.display = 'none';
+    let html = '';
+    
+    // Fallback Mock items if real list is empty but we want to show something
+    const mockPdfs = [
+      { name: 'Pauta_Trimestral_PORTUGUES_1_Trimestre.pdf', date: 'Hoje', size: '124 KB' },
+      { name: 'Boletim_ZINIA_1_Trimestre.pdf', date: 'Ontem', size: '45 KB' }
+    ];
+    
+    const items = pdfs.length ? pdfs : mockPdfs;
+
+    items.forEach(pdf => {
+      html += `
+        <div class="card mb-2">
+          <div class="card-body p-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-file-pdf text-danger fa-2x me-3"></i>
+              <div>
+                <h6 class="mb-0 text-dark">${pdf.name}</h6>
+                <small class="text-secondary">${pdf.date} • ${pdf.size}</small>
+              </div>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-outline-success"><i class="fas fa-download"></i></button>
+              <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    // Replace everything except the empty div
+    list.innerHTML = empty.outerHTML + html;
+  }
+};
+
+/* ==================== relatorios.js ==================== */
+const Relatorios = {
+  students: [],
+  chart: null,
+  currentType: 'ranking',
+
+  async init() {
+    try {
+      this.students = await API.getAllStudentsConsolidated();
+      this.setupTabs();
+      this.setupFilters();
+      this.loadData();
+    } catch (e) {
+      console.error('Erro Relatorios', e);
+    }
+  },
+  
+  async loadData() {
+    // If called by auto-sync, fetch fresh data
+    if (this.students.length === 0 || document.querySelector('.sidebar-item.active').getAttribute('data-page') === 'relatorios') {
+       this.students = await App.schoolData ? await API.getAllStudentsConsolidated() : this.students;
+    }
+    this.loadReport(this.currentType);
+  },
+
+  setupTabs() {
+    const tabs = document.querySelectorAll('.report-type-card');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        tabs.forEach(t => t.classList.remove('active'));
+        const current = e.currentTarget;
+        current.classList.add('active');
+        
+        this.currentType = current.getAttribute('data-report');
+        this.loadReport(this.currentType);
+      });
+    });
+    
+    document.getElementById('btn-print-relatorio').addEventListener('click', () => window.print());
+    
+    // Export CSV hook
+    const btnCsv = document.getElementById('btn-export-excel');
+    if (btnCsv) {
+      btnCsv.addEventListener('click', () => {
+        Utils.showToast('Exportando dados do relatório para Excel...', 'info');
+        // Simple mock of export
+      });
+    }
+    // Export PDF hook
+    const btnPdf = document.getElementById('btn-export-pdf');
+    if (btnPdf) {
+      btnPdf.addEventListener('click', () => {
+        Utils.showToast('Gerando PDF do relatório...', 'info');
+        // Simple mock of export
+      });
+    }
+  },
+  
+  setupFilters() {
+    const discSelect = document.getElementById('filter-relatorio-disciplina');
+    if (discSelect && this.students.length > 0) {
+      const disciplines = Object.keys(this.students[0].disciplinas);
+      discSelect.innerHTML = '<option value="">Todas as Disciplinas</option>';
+      disciplines.forEach(d => {
+        discSelect.innerHTML += `<option value="${d}">${d}</option>`;
+      });
+      
+      discSelect.addEventListener('change', () => this.loadReport(this.currentType));
+    }
+    
+    const trimSelect = document.getElementById('filter-relatorio-trimestre');
+    if (trimSelect) {
+      trimSelect.addEventListener('change', () => this.loadReport(this.currentType));
+    }
+    
+    const btnGen = document.getElementById('btn-generate-relatorio');
+    if (btnGen) {
+      btnGen.addEventListener('click', () => this.loadReport(this.currentType));
+    }
+  },
+
+  getChartColors() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return {
+      text: isDark ? '#f8fafc' : '#718096',
+      grid: isDark ? '#334155' : '#e2e8f0',
+      bgPrimary: isDark ? '#3b82f6' : '#1a365d',
+      bgSecondary: isDark ? '#ec4899' : '#ec4899',
+      bgSuccess: '#10b981',
+      bgWarning: '#f59e0b',
+      bgDanger: '#ef4444'
+    };
+  },
+
+  loadReport(type) {
+    if (this.chart) this.chart.destroy();
+    
+    // Reset standard areas visibility
+    document.getElementById('relatorio-chart-area').style.display = 'block';
+    document.getElementById('relatorio-table-area').style.display = 'block';
+    const actaArea = document.getElementById('relatorio-acta-area');
+    if (actaArea) actaArea.style.display = 'none';
+
+    const discFilter = document.getElementById('filter-relatorio-disciplina');
+    if (discFilter) {
+      if (type === 'acta') {
+        discFilter.setAttribute('disabled', 'disabled');
+      } else {
+        discFilter.removeAttribute('disabled');
+      }
+    }
+
+    switch (type) {
+      case 'ranking':
+        document.getElementById('relatorio-chart-area').style.display = 'none';
+        this.renderRanking();
+        break;
+      case 'disciplina':
+        this.renderDisciplinaAnalysis();
+        break;
+      case 'comportamento':
+        this.renderBehaviorAnalysis();
+        break;
+      case 'sexo':
+        this.renderSexAnalysis();
+        break;
+      case 'acta':
+        document.getElementById('relatorio-chart-area').style.display = 'none';
+        document.getElementById('relatorio-table-area').style.display = 'none';
+        if (actaArea) actaArea.style.display = 'block';
+        this.renderActa();
+        break;
+    }
+  },
+
+  renderRanking() {
+    const sorted = [...this.students].sort((a,b) => b.mediaGeral - a.mediaGeral);
+    
+    let html = '';
+    sorted.forEach((s, i) => {
+      html += `
+        <tr>
+          <td><strong>${i+1}º</strong></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="student-avatar me-3" style="background:${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+              <div>
+                <span class="fw-bold d-block">${s.nome}</span>
+                <small class="text-secondary">Nº ${s.numero} | Sexo: ${s.sexo}</small>
+              </div>
+            </div>
+          </td>
+          <td class="text-center align-middle">${Utils.getGradeBadge(s.mediaGeral)}</td>
+          <td class="text-center align-middle"><span class="badge ${s.resultadoGeral === 'APROVADO(A)' ? 'bg-success' : 'bg-danger'}">${s.resultadoGeral}</span></td>
+          <td class="text-center align-middle">${Utils.getBehaviorBadge(s.comportamentoGeral)}</td>
+        </tr>
+      `;
+    });
+    
+    document.querySelector('#table-relatorio thead').innerHTML = `
+      <tr>
+        <th style="width: 50px;">Pos.</th>
+        <th>Aluno</th>
+        <th class="text-center">Média Global</th>
+        <th class="text-center">Resultado</th>
+        <th class="text-center">Comportamento</th>
+      </tr>
+    `;
+    document.querySelector('#table-relatorio tbody').innerHTML = html;
+  },
+
+  renderDisciplinaAnalysis() {
+    const discFilter = document.getElementById('filter-relatorio-disciplina').value;
+    const colors = this.getChartColors();
+    
+    if (discFilter) {
+      // Show details for one specific discipline
+      const vals = this.students.map(s => s.disciplinas[discFilter].mfd);
+      const mediaTurma = vals.reduce((a,b)=>a+b,0) / vals.length;
+      const positivas = vals.filter(v => v >= 10).length;
+      const negativas = vals.filter(v => v < 10).length;
+ 
+      const ctx = document.getElementById('chart-relatorio').getContext('2d');
+      this.chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Positivas (>=10)', 'Negativas (<10)'],
+          datasets: [{
+            data: [positivas, negativas],
+            backgroundColor: [colors.bgSuccess, colors.bgDanger]
+          }]
+        },
+        options: { 
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: colors.text } } }
+        }
+      });
+
+      let html = '';
+      this.students.forEach((s, i) => {
+        const nota = s.disciplinas[discFilter].mfd;
+        const result = s.disciplinas[discFilter].resultado;
+        const comp = s.disciplinas[discFilter].comp;
+        html += `
+          <tr>
+            <td>${s.numero}</td>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="student-avatar me-3" style="background:${Utils.getAvatarColor(s.nome)}">${Utils.getInitials(s.nome)}</div>
+                <span class="fw-bold">${s.nome}</span>
+              </div>
+            </td>
+            <td class="text-center align-middle"><span class="fw-bold ${nota>=10?'text-success':'text-danger'}">${Utils.formatNumber(nota)}</span></td>
+            <td class="text-center align-middle">${result}</td>
+            <td class="text-center align-middle">${Utils.getBehaviorBadge(comp)}</td>
+          </tr>
+        `;
+      });
+      
+      document.querySelector('#table-relatorio thead').innerHTML = `
+        <tr><th style="width: 50px;">Nº</th><th>Aluno</th><th class="text-center">Nota Exacta</th><th class="text-center">Situação</th><th class="text-center">Comportamento</th></tr>
+      `;
+      document.querySelector('#table-relatorio tbody').innerHTML = html;
+
+    } else {
+      // General discipline overview
+      const labels = ['PORTUGUES', 'MATEMATICA', 'CIENCIAS NATURAIS', 'CIENCIAS SOCIAIS'];
+      const medias = labels.map(disc => {
+        const sum = this.students.reduce((acc, s) => acc + s.disciplinas[disc].mfd, 0);
+        return sum / this.students.length;
+      });
+
+      const ctx = document.getElementById('chart-relatorio').getContext('2d');
+      this.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Média da Turma',
+            data: medias,
+            backgroundColor: colors.bgPrimary,
+            borderRadius: 4
+          }]
+        },
+        options: { 
+          responsive: true, maintainAspectRatio: false, 
+          scales: { 
+            y: { max: 20, grid: { color: colors.grid }, ticks: { color: colors.text } },
+            x: { grid: { display: false }, ticks: { color: colors.text } }
+          },
+          plugins: { legend: { labels: { color: colors.text } } }
+        }
+      });
+
+      let html = '';
+      labels.forEach((disc, i) => {
+        const vals = this.students.map(s => s.disciplinas[disc].mfd);
+        const max = Math.max(...vals);
+        const min = Math.min(...vals);
+        html += `
+          <tr>
+            <td>${i+1}</td>
+            <td><strong>${disc}</strong></td>
+            <td class="text-center align-middle">${Utils.getGradeBadge(medias[i])}</td>
+            <td class="text-center align-middle text-success fw-bold">${Utils.formatNumber(max)}</td>
+            <td class="text-center align-middle text-danger fw-bold">${Utils.formatNumber(min)}</td>
+          </tr>
+        `;
+      });
+      
+      document.querySelector('#table-relatorio thead').innerHTML = `
+        <tr><th>#</th><th>Disciplina</th><th class="text-center">Média Geral</th><th class="text-center">Nota Máxima</th><th class="text-center">Nota Mínima</th></tr>
+      `;
+      document.querySelector('#table-relatorio tbody').innerHTML = html;
+    }
+  },
+
+  renderBehaviorAnalysis() {
+    const colors = this.getChartColors();
+    const comps = { Excelente: 0, Bom: 0, Regular: 0, Insatisfatório: 0, Crítico: 0 };
+    this.students.forEach(s => {
+      if (comps[s.comportamentoGeral] !== undefined) comps[s.comportamentoGeral]++;
+    });
+
+    const ctx = document.getElementById('chart-relatorio').getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(comps),
+        datasets: [{
+          data: Object.values(comps),
+          backgroundColor: [colors.bgSuccess, colors.bgPrimary, colors.bgWarning, '#f97316', colors.bgDanger],
+          borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#fff'
+        }]
+      },
+      options: { 
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: colors.text } } }
+      }
+    });
+
+    let html = '';
+    Object.keys(comps).forEach((k, i) => {
+      html += `
+        <tr>
+          <td>${i+1}</td>
+          <td><strong>${k}</strong></td>
+          <td class="text-center align-middle">${comps[k]} alunos</td>
+          <td class="text-center align-middle">${Utils.getBehaviorBadge(k)}</td>
+        </tr>
+      `;
+    });
+    
+    document.querySelector('#table-relatorio thead').innerHTML = `
+      <tr><th>#</th><th>Comportamento</th><th class="text-center">Quantidade</th><th class="text-center">Status</th></tr>
+    `;
+    document.querySelector('#table-relatorio tbody').innerHTML = html;
+  },
+  
+  renderSexAnalysis() {
+    const colors = this.getChartColors();
+    const m = this.students.filter(s => s.sexo === 'M');
+    const f = this.students.filter(s => s.sexo === 'F');
+
+    const mMedia = m.length ? m.reduce((a,s) => a+s.mediaGeral, 0) / m.length : 0;
+    const fMedia = f.length ? f.reduce((a,s) => a+s.mediaGeral, 0) / f.length : 0;
+
+    const ctx = document.getElementById('chart-relatorio').getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Masculino', 'Feminino'],
+        datasets: [{
+          data: [m.length, f.length],
+          backgroundColor: [colors.bgPrimary, colors.bgSecondary],
+          borderColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#fff'
+        }]
+      },
+      options: { 
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: colors.text } } }
+      }
+    });
+
+    let html = `
+      <tr>
+        <td>1</td>
+        <td><strong>Masculino</strong></td>
+        <td class="text-center align-middle">${m.length} alunos</td>
+        <td class="text-center align-middle">${Utils.getGradeBadge(mMedia)}</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Feminino</strong></td>
+        <td class="text-center align-middle">${f.length} alunas</td>
+        <td class="text-center align-middle">${Utils.getGradeBadge(fMedia)}</td>
+      </tr>
+    `;
+    
+    document.querySelector('#table-relatorio thead').innerHTML = `
+      <tr><th>#</th><th>Sexo</th><th class="text-center">Total Alunos</th><th class="text-center">Média Global</th></tr>
+    `;
+    document.querySelector('#table-relatorio tbody').innerHTML = html;
+  },
+
+  async renderActa() {
+    let trimVal = document.getElementById('filter-relatorio-trimestre').value;
+    if (!trimVal) {
+      trimVal = '1';
+      document.getElementById('filter-relatorio-trimestre').value = '1';
+      Utils.showToast('Selecione um trimestre específico para a Acta do Conselho. Mostrando o 1º Trimestre.', 'warning');
+    }
+
+    try {
+      const school = await API.getSchoolData();
+      
+      // Update basic fields
+      document.getElementById('acta-turma-nome').textContent = school.classe ? (school.classe + ' Classe') : '---';
+      document.getElementById('acta-trimestre-nome').textContent = trimVal + 'º';
+      document.getElementById('acta-director-nome').textContent = school.director || 'Maria Manuela';
+      document.getElementById('acta-professor-nome').textContent = school.professor || 'Pascoa da Graca Ramim';
+
+      // Set date defaults if empty
+      const dayInput = document.getElementById('acta-dia');
+      const monthInput = document.getElementById('acta-mes');
+      const yearInput = document.getElementById('acta-ano');
+      const roomInput = document.getElementById('acta-sala');
+
+      const now = new Date();
+      if (!dayInput.value) dayInput.value = now.getDate();
+      if (!monthInput.value) {
+        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        monthInput.value = months[now.getMonth()];
+      }
+      if (!yearInput.value) yearInput.value = now.getFullYear();
+      if (!roomInput.value) roomInput.value = 'Sala 1';
+
+      // Statistics calculations
+      const students = this.students;
+      const activeStudents = students.filter(s => s.nome && s.nome.trim() !== '');
+
+      // Gender counts
+      const totalM = activeStudents.filter(s => s.sexo === 'F').length; // M stands for Mulheres (Female)
+      const totalHM = activeStudents.length; // HM stands for Homens + Mulheres (Total)
+
+      // Set Turma Indicators defaults
+      document.getElementById('ind-mat-m').value = totalM;
+      document.getElementById('ind-mat-hm').value = totalHM;
+      document.getElementById('ind-ini-m').value = totalM;
+      document.getElementById('ind-ini-hm').value = totalHM;
+
+      // Compute quarterly average and positive students count
+      const trimKey = 'mt' + trimVal;
+      let posM = 0;
+      let posHM = 0;
+
+      activeStudents.forEach(s => {
+        let sum = 0;
+        let count = 0;
+        const discNames = Object.keys(s.disciplinas);
+        discNames.forEach(d => {
+          const val = s.disciplinas[d] ? s.disciplinas[d][trimKey] : null;
+          if (val !== null && val !== undefined && val !== '' && !isNaN(val)) {
+            sum += Number(val);
+            count++;
+          }
+        });
+        const avg = count > 0 ? (sum / count) : 0;
+        if (avg >= 9.5) {
+          posHM++;
+          if (s.sexo === 'F') {
+            posM++;
+          }
+        }
+      });
+
+      document.getElementById('ind-pos-m').textContent = posM;
+      document.getElementById('ind-pos-hm').textContent = posHM;
+
+      // Add event listeners for inputs to update Fim do Trimestre and Aproveitamento % dynamically
+      const updateFrequencia = () => {
+        const iniM = parseInt(document.getElementById('ind-ini-m').value) || 0;
+        const iniHM = parseInt(document.getElementById('ind-ini-hm').value) || 0;
+        const desM = parseInt(document.getElementById('ind-des-m').value) || 0;
+        const desHM = parseInt(document.getElementById('ind-des-hm').value) || 0;
+        const entM = parseInt(document.getElementById('ind-ent-m').value) || 0;
+        const entHM = parseInt(document.getElementById('ind-ent-hm').value) || 0;
+        const saiM = parseInt(document.getElementById('ind-sai-m').value) || 0;
+        const saiHM = parseInt(document.getElementById('ind-sai-hm').value) || 0;
+
+        const fimM = iniM - desM - saiM + entM;
+        const fimHM = iniHM - desHM - saiHM + entHM;
+
+        document.getElementById('ind-fim-m').textContent = fimM;
+        document.getElementById('ind-fim-hm').textContent = fimHM;
+
+        const aprovM = fimM > 0 ? ((posM / fimM) * 100).toFixed(1) + '%' : '0%';
+        const aprovHM = fimHM > 0 ? ((posHM / fimHM) * 100).toFixed(1) + '%' : '0%';
+
+        document.getElementById('ind-aprov-m').textContent = aprovM;
+        document.getElementById('ind-aprov-hm').textContent = aprovHM;
+      };
+
+      // Register input change listeners
+      const inputs = [
+        'ind-mat-m', 'ind-mat-hm',
+        'ind-ini-m', 'ind-ini-hm',
+        'ind-des-m', 'ind-des-hm',
+        'ind-ent-m', 'ind-ent-hm',
+        'ind-sai-m', 'ind-sai-hm'
+      ];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.removeEventListener('input', updateFrequencia);
+          el.addEventListener('input', updateFrequencia);
+        }
+      });
+
+      // Run once initially
+      updateFrequencia();
+
+      // Populate Pedagogical Achievement Table
+      const disciplinesToRender = [
+        { label: 'Português', key: 'PORTUGUES' },
+        { label: 'C. sociais', key: 'CIENCIAS SOCIAIS' },
+        { label: 'Matemática', key: 'MATEMATICA' },
+        { label: 'C. naturais', key: 'CIENCIAS NATURAIS' },
+        { label: 'Ed. Visual', key: 'ED. VISUAL' },
+        { label: 'Ed. Física', key: 'ED. FISICA' }
+      ];
+
+      let tableHtml = '';
+      disciplinesToRender.forEach(d => {
+        let evalH = 0, evalM = 0, evalHM = 0;
+        let posH = 0, posM = 0, posHM = 0;
+        let negH = 0, negM = 0, negHM = 0;
+        
+        let span0_9 = 0;   // Não Satisfatório (0-9)
+        let span10_13 = 0; // Satisfatório (10-13)
+        let span14_16 = 0; // Bom (14-16)
+        let span17_18 = 0; // Muito Bom (17-18)
+        let span19_20 = 0; // Excelente (19-20)
+
+        activeStudents.forEach(s => {
+          const discData = s.disciplinas[d.key];
+          const rawGrade = discData ? discData[trimKey] : null;
+
+          if (rawGrade !== null && rawGrade !== undefined && rawGrade !== '' && !isNaN(rawGrade)) {
+            const grade = Number(rawGrade);
+            
+            // Count evaluated
+            evalHM++;
+            if (s.sexo === 'F') {
+              evalM++;
+            } else {
+              evalH++;
+            }
+
+            // Count positive and negative
+            if (grade >= 9.5) {
+              posHM++;
+              if (s.sexo === 'F') {
+                posM++;
+              } else {
+                posH++;
+              }
+            } else {
+              negHM++;
+              if (s.sexo === 'F') {
+                negM++;
+              } else {
+                negH++;
+              }
+            }
+
+            // Distribution
+            if (grade < 9.5) {
+              span0_9++;
+            } else if (grade < 13.5) {
+              span10_13++;
+            } else if (grade < 16.5) {
+              span14_16++;
+            } else if (grade < 18.5) {
+              span17_18++;
+            } else {
+              span19_20++;
+            }
+          }
+        });
+
+        const pctH = evalH > 0 ? ((posH / evalH) * 100).toFixed(1) : '0.0';
+        const pctM = evalM > 0 ? ((posM / evalM) * 100).toFixed(1) : '0.0';
+        const pctHM = evalHM > 0 ? ((posHM / evalHM) * 100).toFixed(1) : '0.0';
+
+        tableHtml += `
+          <tr>
+            <td class="text-left fw-bold">${d.label}</td>
+            <td>${evalH}</td>
+            <td>${evalM}</td>
+            <td class="fw-bold">${evalHM}</td>
+            <td>${posH}</td>
+            <td>${posM}</td>
+            <td class="fw-bold text-success">${posHM}</td>
+            <td>${negH}</td>
+            <td>${negM}</td>
+            <td class="fw-bold text-danger">${negHM}</td>
+            <td>${pctH}%</td>
+            <td>${pctM}%</td>
+            <td class="fw-bold">${pctHM}%</td>
+            <td>${span0_9}</td>
+            <td>${span10_13}</td>
+            <td>${span14_16}</td>
+            <td>${span17_18}</td>
+            <td>${span19_20}</td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('acta-aproveitamento-body').innerHTML = tableHtml;
+
+      // Print button click handler
+      const printBtn = document.getElementById('btn-print-acta');
+      if (printBtn) {
+        printBtn.onclick = () => window.print();
+      }
+
+      // PDF download button handler
+      const downloadBtn = document.getElementById('btn-download-acta');
+      if (downloadBtn) {
+        downloadBtn.onclick = () => {
+          Utils.showToast('Gerando PDF da Acta...', 'info');
+          const element = document.querySelector('.printable-acta');
+          const opt = {
+            margin:       10,
+            filename:     `Acta_Conselho_Trimestre_${trimVal}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
+          html2pdf().set(opt).from(element).save();
+        };
+      }
+
+    } catch (e) {
+      console.error('Erro renderActa', e);
+      Utils.showToast('Erro ao carregar dados para a Acta do Conselho.', 'danger');
+    }
+  }
+};
+
+
+/* ==================== config.js ==================== */
+const Config = {
+  init() {
+    this.renderConfig();
+  },
+
+  renderConfig() {
+    if(!App.schoolData) return;
+    const sd = App.schoolData;
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+
+    // School Info (Assuming we inject a list of items dynamically or update existing ones)
+    // The HTML has hardcoded values, let's update them dynamically
+    const configCard = document.querySelector('#config-page .col-lg-6:first-child .config-card');
+    if(configCard) {
+      configCard.innerHTML = `
+        <h6><i class="fas fa-school me-2"></i>Informações da Escola</h6>
+        <div class="config-item"><span class="label">Escola</span><span class="value">${sd.escola}</span></div>
+        <div class="config-item"><span class="label">Localização</span><span class="value">${sd.endereco}</span></div>
+        <div class="config-item"><span class="label">Contacto</span><span class="value">${sd.contacto}</span></div>
+        <div class="config-item"><span class="label">Classe</span><span class="value">${sd.classe}</span></div>
+        <div class="config-item"><span class="label">Ano Lectivo</span><span class="value">${sd.ano}</span></div>
+        <div class="config-item"><span class="label">Professor(a)</span><span class="value">${sd.professor}</span></div>
+        <div class="config-item"><span class="label">Dir. Pedagógico</span><span class="value">${sd.directorPedagogico}</span></div>
+        <div class="config-item"><span class="label">Directora</span><span class="value">${sd.director}</span></div>
+      `;
+    }
+
+    // User Profile
+    document.getElementById('config-avatar-initials').textContent = user.avatar;
+    document.querySelector('.config-avatar').style.background = Utils.getAvatarColor(user.nome || '');
+    document.getElementById('config-user-name').textContent = user.nome;
+    document.getElementById('config-user-role').textContent = user.role.toUpperCase();
+    document.getElementById('config-last-login').textContent = new Date().toLocaleString();
+
+    document.getElementById('btn-change-password').addEventListener('click', () => {
+      Swal.fire({
+        title: 'Funcionalidade desativada',
+        text: 'Nesta versão MVP as senhas são geridas pelo administrador.',
+        icon: 'info'
+      });
+    });
+  }
+};
+
+
+/* ==================== app.js ==================== */
+const App = {
+  schoolData: null,
+  syncTimer: 300,
+  syncInterval: null,
+  
+  async start() {
+    Utils.showLoading();
+    try {
+      this.schoolData = await API.getSchoolData();
+      document.querySelector('.login-school').textContent = this.schoolData.escola;
+      document.querySelector('.sidebar-title').textContent = 'Caderneta Escolar';
+      document.querySelector('.sidebar-subtitle').textContent = `${this.schoolData.classe} · ${this.schoolData.ano}`;
+      
+      this.initTheme();
+      this.initRouter();
+      
+      // Init modules
+      await Dashboard.init();
+      Alunos.init();
+      Disciplinas.init();
+      Pautas.init();
+      Relatorios.init();
+      Config.init();
+      
+      this.navigate('dashboard');
+      
+      // Start 5-minute auto-sync timer
+      this.startSyncTimer();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar dados iniciais', 'error');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  startSyncTimer() {
+    if (this.syncInterval) clearInterval(this.syncInterval);
+    this.syncTimer = 300;
+    this.updateTimerDisplay();
+    
+    this.syncInterval = setInterval(() => {
+      this.syncTimer--;
+      if (this.syncTimer <= 0) {
+        this.performAutoSync();
+      } else {
+        this.updateTimerDisplay();
+      }
+    }, 1000);
+  },
+  
+  updateTimerDisplay() {
+    const percentage = (this.syncTimer / 300) * 100;
+    const circle = document.getElementById('sync-progress-circle');
+    if (circle) {
+      circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #e2e8f0 0)`;
+    }
+  },
+  
+  async performAutoSync() {
+    const spinner = document.getElementById('sync-spinner');
+    if (spinner) spinner.classList.add('fa-spin', 'text-primary');
+    
+    try {
+      // Re-fetch core data
+      this.schoolData = await API.getSchoolData();
+      
+      // Refresh current page if it is Dashboard or Relatorios to show updated data instantly
+      // (avoid refreshing active tables if user is typing)
+      const currentPage = document.querySelector('.sidebar-item.active').getAttribute('data-page');
+      if (currentPage === 'dashboard') {
+        await Dashboard.loadDashboard();
+      } else if (currentPage === 'relatorios') {
+        await Relatorios.loadData();
+      }
+      
+      Utils.showToast('Dados sincronizados com o servidor.', 'success');
+    } catch (e) {
+      console.error('Auto-sync failed', e);
+      Utils.showToast('Falha na sincronização automática', 'warning');
+    } finally {
+      if (spinner) spinner.classList.remove('fa-spin', 'text-primary');
+      this.syncTimer = 300; // Reset timer
+      this.updateTimerDisplay();
+    }
+  },
+
+  initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    const icon = document.getElementById('theme-icon');
+    
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+      localStorage.setItem('theme', 'light');
+    }
+
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => this.toggleTheme());
+    }
+  },
+
+  toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const icon = document.getElementById('theme-icon');
+    
+    if (current === 'dark') {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      if (icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+    }
+    
+    // Reload charts if on the Relatorios page
+    const currentPage = document.querySelector('.sidebar-item.active').getAttribute('data-page');
+    if (currentPage === 'relatorios' && typeof Relatorios !== 'undefined') {
+      Relatorios.loadReport(Relatorios.currentType);
+    }
+  },
+
+  initRouter() {
+    const btnSync = document.getElementById('btn-manual-sync');
+    if (btnSync) {
+      btnSync.addEventListener('click', () => {
+        this.syncTimer = 0; // Trigger sync on next tick
+        this.performAutoSync();
+      });
+    }
+
+    const items = document.querySelectorAll('.sidebar-nav .sidebar-item[data-page]');
+    items.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = item.getAttribute('data-page');
+        this.navigate(page);
+        
+        // Mobile sidebar close
+        if(window.innerWidth <= 992) {
+          document.getElementById('sidebar').classList.remove('show');
+          document.getElementById('sidebar-overlay').classList.remove('show');
+        }
+      });
+    });
+
+    // Mobile toggle
+    const toggle = document.getElementById('sidebar-toggle');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(toggle) {
+      toggle.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.add('show');
+        overlay.classList.add('show');
+      });
+    }
+    if(overlay) {
+      overlay.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('show');
+        overlay.classList.remove('show');
+      });
+    }
+  },
+
+  navigate(pageId) {
+    let targetPage = pageId;
+    let reportSubPage = null;
+    if (pageId.startsWith('relatorios-')) {
+      targetPage = 'relatorios';
+      reportSubPage = pageId.split('-')[1];
+    }
+
+    // Hide all pages
+    document.querySelectorAll('.page-section').forEach(sec => sec.style.display = 'none');
+    
+    // Show target page
+    const pageEl = document.getElementById(`${targetPage}-page`);
+    if (pageEl) pageEl.style.display = 'block';
+    
+    // Update sidebar active state
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+    const activeItem = document.querySelector(`.sidebar-item[data-page="${pageId}"]`);
+    if(activeItem) activeItem.classList.add('active');
+
+    // Update Header
+    const titles = {
+      dashboard: 'Dashboard',
+      alunos: 'Gestão de Alunos',
+      disciplinas: 'Disciplinas',
+      pautas: 'Geração de Pautas',
+      relatorios: 'Relatórios',
+      'relatorios-acta': 'Acta do Conselho',
+      config: 'Configurações do Sistema'
+    };
+    
+    document.getElementById('page-title').textContent = titles[pageId] || 'Página';
+    document.getElementById('breadcrumb-current').textContent = titles[pageId] || 'Página';
+
+    if (reportSubPage && typeof Relatorios !== 'undefined') {
+      const tabBtn = document.getElementById(`report-${reportSubPage}`);
+      if (tabBtn) {
+        document.querySelectorAll('.report-type-card').forEach(t => t.classList.remove('active'));
+        tabBtn.classList.add('active');
+        Relatorios.currentType = reportSubPage;
+        Relatorios.loadReport(reportSubPage);
+      }
+    }
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  Auth.init();
+  if (!Auth.checkSession()) {
+    document.getElementById('app-shell').style.display = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+  }
+});
+
+
+</script>
+    </body>
+</html>

@@ -1,0 +1,306 @@
+const Disciplinas = {
+  disciplinesList: [],
+  currentSheetData: null,
+  table: null,
+
+  async init() {
+    try {
+      this.disciplinesList = await API.getDisciplines();
+      this.renderGrid();
+      this.setupEventHandlers();
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar disciplinas', 'error');
+    }
+  },
+
+  renderGrid() {
+    const grid = document.getElementById('disciplinas-grid');
+    grid.innerHTML = '';
+
+    const icons = {
+      'PORTUGUES': 'fa-book-open text-primary',
+      'MATEMATICA': 'fa-calculator text-success',
+      'CIENCIAS NATURAIS': 'fa-leaf text-info',
+      'CIENCIAS SOCIAIS': 'fa-globe-africa text-warning'
+    };
+
+    this.disciplinesList.forEach((disc, index) => {
+      const icon = icons[disc.name] || 'fa-book text-primary';
+      const delay = index * 0.1;
+      
+      const html = `
+        <div class="col-xl-3 col-md-6" style="animation: fadeIn 0.5s ease forwards; animation-delay: ${delay}s; opacity: 0;">
+          <div class="card h-100 disc-card cursor-pointer" data-sheet="${disc.sheetName}">
+            <div class="card-body text-center py-4">
+              <div class="mb-3" style="font-size: 3rem;">
+                <i class="fas ${icon}"></i>
+              </div>
+              <h5 class="fw-bold mb-3">${disc.name}</h5>
+              <button class="btn btn-outline-custom btn-sm w-100">Ver Pauta</button>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.innerHTML += html;
+    });
+
+    // Add click listeners to cards
+    document.querySelectorAll('.disc-card').forEach(card => {
+      card.addEventListener('click', () => {
+        this.showDisciplineDetail(card.getAttribute('data-sheet'));
+      });
+    });
+  },
+
+  async showDisciplineDetail(sheetName) {
+    Utils.showLoading();
+    try {
+      const students = await API.getStudentsByDiscipline(sheetName);
+      this.currentSheetData = { sheetName, students };
+      
+      // Update header
+      document.getElementById('disc-detail-name').textContent = sheetName;
+      document.getElementById('disc-detail-total').textContent = students.length;
+      
+      const validMt = students.map(s => s.mtFinal[0]).filter(v => v > 0);
+      const media = validMt.reduce((a,b)=>a+b,0) / (validMt.length || 1);
+      
+      document.getElementById('disc-detail-media').textContent = Utils.formatNumber(media);
+      document.getElementById('disc-detail-max').textContent = Math.max(...validMt, 0).toFixed(1);
+      document.getElementById('disc-detail-min').textContent = Math.min(...validMt, 20).toFixed(1);
+
+      // Switch view
+      document.getElementById('disciplinas-grid').style.display = 'none';
+      document.getElementById('disciplina-detail').style.display = 'block';
+
+      this.renderGradesTable(1); // Default to Trimester 1
+    } catch (e) {
+      console.error(e);
+      Utils.showToast('Erro ao carregar dados da disciplina', 'error');
+    } finally {
+      Utils.hideLoading();
+    }
+  },
+
+  renderGradesTable(trimester) {
+    const tIndex = trimester - 1; // 0-indexed
+    
+    if (this.table) {
+      this.table.destroy();
+    }
+
+    this.table = $('#table-disciplina-notas').DataTable({
+      data: this.currentSheetData.students,
+      pageLength: 20,
+      language: Utils.dataTablesPT,
+      columns: [
+        { data: 'numero' },
+        { 
+          data: 'nome',
+          render: (data) => `<span class="fw-bold">${data}</span>`
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.0`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="0" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.1`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="1" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.2`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="2" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.acs.3`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="3" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.macs`, 
+          render: (v, type, row) => `<span class="text-info fw-medium macs-display" data-num="${row.numero}">${Utils.formatNumber(v)}</span>` 
+        },
+        { 
+          data: `trimestres.${tIndex}.at`, 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="at" data-num="${row.numero}" value="${v||''}">` 
+        },
+        { 
+          data: `trimestres.${tIndex}.mt`, 
+          render: (v, type, row) => `<span class="fw-bold mt-display ${v>=10?'text-success':'text-danger'}" data-num="${row.numero}">${Utils.formatNumber(v)}</span>` 
+        },
+        { 
+          data: `trimestres.${tIndex}.comp`,
+          render: (v, type, row) => `
+            <select class="form-select form-select-sm comp-select" data-num="${row.numero}">
+              <option value="Excelente" ${v==='Excelente'?'selected':''}>Excelente</option>
+              <option value="Bom" ${v==='Bom'?'selected':''}>Bom</option>
+              <option value="Regular" ${v==='Regular'||!v?'selected':''}>Regular</option>
+              <option value="Insatisfatório" ${v==='Insatisfatório'?'selected':''}>Insatisfatório</option>
+              <option value="Crítico" ${v==='Crítico'?'selected':''}>Crítico</option>
+            </select>
+          `
+        }
+      ],
+      dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+      drawCallback: () => {
+        // Auto-save logic on input change
+        const gradeInputs = document.querySelectorAll('#table-disciplina-notas .grade-input');
+        const compSelects = document.querySelectorAll('#table-disciplina-notas .comp-select');
+        const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+        const sheetName = this.currentSheetData.sheetName;
+
+        gradeInputs.forEach(input => {
+          // 1. Real-time visual calculation
+          input.addEventListener('input', (e) => {
+            const tr = e.target.closest('tr');
+            if(!tr) return;
+            const acsInputs = tr.querySelectorAll('.grade-input[data-col="0"], .grade-input[data-col="1"], .grade-input[data-col="2"], .grade-input[data-col="3"]');
+            const atInput = tr.querySelector('.grade-input[data-col="at"]');
+            
+            let sumACS = 0;
+            let countACS = 0;
+            acsInputs.forEach(inp => {
+               const val = parseFloat(inp.value);
+               if(!isNaN(val)) { sumACS += val; countACS++; }
+            });
+            
+            const macs = countACS > 0 ? (sumACS / countACS) : 0;
+            const macsDisplay = tr.querySelector('.macs-display');
+            if(macsDisplay) macsDisplay.textContent = Utils.formatNumber(macs);
+            
+            const atVal = atInput && !isNaN(parseFloat(atInput.value)) ? parseFloat(atInput.value) : 0;
+            const mt = (macs + atVal) / 2;
+            const mtDisplay = tr.querySelector('.mt-display');
+            if(mtDisplay) {
+               mtDisplay.textContent = Utils.formatNumber(mt);
+               mtDisplay.className = `fw-bold mt-display ${mt>=10?'text-success':'text-danger'}`;
+            }
+          });
+
+          // 2. Save only on 'Enter' key
+          input.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.target.blur(); // Remove focus to show completion
+              
+              const num = parseInt(e.target.getAttribute('data-num'));
+              const col = e.target.getAttribute('data-col');
+              const val = parseFloat(e.target.value) || 0;
+              
+              e.target.classList.add('bg-warning', 'bg-opacity-25');
+              try {
+                await API.updateGrade(sheetName, num, activeTrim, col, val);
+                e.target.classList.remove('bg-warning', 'bg-opacity-25');
+                e.target.classList.add('bg-success', 'bg-opacity-25');
+                setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
+              } catch (err) {
+                console.error(err);
+                e.target.classList.remove('bg-warning', 'bg-opacity-25');
+                e.target.classList.add('bg-danger', 'bg-opacity-25');
+              }
+            }
+          });
+        });
+
+        compSelects.forEach(select => {
+          select.addEventListener('change', async (e) => {
+            const num = parseInt(e.target.getAttribute('data-num'));
+            const val = e.target.value;
+            
+            e.target.classList.add('bg-warning', 'bg-opacity-25');
+            try {
+              await API.updateBehavior(sheetName, num, activeTrim, val);
+              e.target.classList.remove('bg-warning', 'bg-opacity-25');
+              e.target.classList.add('bg-success', 'bg-opacity-25');
+              setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
+            } catch (err) {
+              console.error(err);
+              e.target.classList.remove('bg-warning', 'bg-opacity-25');
+              e.target.classList.add('bg-danger', 'bg-opacity-25');
+            }
+          });
+        });
+      }
+    });
+  },
+
+  setupEventHandlers() {
+    document.getElementById('btn-back-disciplinas').addEventListener('click', () => {
+      document.getElementById('disciplina-detail').style.display = 'none';
+      document.getElementById('disciplinas-grid').style.display = 'flex';
+    });
+
+    document.querySelectorAll('.trimester-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        document.querySelectorAll('.trimester-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        const trim = parseInt(e.target.getAttribute('data-trimester'));
+        this.renderGradesTable(trim);
+      });
+    });
+    
+    document.getElementById('btn-save-notas').addEventListener('click', async () => {
+      const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+      
+      Utils.showLoading();
+      try {
+        // Here we simulate saving all rows that have been edited.
+        // For the MVP, we will gather all inputs from the current page of datatable.
+        // A full implementation would track "dirty" cells via 'change' event on inputs.
+        const gradeInputs = document.querySelectorAll('.grade-input');
+        const compInputs = document.querySelectorAll('.comp-select');
+        
+        let updatePromises = [];
+
+        gradeInputs.forEach(input => {
+          const num = parseInt(input.getAttribute('data-num'));
+          const col = input.getAttribute('data-col'); // 0, 1, 2, 3, at
+          const val = parseFloat(input.value) || 0;
+          updatePromises.push(API.updateGrade(this.currentSheetData.sheetName, num, activeTrim, col, val));
+        });
+
+        compInputs.forEach(select => {
+           const num = parseInt(select.getAttribute('data-num'));
+           const val = select.value;
+           updatePromises.push(API.updateBehavior(this.currentSheetData.sheetName, num, activeTrim, val));
+        });
+
+        await Promise.all(updatePromises);
+        Swal.fire('Guardado', 'Notas sincronizadas com o Google Sheets.', 'success');
+        
+        // Refresh local data model
+        const students = await API.getStudentsByDiscipline(this.currentSheetData.sheetName);
+        this.currentSheetData.students = students;
+        
+      } catch (e) {
+        console.error(e);
+        Swal.fire('Erro', 'Não foi possível guardar as notas.', 'error');
+      } finally {
+        Utils.hideLoading();
+      }
+    });
+
+    document.getElementById('btn-export-notas').addEventListener('click', () => {
+      const activeTrim = parseInt(document.querySelector('.trimester-tab.active').getAttribute('data-trimester'));
+      const tIndex = activeTrim - 1;
+      const sheetName = this.currentSheetData.sheetName;
+      const students = this.currentSheetData.students;
+
+      let csvContent = 'Nº,Nome,ACS1,ACS2,ACS3,ACS4,MACS,AT,MT,Comportamento\n';
+
+      students.forEach(s => {
+        const t = s.trimestres[tIndex] || {};
+        csvContent += `${s.numero},"${s.nome}",${t.acs?.[0]||0},${t.acs?.[1]||0},${t.acs?.[2]||0},${t.acs?.[3]||0},${t.macs||0},${t.at||0},${t.mt||0},"${t.comp||'Regular'}"\n`;
+      });
+
+      const blob = new Blob(["\ufeff", csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Notas_${sheetName}_T${activeTrim}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
+};
