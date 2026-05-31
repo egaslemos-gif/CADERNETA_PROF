@@ -32,7 +32,7 @@ const Auth = {
   initGoogleAuth() {
     if (typeof google !== 'undefined' && google.accounts) {
       google.accounts.id.initialize({
-        client_id: '50630855932-8cjspcb019avab7db1ll100hi434thui.apps.googleusercontent.com',
+        client_id: '50630855932-6tm8a6138keml9mb4j6r4tmsvci7djl0.apps.googleusercontent.com',
         callback: this.handleGoogleCallback.bind(this)
       });
       google.accounts.id.renderButton(
@@ -132,9 +132,6 @@ const Auth = {
   logout(e) {
     if(e) e.preventDefault();
     sessionStorage.removeItem('user');
-    document.getElementById('app-shell').style.display = 'none';
-    document.getElementById('login-page').style.display = 'flex';
-    document.getElementById('login-form').reset();
-    document.getElementById('login-error').classList.add('d-none');
+    window.location.reload();
   }
 };

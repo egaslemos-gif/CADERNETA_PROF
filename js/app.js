@@ -2,8 +2,11 @@ const App = {
   schoolData: null,
   syncTimer: 300,
   syncInterval: null,
+  isStarted: false,
   
   async start() {
+    if (this.isStarted) return;
+    this.isStarted = true;
     Utils.showLoading();
     try {
       this.schoolData = await API.getSchoolData();
@@ -22,6 +25,12 @@ const App = {
       Relatorios.init();
       Config.init();
       
+      // Init Bootstrap dropdown properly
+      const profileBtn = document.getElementById('user-profile-dropdown');
+      if (profileBtn && typeof bootstrap !== 'undefined') {
+        new bootstrap.Dropdown(profileBtn);
+      }
+
       this.navigate('dashboard');
       
       // Start 5-minute auto-sync timer
@@ -148,6 +157,30 @@ const App = {
         }
       });
     });
+
+    // Dropdown menu links
+    const closeDropdown = () => {
+      const dropdown = document.querySelector('.dropdown-menu.show');
+      if (dropdown) dropdown.classList.remove('show');
+    };
+
+    const menuProfile = document.getElementById('menu-profile');
+    if (menuProfile) {
+      menuProfile.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.navigate('config');
+        closeDropdown();
+      });
+    }
+
+    const menuSettings = document.getElementById('menu-settings');
+    if (menuSettings) {
+      menuSettings.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.navigate('config');
+        closeDropdown();
+      });
+    }
 
     // Mobile toggle
     const toggle = document.getElementById('sidebar-toggle');

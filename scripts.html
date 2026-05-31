@@ -473,10 +473,7 @@ const Auth = {
   logout(e) {
     if(e) e.preventDefault();
     sessionStorage.removeItem('user');
-    document.getElementById('app-shell').style.display = 'none';
-    document.getElementById('login-page').style.display = 'flex';
-    document.getElementById('login-form').reset();
-    document.getElementById('login-error').classList.add('d-none');
+    window.location.reload();
   }
 };
 
@@ -2137,8 +2134,11 @@ const App = {
   schoolData: null,
   syncTimer: 300,
   syncInterval: null,
+  isStarted: false,
   
   async start() {
+    if (this.isStarted) return;
+    this.isStarted = true;
     Utils.showLoading();
     try {
       this.schoolData = await API.getSchoolData();

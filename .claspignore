@@ -2,4 +2,9 @@ js/**
 css/**
 build_gas.js
 *.md
+*.txt
 .gemini/**
+serve.js
+index-local.html
+node_modules/**
+.git/**

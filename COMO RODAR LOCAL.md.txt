@@ -1,0 +1,4 @@
+Para rodar manualmente no futuro:
+Se o servidor for interrompido, basta abrir o terminal na pasta do projeto e rodar o comando:
+
+> node serve.js

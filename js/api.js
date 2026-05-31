@@ -1,3 +1,20 @@
+/**
+ * ============================================================
+ *  CADERNETA ESCOLAR DIGITAL — api.js
+ *  Camada de comunicação: GAS (google.script.run),
+ *  Web API (fetch), ou Mock (fallback offline)
+ * ============================================================
+ */
+
+// ---------------------------------------------------------------------------
+//  URL do Web App do Google Apps Script (deploy)
+//  Actualizar após cada novo deploy: clasp deploy → copiar URL
+// ---------------------------------------------------------------------------
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxrZkyXR-_BhmlD9LYlo42KxdVfGPYIwhAXrz6ISNPyyKuhnW5sBB3ZmW_77SNzY0ntrw/exec';
+
+// ---------------------------------------------------------------------------
+//  Mock Data (fallback para desenvolvimento offline)
+// ---------------------------------------------------------------------------
 const MockData = {
   getSchoolData: () => ({
     escola: 'ESCOLA BASICA DE MACURUNCO',
@@ -176,11 +193,13 @@ const MockData = {
     };
   },
 
+  // Utilizadores de teste — sincronizados com a sheet USERS
   _mockUsers: [
     { username: 'admin', email: 'admin@gmail.com', password: 'admin2026', nome: 'admin', roleStr: 'Administrador(a)' },
     { username: 'diretor', email: 'dir@gmail.com', password: 'dir2026', nome: 'diretor', roleStr: 'Director(a)' },
     { username: 'professor', email: 'prof@gmail.com', password: 'prof2026', nome: 'professor', roleStr: 'Professor(a)' },
-    { username: 'pramim', email: 'pascoaramim409@gmail.com', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)' }
+    { username: 'pramim', email: 'pascoaramim409@gmail.com', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)' },
+    { username: 'elemos', email: 'egaslemos@gmail.com', password: 'admin2026', nome: 'Egas Lemos', roleStr: 'Administrador(a)' }
   ],
   
   _mapRole(roleStr) {
@@ -212,8 +231,6 @@ const MockData = {
     const student = this._rawStudents.find(s => s.n === numero);
     if (!student) return { success: false, message: 'Aluno não encontrado' };
     
-    // In a real app we'd map this better, but for mock let's just update the main mfd field loosely
-    // The real implementation in GAS will do the proper cell update
     const fieldMap = { 'PORTUGUES': 'p', 'MATEMATICA': 'm', 'CIENCIAS NATURAIS': 'cn', 'CIENCIAS SOCIAIS': 'cs' };
     const field = fieldMap[sheetName];
     if (column === 'mt') {
@@ -237,23 +254,200 @@ const MockData = {
 // ================= GLOBAL API AND UTILS =================
 
 const API = {
-  isGAS: typeof google !== 'undefined' && google.script,
-  
+  /**
+   * Detecta o modo de execução:
+   *  - 'gas'     → dentro do Apps Script (google.script.run)
+   *  - 'webapp'  → frontend local com acesso à web API
+   *  - 'mock'    → fallback offline com dados estáticos
+   */
+  _mode: null,
+  _webAppChecked: false,
+
+  /**
+   * Determina o modo de execução na primeira chamada.
+   */
+  _getMode() {
+    if (this._mode) return this._mode;
+
+    // 1) Dentro do Google Apps Script
+    if (typeof google !== 'undefined' && google.script) {
+      this._mode = 'gas';
+      console.log('[API] Modo: Google Apps Script (google.script.run)');
+      return this._mode;
+    }
+
+    // 2) Frontend local: tentar web app primeiro, fallback para mock
+    //    A verificação real será feita na primeira chamada
+    if (WEBAPP_URL && WEBAPP_URL.startsWith('https://script.google.com/')) {
+      this._mode = 'webapp';
+      console.log('[API] Modo: Web API (' + WEBAPP_URL.substring(0, 60) + '...)');
+      return this._mode;
+    }
+
+    // 3) Sem URL configurado → mock
+    this._mode = 'mock';
+    console.log('[API] Modo: Mock (dados estáticos de desenvolvimento)');
+    return this._mode;
+  },
+
+  /**
+   * Chamada principal — encaminha para o modo correcto.
+   */
   call(functionName, ...args) {
+    const mode = this._getMode();
+
+    if (mode === 'gas') {
+      return this._callGAS(functionName, ...args);
+    }
+
+    if (mode === 'webapp') {
+      return this._callWebApp(functionName, ...args);
+    }
+
+    // mock
+    return this._callMock(functionName, ...args);
+  },
+
+  /**
+   * Chamada via google.script.run (dentro do Apps Script).
+   */
+  _callGAS(functionName, ...args) {
     return new Promise((resolve, reject) => {
-      if (this.isGAS) {
-        google.script.run
-          .withSuccessHandler(resolve)
-          .withFailureHandler(reject)
-          [functionName](...args);
-      } else {
-        const mockFn = MockData[functionName];
-        if(!mockFn) return reject(new Error('Mock fn not found: ' + functionName));
-        setTimeout(() => resolve(mockFn.apply(MockData, args)), 300 + Math.random() * 500);
-      }
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)
+        [functionName](...args);
     });
   },
 
+  /**
+   * Chamada via fetch() à web app do Apps Script.
+   * Usa GET com query params para leituras, POST para escritas.
+   */
+  _callWebApp(functionName, ...args) {
+    // Mapear nome da função e argumentos para os parâmetros da API
+    const paramMap = this._buildParams(functionName, args);
+    
+    // Para autenticação e escrita, usar POST (dados sensíveis)
+    const writeFunctions = ['authenticate', 'authenticateWithGoogle', 'updateGrade', 'updateBehavior', 
+                            'generateAndSavePautaPDF', 'generateAndSaveBoletimPDF', 'clearAllCache'];
+    
+    if (writeFunctions.includes(functionName)) {
+      return this._fetchPost(functionName, paramMap);
+    }
+    
+    return this._fetchGet(functionName, paramMap);
+  },
+
+  /**
+   * Mapeia nomes de funções e argumentos posicionais para parâmetros nomeados.
+   */
+  _buildParams(functionName, args) {
+    const map = {
+      'authenticate':             ['username', 'password'],
+      'authenticateWithGoogle':   ['email'],
+      'getStudentsByDiscipline':  ['sheetName'],
+      'getStudentDetail':         ['studentName'],
+      'updateGrade':              ['sheetName', 'studentRow', 'column', 'value'],
+      'updateBehavior':           ['sheetName', 'studentRow', 'trimester', 'value'],
+      'generateAndSavePautaPDF':  ['disciplina', 'trimestre'],
+      'generateAndSaveBoletimPDF':['studentName', 'trimestre']
+    };
+
+    const paramNames = map[functionName] || [];
+    const params = {};
+    paramNames.forEach((name, i) => {
+      if (i < args.length && args[i] !== undefined) {
+        params[name] = args[i];
+      }
+    });
+
+    return params;
+  },
+
+  /**
+   * GET request à web app.
+   */
+  async _fetchGet(functionName, params) {
+    const url = new URL(WEBAPP_URL);
+    url.searchParams.set('action', functionName);
+    Object.entries(params).forEach(([k, v]) => {
+      url.searchParams.set(k, v);
+    });
+
+    try {
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        redirect: 'follow'
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const json = await response.json();
+      
+      if (json.success === false) {
+        throw new Error(json.error || 'Erro desconhecido do servidor');
+      }
+
+      return json.data;
+    } catch (error) {
+      console.warn(`[API] WebApp GET falhou para ${functionName}:`, error.message);
+      console.log('[API] Fallback para dados mock...');
+      return this._callMock(functionName, ...Object.values(params));
+    }
+  },
+
+  /**
+   * POST request à web app.
+   */
+  async _fetchPost(functionName, params) {
+    try {
+      const response = await fetch(WEBAPP_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: functionName,
+          params: params
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const json = await response.json();
+      
+      if (json.success === false) {
+        throw new Error(json.error || 'Erro desconhecido do servidor');
+      }
+
+      // Para autenticação, o resultado já vem dentro de data
+      // A estrutura é: { success: true, data: { success: true, user: {...} } }
+      return json.data;
+    } catch (error) {
+      console.warn(`[API] WebApp POST falhou para ${functionName}:`, error.message);
+      console.log('[API] Fallback para dados mock...');
+      return this._callMock(functionName, ...Object.values(params));
+    }
+  },
+
+  /**
+   * Chamada mock (dados estáticos).
+   */
+  _callMock(functionName, ...args) {
+    return new Promise((resolve, reject) => {
+      const mockFn = MockData[functionName];
+      if (!mockFn) return reject(new Error('Mock fn not found: ' + functionName));
+      setTimeout(() => resolve(mockFn.apply(MockData, args)), 300 + Math.random() * 500);
+    });
+  },
+
+  // -----------------------------------------------------------------------
+  //  Interface pública — mantém compatibilidade com o resto do código
+  // -----------------------------------------------------------------------
   authenticate: (u, p) => API.call('authenticate', u, p),
   authenticateWithGoogle: (email) => API.call('authenticateWithGoogle', email),
   getSchoolData: () => API.call('getSchoolData'),

@@ -94,7 +94,10 @@ const Pautas = {
         html += `<table><thead><tr><th>Nº</th><th>Nome</th><th>MACS</th><th>AT</th><th>MT</th><th>Comportamento</th></tr></thead><tbody>`;
         students.forEach(s => {
           const tData = s.trimestres[parseInt(trim)-1] || {};
-          html += `<tr><td>${s.numero}</td><td>${s.nome}</td><td>${tData.macs||0}</td><td>${tData.at||0}</td><td><strong>${tData.mt||0}</strong></td><td>${tData.comp||'Regular'}</td></tr>`;
+          const macs = tData.macs ? Number(tData.macs).toFixed(1) : '—';
+          const at = tData.at ? Number(tData.at).toFixed(1) : '—';
+          const mt = tData.mt ? Number(tData.mt).toFixed(1) : '—';
+          html += `<tr><td>${s.numero}</td><td>${s.nome}</td><td>${macs}</td><td>${at}</td><td><strong>${mt}</strong></td><td>${tData.comp||'Regular'}</td></tr>`;
         });
         html += `</tbody></table>`;
       } else if (tipo === 'individual') {
@@ -106,7 +109,8 @@ const Pautas = {
           html += `<table><thead><tr><th>Disciplina</th><th>Média Final</th><th>Comportamento</th><th>Situação</th></tr></thead><tbody>`;
           Object.keys(student.disciplinas).forEach(d => {
              const data = student.disciplinas[d];
-             html += `<tr><td>${d}</td><td><strong>${data.mfd}</strong></td><td>${data.comp}</td><td>${data.resultado}</td></tr>`;
+             const mfd = data.mfd ? Number(data.mfd).toFixed(1) : '—';
+             html += `<tr><td>${d}</td><td><strong>${mfd}</strong></td><td>${data.comp}</td><td>${data.resultado}</td></tr>`;
           });
           html += `</tbody></table>`;
         }

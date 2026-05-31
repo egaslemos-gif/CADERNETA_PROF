@@ -29,7 +29,13 @@ const Config = {
     document.getElementById('config-avatar-initials').textContent = user.avatar;
     document.querySelector('.config-avatar').style.background = Utils.getAvatarColor(user.nome || '');
     document.getElementById('config-user-name').textContent = user.nome;
-    document.getElementById('config-user-role').textContent = user.role.toUpperCase();
+    document.getElementById('config-user-role').textContent = user.roleStr || user.role.toUpperCase();
+    
+    const emailEl = document.getElementById('config-user-email');
+    if (emailEl) {
+      emailEl.textContent = user.email || 'Email não disponível';
+    }
+
     document.getElementById('config-last-login').textContent = new Date().toLocaleString();
 
     document.getElementById('btn-change-password').addEventListener('click', () => {

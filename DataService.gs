@@ -188,30 +188,17 @@ function getUsers() {
 }
 
 /**
- * Le a fonte de utilizadores. O CSV publicado e temporario e somente leitura;
- * a configuracao final deve usar a folha privada atraves de SPREADSHEET_ID.
+ * Lê os utilizadores directamente da tab USERS na spreadsheet configurada.
+ * Colunas esperadas: Nome (A), Usuário (B), Email (C), Senha (D), Perfil (E)
  *
  * @return {Array<Array<*>>} Linhas da tabela USERS.
  * @private
  */
 function _getUsersData() {
-  if (CONFIG.AUTH_USERS_CSV_URL) {
-    const response = UrlFetchApp.fetch(CONFIG.AUTH_USERS_CSV_URL, {
-      followRedirects: true,
-      muteHttpExceptions: true
-    });
-
-    if (response.getResponseCode() !== 200) {
-      throw new Error('A fonte temporaria de utilizadores nao esta disponivel.');
-    }
-
-    return Utilities.parseCsv(response.getContentText());
-  }
-
   const ss = getSpreadsheet();
   const sheet = ss.getSheetByName('USERS');
   if (!sheet) {
-    throw new Error('Tab "USERS" nao encontrada.');
+    throw new Error('Tab "USERS" nao encontrada na spreadsheet.');
   }
 
   return sheet.getDataRange().getValues();

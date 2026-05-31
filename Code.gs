@@ -4,6 +4,7 @@
  *  Ponto de entrada principal da aplicação web
  * ============================================================
  *  Contém doGet(), doPost(), include() e configuração global.
+ *  Suporta chamadas REST via ?action=xxx para o frontend local.
  * ============================================================
  */
 
@@ -12,12 +13,10 @@
  * @const {Object}
  */
 const CONFIG = {
-  /** ID da folha de calculo privada. Vazio ate receber o link original valido. */
-  SPREADSHEET_ID: null,
+  /** ID da folha de calculo real. */
+  SPREADSHEET_ID: '1AxtTnKLW0F0WR3P7kY7aldMXd_-bYrvcK5bQu8frpNQ',
   /** Propriedade opcional para projectos que nao estejam vinculados a uma folha. */
   SPREADSHEET_ID_PROPERTY: 'SPREADSHEET_ID',
-  /** Fonte temporaria, somente leitura, para login enquanto a folha privada e configurada. */
-  AUTH_USERS_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTOuj9HZFNSEYujihqPlMPY8xX-2NoqGMAqLUXum2ON_ZU3yvhSI6_PbqugcdnHFw5O8dI6fyc0aCLc/pub?gid=1315794932&single=true&output=csv',
   /** Nome da aplicação */
   APP_NAME: 'Caderneta Escolar Digital',
   /** Versão actual */
@@ -35,13 +34,22 @@ const CONFIG = {
 // ---------------------------------------------------------------------------
 
 /**
- * Serve a interface HTML quando o utilizador acede ao URL da web app.
+ * Serve a interface HTML quando acedido sem parâmetros,
+ * ou actua como API REST quando chamado com ?action=xxx.
  *
  * @param {Object} e  Objecto de evento fornecido pelo Apps Script.
- * @return {HtmlOutput}  Página HTML renderizada.
+ * @return {HtmlOutput|TextOutput}  Página HTML ou resposta JSON.
  */
 function doGet(e) {
   try {
+    const action = (e && e.parameter && e.parameter.action) ? e.parameter.action : null;
+
+    // ---------- Modo API: ?action=xxx ----------
+    if (action) {
+      return _handleApiRequest(action, e.parameter);
+    }
+
+    // ---------- Modo normal: servir HTML ----------
     const template = HtmlService.createTemplateFromFile('index');
     const output = template.evaluate();
 
@@ -53,6 +61,10 @@ function doGet(e) {
     return output;
   } catch (erro) {
     Logger.log('Erro em doGet: ' + erro.message);
+    // Se era uma chamada API, devolver erro JSON
+    if (e && e.parameter && e.parameter.action) {
+      return _jsonOutput({ success: false, error: erro.message });
+    }
     return HtmlService.createHtmlOutput(
       '<h1>Erro ao carregar a aplicação</h1><p>' + erro.message + '</p>'
     );
@@ -60,7 +72,7 @@ function doGet(e) {
 }
 
 // ---------------------------------------------------------------------------
-//  doPost  —  ponto de entrada HTTP POST (API JSON, uso futuro)
+//  doPost  —  ponto de entrada HTTP POST (API JSON)
 // ---------------------------------------------------------------------------
 
 /**
@@ -76,29 +88,59 @@ function doPost(e) {
     const action = body.action;
     const params = body.params || {};
 
-    /** Mapa de acções permitidas via POST */
-    const actions = {
-      getSchoolData: () => getSchoolData(),
-      getDisciplines: () => getDisciplines(),
-      getStudentsByDiscipline: () => getStudentsByDiscipline(params.sheetName),
-      getAllStudentsConsolidated: () => getAllStudentsConsolidated(),
-      getDashboardStats: () => getDashboardStats(),
-      getStudentDetail: () => getStudentDetail(params.studentName),
-      updateGrade: () => updateGrade(params.sheetName, params.studentRow, params.column, params.value),
-      updateBehavior: () => updateBehavior(params.sheetName, params.studentRow, params.trimester, params.value),
-      authenticate: () => authenticate(params.username, params.password)
-    };
-
-    if (!actions[action]) {
-      return _jsonOutput({ success: false, error: 'Acção desconhecida: ' + action });
-    }
-
-    const result = actions[action]();
-    return _jsonOutput({ success: true, data: result });
+    return _handleApiRequest(action, params);
   } catch (erro) {
     Logger.log('Erro em doPost: ' + erro.message);
     return _jsonOutput({ success: false, error: erro.message });
   }
+}
+
+// ---------------------------------------------------------------------------
+//  _handleApiRequest  —  router central para chamadas API
+// ---------------------------------------------------------------------------
+
+/**
+ * Encaminha chamadas API para as funções correctas.
+ *
+ * @param {string} action  Nome da acção.
+ * @param {Object} params  Parâmetros da chamada.
+ * @return {TextOutput}    Resposta JSON.
+ * @private
+ */
+function _handleApiRequest(action, params) {
+  /** Mapa de acções permitidas */
+  const actions = {
+    // Dados gerais
+    getSchoolData:              () => getSchoolData(),
+    getDisciplines:             () => getDisciplines(),
+    getStudentsByDiscipline:    () => getStudentsByDiscipline(params.sheetName),
+    getAllStudentsConsolidated:  () => getAllStudentsConsolidated(),
+    getDashboardStats:          () => getDashboardStats(),
+    getStudentDetail:           () => getStudentDetail(params.studentName),
+
+    // Autenticação
+    authenticate:               () => authenticate(params.username, params.password),
+    authenticateWithGoogle:      () => authenticateWithGoogle(params.email),
+
+    // Escrita
+    updateGrade:    () => updateGrade(params.sheetName, params.studentRow, params.column, params.value),
+    updateBehavior: () => updateBehavior(params.sheetName, params.studentRow, params.trimester, params.value),
+
+    // PDF / Drive
+    generateAndSavePautaPDF:    () => typeof generateAndSavePautaPDF === 'function' ? generateAndSavePautaPDF(params.disciplina, params.trimestre) : { success: false, error: 'PDF service não disponível' },
+    generateAndSaveBoletimPDF:  () => typeof generateAndSaveBoletimPDF === 'function' ? generateAndSaveBoletimPDF(params.studentName, params.trimestre) : { success: false, error: 'PDF service não disponível' },
+    listSavedPDFs:              () => typeof listSavedPDFs === 'function' ? listSavedPDFs() : [],
+
+    // Cache
+    clearAllCache:              () => clearAllCache()
+  };
+
+  if (!actions[action]) {
+    return _jsonOutput({ success: false, error: 'Acção desconhecida: ' + action });
+  }
+
+  const result = actions[action]();
+  return _jsonOutput({ success: true, data: result });
 }
 
 // ---------------------------------------------------------------------------
@@ -121,7 +163,8 @@ function include(filename) {
 // ---------------------------------------------------------------------------
 
 /**
- * Cria uma resposta JSON para doPost.
+ * Cria uma resposta JSON para doPost/doGet API.
+ * Inclui headers CORS para permitir chamadas do frontend local.
  *
  * @param {Object} data  Objecto a serializar.
  * @return {TextOutput}  Resposta com ContentType JSON.
@@ -139,11 +182,16 @@ function _jsonOutput(data) {
  * @return {string} ID configurado, ou string vazia para usar a folha vinculada.
  */
 function getConfiguredSpreadsheetId() {
-  const propertyId = PropertiesService
-    .getScriptProperties()
-    .getProperty(CONFIG.SPREADSHEET_ID_PROPERTY);
+  try {
+    const propertyId = PropertiesService
+      .getScriptProperties()
+      .getProperty(CONFIG.SPREADSHEET_ID_PROPERTY);
 
-  return String(propertyId || CONFIG.SPREADSHEET_ID || '').trim();
+    return String(propertyId || CONFIG.SPREADSHEET_ID || '').trim();
+  } catch (e) {
+    // Se PropertiesService não estiver disponível, usar CONFIG directamente
+    return String(CONFIG.SPREADSHEET_ID || '').trim();
+  }
 }
 
 /**
