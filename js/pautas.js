@@ -88,6 +88,10 @@ const Pautas = {
         </div>
       `;
 
+      if (tipo === 'trimestral' && disc === 'todas') {
+        tipo = 'geral';
+      }
+
       if (tipo === 'trimestral') {
         html += `<h3>Pauta Trimestral - ${disc} - ${trim}º Trimestre</h3>`;
         const students = await API.getStudentsByDiscipline(disc);
