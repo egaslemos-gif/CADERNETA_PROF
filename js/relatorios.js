@@ -494,13 +494,33 @@ const Relatorios = {
       ];
 
       // Fuzzy match real keys from the Google Sheets
-      const availableKeys = activeStudents.length > 0 ? Object.keys(activeStudents[0].disciplinas) : [];
+      const availableKeysSet = new Set();
+      activeStudents.forEach(s => {
+        if (s.disciplinas) {
+          Object.keys(s.disciplinas).forEach(k => availableKeysSet.add(k));
+        }
+      });
+      const availableKeys = Array.from(availableKeysSet);
+      
       const cleanStr = str => str.replace(/[^A-Z]/gi, '').toLowerCase();
       
+      const aliases = {
+        'edvisual': ['educacaovisual', 'edv', 'ev'],
+        'edfisica': ['educacaofisica', 'edf', 'ef'],
+        'csociais': ['cienciassociais'],
+        'cnaturais': ['cienciasnaturais']
+      };
+
       disciplinesToRender.forEach(d => {
         let actualKey = d.key;
         if (!availableKeys.includes(d.key)) {
-           const found = availableKeys.find(k => cleanStr(k) === cleanStr(d.key));
+           const cleanDKey = cleanStr(d.key);
+           const found = availableKeys.find(k => {
+              const cleanK = cleanStr(k);
+              if (cleanK === cleanDKey) return true;
+              if (aliases[cleanDKey] && aliases[cleanDKey].includes(cleanK)) return true;
+              return false;
+           });
            if (found) actualKey = found;
         }
         d.key = actualKey;
