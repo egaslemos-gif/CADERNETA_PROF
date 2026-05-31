@@ -157,23 +157,21 @@ const Disciplinas = {
             const acsInputs = tr.querySelectorAll('.grade-input[data-col="0"], .grade-input[data-col="1"], .grade-input[data-col="2"], .grade-input[data-col="3"]');
             const atInput = tr.querySelector('.grade-input[data-col="at"]');
             
-            let sumACS = 0;
-            let countACS = 0;
-            acsInputs.forEach(inp => {
-               const val = parseFloat(inp.value);
-               if(!isNaN(val)) { sumACS += val; countACS++; }
-            });
+            // Preview reflects spreadsheet: MACS = (E5 + F5) / 2
+            const acs1 = acsInputs[0] && !isNaN(parseFloat(acsInputs[0].value)) ? parseFloat(acsInputs[0].value) : 0;
+            const acs2 = acsInputs[1] && !isNaN(parseFloat(acsInputs[1].value)) ? parseFloat(acsInputs[1].value) : 0;
+            const macs = (acs1 + acs2) / 2;
             
-            const macs = countACS > 0 ? (sumACS / countACS) : 0;
             const macsDisplay = tr.querySelector('.macs-display');
             if(macsDisplay) macsDisplay.textContent = Utils.formatNumber(macs);
             
             const atVal = atInput && !isNaN(parseFloat(atInput.value)) ? parseFloat(atInput.value) : 0;
-            const mt = (macs + atVal) / 2;
+            // Official Formula: MT = (2*MACS + AT) / 3
+            const mt = (2 * macs + atVal) / 3;
             const mtDisplay = tr.querySelector('.mt-display');
             if(mtDisplay) {
                mtDisplay.textContent = Utils.formatNumber(mt);
-               mtDisplay.className = `fw-bold mt-display ${mt>=10?'text-success':'text-danger'}`;
+               mtDisplay.className = `fw-bold mt-display ${Math.round(mt)>=10?'text-success':'text-danger'}`;
             }
           });
 
