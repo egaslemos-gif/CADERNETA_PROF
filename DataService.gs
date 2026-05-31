@@ -48,26 +48,26 @@ function getSpreadsheet() {
 
 /**
  * Converte um valor para número, tratando vírgulas decimais.
- * Exemplos: '8,5' → 8.5, '' → 0, undefined → 0, 10 → 10
+ * Exemplos: '8,5' → 8.5, '' → '', undefined → '', 10 → 10
  *
  * @param {*} value  Valor a converter.
- * @return {number}  Valor numérico.
+ * @return {number|string}  Valor numérico ou string vazia.
  */
 function parseNumber(value) {
-  if (value === null || value === undefined || value === '') return 0;
+  if (value === null || value === undefined || value === '') return '';
 
   // Se já é número, devolver directamente
   if (typeof value === 'number') return Math.round(value);
 
   // Converter para string e substituir vírgula por ponto
   let str = String(value).trim();
-  if (str === '') return 0;
+  if (str === '') return '';
 
   // Remover espaços e substituir vírgula por ponto
   str = str.replace(/\s/g, '').replace(',', '.');
 
   const num = parseFloat(str);
-  return isNaN(num) ? 0 : Math.round(num);
+  return isNaN(num) ? '' : Math.round(num);
 }
 
 // ---------------------------------------------------------------------------
