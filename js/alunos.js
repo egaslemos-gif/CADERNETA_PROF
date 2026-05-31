@@ -194,8 +194,8 @@ const Alunos = {
               
               if (res.success) {
                 Utils.showToast(`Estado actualizado com sucesso em ${res.updatedSheets} disciplinas!`, 'success');
-                // Refresh the table data
-                this.loadData();
+                // Refresh the page to reflect the new state everywhere
+                setTimeout(() => window.location.reload(), 1500);
               } else {
                 Utils.showToast(res.error || 'Erro ao actualizar estado', 'error');
               }
