@@ -1,0 +1,17 @@
+{
+  "name": "Caderneta Escolar",
+  "short_name": "Caderneta",
+  "description": "Sistema de Gestão Escolar",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f1923",
+  "theme_color": "#1a365d",
+  "icons": [
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
