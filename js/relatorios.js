@@ -376,10 +376,17 @@ const Relatorios = {
       const school = await API.getSchoolData();
       
       // Update basic fields
-      document.getElementById('acta-turma-nome').textContent = school.classe ? (school.classe + ' Classe') : '---';
-      document.getElementById('acta-trimestre-nome').textContent = trimVal + 'º';
-      document.getElementById('acta-director-nome').textContent = school.director || 'Maria Manuela';
-      document.getElementById('acta-professor-nome').textContent = school.professor || 'Pascoa da Graca Ramim';
+      const turmaEl = document.getElementById('acta-turma-nome');
+      if (turmaEl) turmaEl.textContent = school.classe ? (school.classe + ' Classe') : '---';
+      
+      const trimEl = document.getElementById('acta-trimestre-nome');
+      if (trimEl) trimEl.textContent = trimVal + 'º';
+      
+      const dirEl = document.getElementById('acta-director-nome');
+      if (dirEl) dirEl.textContent = school.director || 'Maria Manuela';
+      
+      const profEl = document.getElementById('acta-professor-nome');
+      if (profEl) profEl.textContent = school.professor || 'Pascoa da Graca Ramim';
 
       // Set date defaults if empty
       const dayInput = document.getElementById('acta-dia');
@@ -666,7 +673,7 @@ const Relatorios = {
 
     } catch (e) {
       console.error('Erro renderActa', e);
-      Utils.showToast('Erro ao carregar dados para a Acta do Conselho.', 'danger');
+      Utils.showToast('Erro ao carregar dados para a Acta do Conselho.', 'error');
     }
   }
 };
