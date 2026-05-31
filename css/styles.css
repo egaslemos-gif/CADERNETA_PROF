@@ -325,6 +325,7 @@ body {
   .sidebar-overlay.show { display: block; }
   .content-header { padding-left: 4rem; padding-right: 1rem; }
   .content-body { padding: 1.5rem 1rem; }
+  .user-info { display: none !important; }
 }
 
 @media (max-width: 768px) {
@@ -341,18 +342,20 @@ body {
     padding-right: 1rem;
     padding-top: 0.75rem; 
     padding-bottom: 0.75rem;
-    flex-direction: column; 
-    align-items: flex-start; 
-    gap: 0.5rem; 
+    display: flex;
+    flex-wrap: wrap; 
+    flex-direction: row;
+    align-items: center; 
+    justify-content: space-between;
   }
-  .header-left { width: 100%; }
-  #page-title { font-size: 1.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header-left { width: 100%; margin-bottom: 0.5rem; }
+  #page-title { font-size: 1.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .breadcrumb-area { font-size: 0.7rem; margin-bottom: 0.1rem; }
   
-  .header-right { width: 100%; justify-content: space-between !important; }
-  .sync-timer-container { font-size: 0.8rem; padding: 0.2rem 0.5rem !important; }
+  .header-right { width: 100%; justify-content: flex-end; gap: 0.5rem !important; }
+  .sync-timer-container { font-size: 0.8rem; padding: 0.2rem 0.5rem !important; margin-right: auto; }
   .user-profile { margin-top: 0; padding: 0.2rem; }
-  .user-avatar { width: 32px; height: 32px; font-size: 0.8rem; margin-right: 0.5rem; }
+  .user-avatar { width: 32px; height: 32px; font-size: 0.8rem; margin-right: 0; }
   
   .filter-bar { flex-direction: column; gap: 0.5rem; padding: 0.75rem; }
   .filter-bar select, .filter-bar input, .filter-bar button { width: 100%; }
