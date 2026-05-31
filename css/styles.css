@@ -328,10 +328,13 @@ body {
 }
 
 @media (max-width: 768px) {
-  .login-page { flex-direction: column; }
-  .login-left { padding: 2rem; text-align: center; }
+  .login-page { flex-direction: column; overflow-y: auto; }
+  .login-left { flex: none; padding: 2rem 1rem; text-align: center; }
+  .login-left h1 { font-size: 2rem; }
+  .login-tagline { font-size: 1.1rem; margin-bottom: 1rem; }
+  .login-school, .login-location { font-size: 0.9rem; }
   .login-features { display: none; }
-  .login-card { padding: 2rem 1.5rem; }
+  .login-card { padding: 1.5rem; }
   
   .content-header { 
     padding-left: 3.5rem; 
