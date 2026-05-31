@@ -402,16 +402,20 @@ const Relatorios = {
 
       // Gender counts
       const totalM = activeStudents.filter(s => s.sexo === 'F').length; // M stands for Mulheres (Female)
+      const totalH = activeStudents.filter(s => s.sexo === 'M').length; // H stands for Homens (Male)
       const totalHM = activeStudents.length; // HM stands for Homens + Mulheres (Total)
 
       // Set Turma Indicators defaults
+      document.getElementById('ind-mat-h').value = totalH;
       document.getElementById('ind-mat-m').value = totalM;
       document.getElementById('ind-mat-hm').value = totalHM;
+      document.getElementById('ind-ini-h').value = totalH;
       document.getElementById('ind-ini-m').value = totalM;
       document.getElementById('ind-ini-hm').value = totalHM;
 
       // Compute quarterly average and positive students count
       const trimKey = 'mt' + trimVal;
+      let posH = 0;
       let posM = 0;
       let posHM = 0;
 
@@ -442,44 +446,55 @@ const Relatorios = {
             posHM++;
             if (s.sexo === 'F') {
               posM++;
+            } else {
+              posH++;
             }
           }
         });
 
+      document.getElementById('ind-pos-h').textContent = posH;
       document.getElementById('ind-pos-m').textContent = posM;
       document.getElementById('ind-pos-hm').textContent = posHM;
 
       // Add event listeners for inputs to update Fim do Trimestre and Aproveitamento % dynamically
       const updateFrequencia = () => {
+        const iniH = parseInt(document.getElementById('ind-ini-h').value) || 0;
         const iniM = parseInt(document.getElementById('ind-ini-m').value) || 0;
         const iniHM = parseInt(document.getElementById('ind-ini-hm').value) || 0;
+        const desH = parseInt(document.getElementById('ind-des-h').value) || 0;
         const desM = parseInt(document.getElementById('ind-des-m').value) || 0;
         const desHM = parseInt(document.getElementById('ind-des-hm').value) || 0;
+        const entH = parseInt(document.getElementById('ind-ent-h').value) || 0;
         const entM = parseInt(document.getElementById('ind-ent-m').value) || 0;
         const entHM = parseInt(document.getElementById('ind-ent-hm').value) || 0;
+        const saiH = parseInt(document.getElementById('ind-sai-h').value) || 0;
         const saiM = parseInt(document.getElementById('ind-sai-m').value) || 0;
         const saiHM = parseInt(document.getElementById('ind-sai-hm').value) || 0;
 
+        const fimH = iniH - desH - saiH + entH;
         const fimM = iniM - desM - saiM + entM;
         const fimHM = iniHM - desHM - saiHM + entHM;
 
+        document.getElementById('ind-fim-h').textContent = fimH;
         document.getElementById('ind-fim-m').textContent = fimM;
         document.getElementById('ind-fim-hm').textContent = fimHM;
 
+        const aprovH = fimH > 0 ? ((posH / fimH) * 100).toFixed(1) + '%' : '0%';
         const aprovM = fimM > 0 ? ((posM / fimM) * 100).toFixed(1) + '%' : '0%';
         const aprovHM = fimHM > 0 ? ((posHM / fimHM) * 100).toFixed(1) + '%' : '0%';
 
+        document.getElementById('ind-aprov-h').textContent = aprovH;
         document.getElementById('ind-aprov-m').textContent = aprovM;
         document.getElementById('ind-aprov-hm').textContent = aprovHM;
       };
 
       // Register input change listeners
       const inputs = [
-        'ind-mat-m', 'ind-mat-hm',
-        'ind-ini-m', 'ind-ini-hm',
-        'ind-des-m', 'ind-des-hm',
-        'ind-ent-m', 'ind-ent-hm',
-        'ind-sai-m', 'ind-sai-hm'
+        'ind-mat-h', 'ind-mat-m', 'ind-mat-hm',
+        'ind-ini-h', 'ind-ini-m', 'ind-ini-hm',
+        'ind-des-h', 'ind-des-m', 'ind-des-hm',
+        'ind-ent-h', 'ind-ent-m', 'ind-ent-hm',
+        'ind-sai-h', 'ind-sai-m', 'ind-sai-hm'
       ];
       inputs.forEach(id => {
         const el = document.getElementById(id);
