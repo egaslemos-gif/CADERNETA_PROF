@@ -412,14 +412,16 @@ function getAllStudentsConsolidated() {
             numero: student.numero,
             nome: student.nome,
             sexo: student.sexo,
-            isTransferido: student.isTransferido || false,
+            isTransferido: false,
             disciplinas: {},
             _mfds: [],
             _comportamentos: []
           };
         }
 
-        // Adicionar dados da disciplina
+        if (student.isTransferido) { studentMap[key].isTransferido = true; }
+
+          // Adicionar dados da disciplina
         studentMap[key].disciplinas[disc.sheetName] = {
           mt1: student.mtFinal[0],
           mt2: student.mtFinal[1],
@@ -895,7 +897,7 @@ function _invalidateCache(sheetName) {
 /**
  * Marca ou desmarca um aluno como Transferido em TODAS as disciplinas.
  * @param {string} studentName Nome do aluno (limpo)
- * @param {boolean} isTransferred true se foi transferido, false caso contrário
+ * @param {boolean} isTransferred true se foi transferido, false caso contrï¿½rio
  */
 function markStudentAsTransferred(studentName, isTransferred) {
   try {
@@ -903,12 +905,12 @@ function markStudentAsTransferred(studentName, isTransferred) {
     const sheets = ss.getSheets();
     const searchName = String(studentName || "").toUpperCase().trim();
 
-    if (!searchName) throw new Error("Nome do aluno não fornecido.");
+    if (!searchName) throw new Error("Nome do aluno nï¿½o fornecido.");
 
     let updated = 0;
 
     sheets.forEach(sheet => {
-      // Ignorar abas ocultas ou que não sejam disciplinas
+      // Ignorar abas ocultas ou que nï¿½o sejam disciplinas
       const name = sheet.getName();
       if (name.includes("Pauta") || name.includes("Dashboard") || name.includes("Acta")) return;
 
@@ -932,7 +934,7 @@ function markStudentAsTransferred(studentName, isTransferred) {
               updated++;
             }
           }
-          break; // Avançar para a próxima disciplina
+          break; // Avanï¿½ar para a prï¿½xima disciplina
         }
       }
     });

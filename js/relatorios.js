@@ -396,7 +396,7 @@ const Relatorios = {
 
       // Statistics calculations
       const students = this.students;
-      const activeStudents = students.filter(s => s.nome && s.nome.trim() !== '');
+      const activeStudents = students.filter(s => s.nome && s.nome.trim() !== '' && !s.isTransferido);
 
       // Gender counts
       const totalM = activeStudents.filter(s => s.sexo === 'F').length; // M stands for Mulheres (Female)
