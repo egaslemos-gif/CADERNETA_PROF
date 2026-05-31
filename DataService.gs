@@ -57,7 +57,7 @@ function parseNumber(value) {
   if (value === null || value === undefined || value === '') return 0;
 
   // Se já é número, devolver directamente
-  if (typeof value === 'number') return value;
+  if (typeof value === 'number') return Math.round(value);
 
   // Converter para string e substituir vírgula por ponto
   let str = String(value).trim();
@@ -67,7 +67,7 @@ function parseNumber(value) {
   str = str.replace(/\s/g, '').replace(',', '.');
 
   const num = parseFloat(str);
-  return isNaN(num) ? 0 : num;
+  return isNaN(num) ? 0 : Math.round(num);
 }
 
 // ---------------------------------------------------------------------------
@@ -449,7 +449,7 @@ function getAllStudentsConsolidated() {
     const consolidated = Object.values(studentMap).map(student => {
       // Média geral: média dos MFD de todas as disciplinas
       const mediaGeral = student._mfds.length > 0
-        ? Math.round((student._mfds.reduce((a, b) => a + b, 0) / student._mfds.length) * 10) / 10
+        ? Math.round(student._mfds.reduce((a, b) => a + b, 0) / student._mfds.length)
         : 0;
 
       // Comportamento geral: o mais frequente
@@ -523,7 +523,7 @@ function getDashboardStats() {
       .map(a => a.mediaGeral);
 
     const mediaGeral = mfdsValidos.length > 0
-      ? Math.round((mfdsValidos.reduce((a, b) => a + b, 0) / mfdsValidos.length) * 10) / 10
+      ? Math.round(mfdsValidos.reduce((a, b) => a + b, 0) / mfdsValidos.length)
       : 0;
 
     // --- Alunos críticos (MFD < 9.5) ---
@@ -534,7 +534,7 @@ function getDashboardStats() {
       const students = getStudentsByDiscipline(disc.sheetName);
       const mfds = students.filter(s => !s.isTransferido && s.mfd > 0).map(s => s.mfd);
       const media = mfds.length > 0
-        ? Math.round((mfds.reduce((a, b) => a + b, 0) / mfds.length) * 10) / 10
+        ? Math.round(mfds.reduce((a, b) => a + b, 0) / mfds.length)
         : 0;
 
       return {
@@ -808,6 +808,52 @@ function updateBehavior(sheetName, studentRow, trimester, value) {
   } catch (erro) {
     Logger.log('Erro ao actualizar comportamento: ' + erro.message);
     return { success: false, error: 'Erro ao actualizar comportamento: ' + erro.message };
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Actualização em Lote (Batch)
+// ---------------------------------------------------------------------------
+
+/**
+ * Actualiza múltiplas células de uma só vez (notas ou comportamentos).
+ * Reduz drasticamente as chamadas à API do Google Sheets.
+ *
+ * @param {string} sheetName Nome da tab (ex: 'PORTUGUES').
+ * @param {Array<Object>} updates Array de objectos { row, col, val }
+ * @return {Object}  { success: boolean, error?: string }
+ */
+function batchUpdate(sheetName, updates) {
+  try {
+    if (!sheetName || !Array.isArray(updates) || updates.length === 0) {
+      return { success: false, error: 'Parâmetros insuficientes ou vazios.' };
+    }
+
+    const ss = getSpreadsheet();
+    const sheet = ss.getSheetByName(sheetName);
+
+    if (!sheet) {
+      return { success: false, error: 'Tab "' + sheetName + '" não encontrada.' };
+    }
+
+    // Aplica todas as actualizações uma a uma
+    // Em arrays grandes seria melhor construir um range contíguo se possível,
+    // mas para um número limitado de notas, múltiplos setValue já são muito
+    // mais rápidos que múltiplos requests HTTP.
+    updates.forEach(u => {
+      if (u.row && u.col !== undefined) {
+        sheet.getRange(u.row, u.col + 1).setValue(u.val);
+      }
+    });
+
+    // Invalidar cache
+    _invalidateCache(sheetName);
+
+    Logger.log('Lote actualizado na folha: ' + sheetName + ' com ' + updates.length + ' registos.');
+    return { success: true };
+  } catch (erro) {
+    Logger.log('Erro ao actualizar lote: ' + erro.message);
+    return { success: false, error: 'Erro ao actualizar lote: ' + erro.message };
   }
 }
 

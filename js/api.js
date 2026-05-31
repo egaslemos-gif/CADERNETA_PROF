@@ -334,7 +334,8 @@ const API = {
     
     // Para autenticação e escrita, usar POST (dados sensíveis)
     const writeFunctions = ['authenticate', 'authenticateWithGoogle', 'updateGrade', 'updateBehavior', 
-                            'generateAndSavePautaPDF', 'generateAndSaveBoletimPDF', 'clearAllCache', 'markStudentAsTransferred'];
+                            'batchUpdate', 'generateAndSavePautaPDF', 'generateAndSaveBoletimPDF', 'clearAllCache', 
+                            'markStudentAsTransferred'];
     
     if (writeFunctions.includes(functionName)) {
       return this._fetchPost(functionName, paramMap);
@@ -354,6 +355,7 @@ const API = {
       'getStudentDetail':         ['studentName'],
       'updateGrade':              ['sheetName', 'studentRow', 'column', 'value'],
       'updateBehavior':           ['sheetName', 'studentRow', 'trimester', 'value'],
+      'batchUpdate':              ['sheetName', 'updates'],
       'generateAndSavePautaPDF':  ['disciplina', 'trimestre'],
       'generateAndSaveBoletimPDF':['studentName', 'trimestre'],
       'markStudentAsTransferred': ['studentName', 'isTransferred']
@@ -465,6 +467,7 @@ const API = {
   listPDFs: () => API.call('listSavedPDFs'),
   updateGrade: (s, row, col, v) => API.call('updateGrade', s, row, col, v),
   updateBehavior: (s, row, t, v) => API.call('updateBehavior', s, row, t, v),
+  batchUpdate: (s, updates) => API.call('batchUpdate', s, updates),
   markStudentAsTransferred: (s, isTransferred) => API.call('markStudentAsTransferred', s, isTransferred)
 };
 

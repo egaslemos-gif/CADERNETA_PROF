@@ -185,7 +185,7 @@ const Disciplinas = {
               
               const rowIndex = parseInt(e.target.getAttribute('data-row'));
               const col = e.target.getAttribute('data-col');
-              const val = parseFloat(e.target.value) || 0;
+              const val = e.target.value === '' ? '' : (parseFloat(e.target.value) || 0);
               
               const offsets = {
                 1: { "0": 4, "1": 5, "2": 6, "3": 7, "at": 9 },
@@ -254,30 +254,35 @@ const Disciplinas = {
         const gradeInputs = document.querySelectorAll('.grade-input');
         const compInputs = document.querySelectorAll('.comp-select');
         
-        let updatePromises = [];
+        let updates = [];
+        
         const offsets = {
           1: { "0": 4, "1": 5, "2": 6, "3": 7, "at": 9 },
           2: { "0": 13, "1": 14, "2": 15, "3": 16, "at": 18 },
           3: { "0": 22, "1": 23, "2": 24, "3": 25, "at": 27 }
         };
 
+        const compColumns = { 1: 11, 2: 20, 3: 29 };
+
         gradeInputs.forEach(input => {
           const rowIndex = parseInt(input.getAttribute('data-row'));
-          const col = input.getAttribute('data-col');
-          const val = parseFloat(input.value) || 0;
+          const col = input.getAttribute('data-col'); // 0, 1, 2, 3, at
+          const val = input.value === '' ? '' : (parseFloat(input.value) || 0);
           const physCol = offsets[activeTrim][col];
-          updatePromises.push(API.updateGrade(this.currentSheetData.sheetName, rowIndex, physCol, val));
+          updates.push({ row: rowIndex, col: physCol, val: val });
         });
 
         compInputs.forEach(select => {
            const rowIndex = parseInt(select.getAttribute('data-row'));
            const val = select.value;
-           updatePromises.push(API.updateBehavior(this.currentSheetData.sheetName, rowIndex, activeTrim, val));
+           const physCol = compColumns[activeTrim];
+           updates.push({ row: rowIndex, col: physCol, val: val });
         });
 
-        await Promise.all(updatePromises);
-        Swal.fire('Guardado', 'Notas sincronizadas com o Google Sheets.', 'success');
+        await API.batchUpdate(this.currentSheetData.sheetName, updates);
+        Swal.fire('Guardado', 'Lote de notas sincronizado com sucesso.', 'success');
         
+        // Refresh local data model
         const students = await API.getStudentsByDiscipline(this.currentSheetData.sheetName);
         this.currentSheetData.students = students;
         
