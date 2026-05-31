@@ -1304,10 +1304,11 @@ body {
                                     <input type="text" class="acta-input-inline" id="acta-sala" style="width: 50px;" placeholder="sala"> o conselho de notas da turma 
                                     <span class="fw-bold" id="acta-turma-nome">---</span> da <span class="fw-bold">4ª</span> Classe, a fim de dar execução do disposto nos artigos (82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 96, 97, 98, 99 e 107) do regulamento Geral do ensino Básico.
                                 </p>
-                                <p class="acta-paragraph mb-4">
-                                    O conselho, por acordo unânime, votou as classificações que constam da respectiva pauta das quais se extraíram em resumo os seguintes resultados:
+                                <p class="text-justify mb-4" style="line-height: 1.6;">
+                                    O conselho, por acordo unânime dos seus membros, deliberou aprovar o que se segue:
                                 </p>
 
+                                <div class="acta-section-title fw-bold fs-5 mb-2">I. Indicadores da Turma</div>
                                 <table class="acta-table mt-2" id="table-acta-indicadores">
                                     <thead>
                                         <tr>
@@ -1319,52 +1320,52 @@ body {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="text-left">Nº de alunos matriculados ou 3 de Março</td>
+                                            <td class="text-left">Matriculados</td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-mat-h" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-mat-m" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-mat-hm" min="0" value="0"></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-left">Nº de alunos no Início do Trimestre</td>
+                                            <td class="text-left">Início do Trimestre</td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ini-h" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ini-m" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ini-hm" min="0" value="0"></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-left">Nº de alunos Desistentes</td>
+                                            <td class="text-left">Desistentes</td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-des-h" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-des-m" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-des-hm" min="0" value="0"></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-left">Nº de alunos vindos transferidos (Entradas)</td>
+                                            <td class="text-left">Transferidos de (Entradas)</td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ent-h" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ent-m" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-ent-hm" min="0" value="0"></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-left">Nº de alunos transferidos (Saída)</td>
+                                            <td class="text-left">Transferidos para (Saídas)</td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-sai-h" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-sai-m" min="0" value="0"></td>
                                             <td><input type="number" class="acta-input-inline text-center w-100" id="ind-sai-hm" min="0" value="0"></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-left">Nº de alunos que chegaram no fim do Trimestre ou Fim do Ano</td>
-                                            <td id="ind-fim-h">0</td>
-                                            <td id="ind-fim-m">0</td>
-                                            <td id="ind-fim-hm">0</td>
+                                            <td class="text-left fw-bold">Fim do Trimestre (Frequência)</td>
+                                            <td id="ind-fim-h" class="fw-bold">0</td>
+                                            <td id="ind-fim-m" class="fw-bold">0</td>
+                                            <td id="ind-fim-hm" class="fw-bold">0</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-left">Nº de alunos em situação positiva</td>
-                                            <td id="ind-pos-h">0</td>
-                                            <td id="ind-pos-m">0</td>
-                                            <td id="ind-pos-hm">0</td>
+                                            <td class="text-left fw-bold">Positivas (+ Português & Matemática)</td>
+                                            <td id="ind-pos-h" class="fw-bold">0</td>
+                                            <td id="ind-pos-m" class="fw-bold">0</td>
+                                            <td id="ind-pos-hm" class="fw-bold">0</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-left">Percentagem de Situação Positiva (%)</td>
-                                            <td id="ind-aprov-h">0%</td>
-                                            <td id="ind-aprov-m">0%</td>
-                                            <td id="ind-aprov-hm">0%</td>
+                                            <td class="text-left fw-bold">Aproveitamento (%)</td>
+                                            <td id="ind-aprov-h" class="fw-bold">0%</td>
+                                            <td id="ind-aprov-m" class="fw-bold">0%</td>
+                                            <td id="ind-aprov-hm" class="fw-bold">0%</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1374,7 +1375,7 @@ body {
                                     <textarea class="acta-textarea flex-grow-1" id="acta-causas-desistencias" style="min-height: 40px; border: none; border-bottom: 1px dashed #000; padding: 0; background-color: transparent; resize: none;"></textarea>
                                 </div>
 
-                                <div class="text-center fw-bold mb-2 mt-4" style="text-transform: uppercase;">Aproveitamento Pedagógico</div>
+                                <div class="acta-section-title fw-bold fs-5 mt-4 mb-2">II. Aproveitamento Pedagógico por Disciplina</div>
                                 <table class="acta-table" id="table-acta-aproveitamento">
                                     <thead>
                                         <tr>
