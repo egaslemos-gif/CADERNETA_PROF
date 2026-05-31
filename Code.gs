@@ -50,7 +50,7 @@ function doGet(e) {
     }
 
     // ---------- Modo normal: servir HTML ----------
-    const template = HtmlService.createTemplateFromFile('index');
+    const template = HtmlService.createTemplateFromFile('app');
     const output = template.evaluate();
 
     output

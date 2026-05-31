@@ -5,6 +5,6 @@ build_gas.js
 *.txt
 .gemini/**
 serve.js
-index-local.html
+index.html
 node_modules/**
 .git/**
