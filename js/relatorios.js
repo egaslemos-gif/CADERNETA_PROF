@@ -5,7 +5,8 @@ const Relatorios = {
 
   async init() {
     try {
-      this.students = await API.getAllStudentsConsolidated();
+      const allStudents = await API.getAllStudentsConsolidated();
+      this.students = Array.isArray(allStudents) ? allStudents.filter(s => !s.isTransferido) : [];
       this.setupTabs();
       this.setupFilters();
       this.loadData();
@@ -17,7 +18,8 @@ const Relatorios = {
   async loadData() {
     // If called by auto-sync, fetch fresh data
     if (this.students.length === 0 || document.querySelector('.sidebar-item.active').getAttribute('data-page') === 'relatorios') {
-       this.students = await App.schoolData ? await API.getAllStudentsConsolidated() : this.students;
+       const allStudents = await App.schoolData ? await API.getAllStudentsConsolidated() : this.students;
+       this.students = Array.isArray(allStudents) ? allStudents.filter(s => !s.isTransferido) : [];
     }
     this.loadReport(this.currentType);
   },

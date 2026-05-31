@@ -16,11 +16,12 @@ const Alunos = {
   },
 
   updateStats() {
-    document.getElementById('stat-total').textContent = this.students.length;
-    document.getElementById('stat-masculino').textContent = this.students.filter(s => s.sexo === 'M').length;
-    document.getElementById('stat-feminino').textContent = this.students.filter(s => s.sexo === 'F').length;
+    const activeStudents = this.students.filter(s => !s.isTransferido);
+    document.getElementById('stat-total').textContent = activeStudents.length;
+    document.getElementById('stat-masculino').textContent = activeStudents.filter(s => s.sexo === 'M').length;
+    document.getElementById('stat-feminino').textContent = activeStudents.filter(s => s.sexo === 'F').length;
     
-    const media = this.students.reduce((acc, s) => acc + s.mediaGeral, 0) / this.students.length;
+    const media = activeStudents.length > 0 ? activeStudents.reduce((acc, s) => acc + s.mediaGeral, 0) / activeStudents.length : 0;
     document.getElementById('stat-media').textContent = Utils.formatNumber(media);
   },
 
