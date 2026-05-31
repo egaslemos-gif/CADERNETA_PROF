@@ -462,6 +462,7 @@ function getAllStudentsConsolidated() {
         numero: student.numero,
         nome: student.nome,
         sexo: student.sexo,
+        isTransferido: student.isTransferido,
         disciplinas: student.disciplinas,
         mediaGeral: mediaGeral,
         comportamentoGeral: comportamentoGeral,
