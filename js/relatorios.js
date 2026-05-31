@@ -488,8 +488,23 @@ const Relatorios = {
         { label: 'Matemática', key: 'MATEMATICA' },
         { label: 'C. naturais', key: 'CIENCIAS NATURAIS' },
         { label: 'Ed. Visual', key: 'ED. VISUAL' },
-        { label: 'Ed. Física', key: 'ED. FISICA' }
+        { label: 'Ed. Física', key: 'ED. FISICA' },
+        { label: 'Ofícios', key: 'OFICIOS' },
+        { label: 'Ed. Musical', key: 'ED. MUSICAL' }
       ];
+
+      // Fuzzy match real keys from the Google Sheets
+      const availableKeys = activeStudents.length > 0 ? Object.keys(activeStudents[0].disciplinas) : [];
+      const cleanStr = str => str.replace(/[^A-Z]/gi, '').toLowerCase();
+      
+      disciplinesToRender.forEach(d => {
+        let actualKey = d.key;
+        if (!availableKeys.includes(d.key)) {
+           const found = availableKeys.find(k => cleanStr(k) === cleanStr(d.key));
+           if (found) actualKey = found;
+        }
+        d.key = actualKey;
+      });
 
       let tableHtml = '';
       disciplinesToRender.forEach(d => {
