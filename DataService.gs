@@ -742,6 +742,7 @@ function updateGrade(sheetName, studentRow, column, value) {
     const cell = sheet.getRange(studentRow, column + 1);
     cell.setValue(value);
 
+    SpreadsheetApp.flush();
     // Invalidar cache
     _invalidateCache(sheetName);
 
@@ -800,6 +801,7 @@ function updateBehavior(sheetName, studentRow, trimester, value) {
     const cell = sheet.getRange(studentRow, col + 1);
     cell.setValue(value);
 
+    SpreadsheetApp.flush();
     // Invalidar cache
     _invalidateCache(sheetName);
 
@@ -846,6 +848,7 @@ function batchUpdate(sheetName, updates) {
       }
     });
 
+    SpreadsheetApp.flush();
     // Invalidar cache
     _invalidateCache(sheetName);
 
