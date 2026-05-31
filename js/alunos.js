@@ -79,10 +79,13 @@ const Alunos = {
         { data: 'numero' },
         { 
           data: 'nome',
-          render: (data) => `
+          render: (data, type, row) => `
             <div class="d-flex align-items-center">
               <div class="student-avatar me-3" style="background: ${Utils.getAvatarColor(data)}">${Utils.getInitials(data)}</div>
-              <span class="fw-bold">${data}</span>
+              <div class="d-flex flex-column">
+                <span class="fw-bold ${row.isTransferido ? 'text-muted text-decoration-line-through' : ''}">${data}</span>
+                ${row.isTransferido ? '<span class="badge bg-secondary" style="font-size:0.6rem;width:fit-content">TRANSFERIDO</span>' : ''}
+              </div>
             </div>
           `
         },
@@ -125,37 +128,84 @@ const Alunos = {
     const student = this.students.find(s => s.nome === name);
     if(!student) return;
     
+    const html = `
+      <div class="text-center mb-4">
+        <div class="student-avatar mx-auto mb-2" style="width:80px;height:80px;font-size:2rem;background:${Utils.getAvatarColor(student.nome)}">${Utils.getInitials(student.nome)}</div>
+        <h5>${student.nome} ${student.isTransferido ? '<span class="badge bg-secondary fs-6 align-middle ms-2">TRANSFERIDO</span>' : ''}</h5>
+        <p class="text-secondary mb-2">Nº ${student.numero} | Sexo: ${student.sexo}</p>
+        <div class="d-flex justify-content-center gap-2 mb-3">
+          ${Utils.getGradeBadge(student.mediaGeral)}
+          ${Utils.getBehaviorBadge(student.comportamentoGeral)}
+        </div>
+        <button id="btn-toggle-transfer" class="btn btn-sm ${student.isTransferido ? 'btn-outline-success' : 'btn-outline-secondary'}">
+          <i class="fa-solid ${student.isTransferido ? 'fa-check' : 'fa-right-from-bracket'} me-1"></i>
+          ${student.isTransferido ? 'Desmarcar Transferência' : 'Marcar como Transferido'}
+        </button>
+      </div>
+      <hr>
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead><tr><th>Disciplina</th><th>Média</th><th>Situação</th></tr></thead>
+          <tbody>
+            ${Object.entries(student.disciplinas).map(([disc, data]) => `
+              <tr>
+                <td class="text-start">${disc}</td>
+                <td>${Utils.getGradeBadge(data.mfd)}</td>
+                <td>${data.resultado}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
     Swal.fire({
       title: 'Perfil do Aluno',
-      html: `
-        <div class="text-center mb-4">
-          <div class="student-avatar mx-auto mb-2" style="width:80px;height:80px;font-size:2rem;background:${Utils.getAvatarColor(student.nome)}">${Utils.getInitials(student.nome)}</div>
-          <h5>${student.nome}</h5>
-          <p class="text-secondary mb-2">Nº ${student.numero} | Sexo: ${student.sexo}</p>
-          <div class="d-flex justify-content-center gap-2">
-            ${Utils.getGradeBadge(student.mediaGeral)}
-            ${Utils.getBehaviorBadge(student.comportamentoGeral)}
-          </div>
-        </div>
-        <hr>
-        <div class="table-responsive">
-          <table class="table table-sm">
-            <thead><tr><th>Disciplina</th><th>Média</th><th>Situação</th></tr></thead>
-            <tbody>
-              ${Object.entries(student.disciplinas).map(([disc, data]) => `
-                <tr>
-                  <td class="text-start">${disc}</td>
-                  <td>${Utils.getGradeBadge(data.mfd)}</td>
-                  <td>${data.resultado}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `,
-      width: 600,
+      html: html,
+      width: '600px',
       showCloseButton: true,
-      showConfirmButton: false
+      showConfirmButton: false,
+      didOpen: () => {
+        document.getElementById('btn-toggle-transfer').addEventListener('click', async () => {
+          const newState = !student.isTransferido;
+          const confirmMsg = newState 
+            ? `Tem a certeza que deseja marcar <b>${student.nome}</b> como TRANSFERIDO? O aluno será removido das estatísticas gerais.`
+            : `Tem a certeza que deseja remover o estado de TRANSFERIDO de <b>${student.nome}</b>? O aluno voltará às estatísticas.`;
+            
+          const confirm = await Swal.fire({
+            title: 'Confirmar Acção',
+            html: confirmMsg,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, prosseguir',
+            cancelButtonText: 'Cancelar'
+          });
+
+          if (confirm.isConfirmed) {
+            try {
+              Swal.fire({
+                title: 'A processar...',
+                text: 'A actualizar dados nas folhas de disciplina. Isto pode demorar alguns segundos.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+              });
+              
+              const res = await API.markStudentAsTransferred(student.nome, newState);
+              
+              if (res.success) {
+                Utils.showToast(`Estado actualizado com sucesso em ${res.updatedSheets} disciplinas!`, 'success');
+                // Refresh the table data
+                this.loadData();
+              } else {
+                Utils.showToast(res.error || 'Erro ao actualizar estado', 'error');
+              }
+            } catch (e) {
+              console.error(e);
+              Utils.showToast('Ocorreu um erro inesperado.', 'error');
+            }
+          }
+        });
+      }
     });
   }
 };

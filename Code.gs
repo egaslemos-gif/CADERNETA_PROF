@@ -125,6 +125,7 @@ function _handleApiRequest(action, params) {
     // Escrita
     updateGrade:    () => updateGrade(params.sheetName, params.studentRow, params.column, params.value),
     updateBehavior: () => updateBehavior(params.sheetName, params.studentRow, params.trimester, params.value),
+    markStudentAsTransferred: () => markStudentAsTransferred(params.studentName, params.isTransferred),
 
     // PDF / Drive
     generateAndSavePautaPDF:    () => typeof generateAndSavePautaPDF === 'function' ? generateAndSavePautaPDF(params.disciplina, params.trimestre) : { success: false, error: 'PDF service não disponível' },

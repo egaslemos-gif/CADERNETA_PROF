@@ -288,9 +288,12 @@ function getStudentsByDiscipline(sheetName) {
 
       // Ignorar linhas sem n√∫mero ou nome
       const numero = row[0];
-      const nome = String(row[1] || '').trim();
+      let nomeRaw = String(row[1] || '').trim();
 
-      if (!nome || nome === '') continue;
+      if (!nomeRaw || nomeRaw === '') continue;
+
+      const isTransferido = nomeRaw.toUpperCase().includes('TRANSFERIDO');
+      const nome = nomeRaw.replace(/\(?TRANSFERIDO\)?/gi, '').trim();
 
       // Sexo
       const sexoF = row[2] === true || String(row[2]).toUpperCase() === 'TRUE';
@@ -350,6 +353,7 @@ function getStudentsByDiscipline(sheetName) {
         numero: numero,
         nome: nome,
         sexo: sexo,
+        isTransferido: isTransferido,
         rowIndex: i + 1, // 1-indexed (para uso em updateGrade)
         trimestres: [trim1, trim2, trim3],
         mtFinal: [mt1, mt2, mt3],
@@ -408,6 +412,7 @@ function getAllStudentsConsolidated() {
             numero: student.numero,
             nome: student.nome,
             sexo: student.sexo,
+            isTransferido: student.isTransferido || false,
             disciplinas: {},
             _mfds: [],
             _comportamentos: []
@@ -503,19 +508,19 @@ function getDashboardStats() {
     }
 
     const disciplines = getDisciplines();
-    const consolidated = getAllStudentsConsolidated();
+    const consolidated = getAllStudentsConsolidated().filter(s => !s.isTransferido);
 
     // --- Totais ---
     const totalAlunos = consolidated.length;
     const totalDisciplinas = disciplines.length;
 
     // --- M√©dia geral de todas as disciplinas ---
-    const todasMedias = consolidated
+    const mfdsValidos = consolidated
       .filter(a => a.mediaGeral > 0)
       .map(a => a.mediaGeral);
 
-    const mediaGeral = todasMedias.length > 0
-      ? Math.round((todasMedias.reduce((a, b) => a + b, 0) / todasMedias.length) * 10) / 10
+    const mediaGeral = mfdsValidos.length > 0
+      ? Math.round((mfdsValidos.reduce((a, b) => a + b, 0) / mfdsValidos.length) * 10) / 10
       : 0;
 
     // --- Alunos cr√≠ticos (MFD < 9.5) ---
@@ -524,7 +529,7 @@ function getDashboardStats() {
     // --- M√©dias por disciplina ---
     const mediasPorDisciplina = disciplines.map(disc => {
       const students = getStudentsByDiscipline(disc.sheetName);
-      const mfds = students.filter(s => s.mfd > 0).map(s => s.mfd);
+      const mfds = students.filter(s => !s.isTransferido && s.mfd > 0).map(s => s.mfd);
       const media = mfds.length > 0
         ? Math.round((mfds.reduce((a, b) => a + b, 0) / mfds.length) * 10) / 10
         : 0;
@@ -886,3 +891,59 @@ function _invalidateCache(sheetName) {
     Logger.log('Aviso: n√£o foi poss√≠vel invalidar cache: ' + e.message);
   }
 }
+
+/**
+ * Marca ou desmarca um aluno como Transferido em TODAS as disciplinas.
+ * @param {string} studentName Nome do aluno (limpo)
+ * @param {boolean} isTransferred true se foi transferido, false caso contr·rio
+ */
+function markStudentAsTransferred(studentName, isTransferred) {
+  try {
+    const ss = getSpreadsheet();
+    const sheets = ss.getSheets();
+    const searchName = String(studentName || "").toUpperCase().trim();
+
+    if (!searchName) throw new Error("Nome do aluno n„o fornecido.");
+
+    let updated = 0;
+
+    sheets.forEach(sheet => {
+      // Ignorar abas ocultas ou que n„o sejam disciplinas
+      const name = sheet.getName();
+      if (name.includes("Pauta") || name.includes("Dashboard") || name.includes("Acta")) return;
+
+      const data = sheet.getDataRange().getValues();
+      for (let i = 4; i < data.length; i++) {
+        let currentName = String(data[i][1] || "").trim();
+        if (!currentName) continue;
+
+        let cleanName = currentName.replace(/\(?TRANSFERIDO\)?/gi, "").trim().toUpperCase();
+
+        if (cleanName === searchName) {
+          if (isTransferred) {
+            if (!currentName.toUpperCase().includes("TRANSFERIDO")) {
+              sheet.getRange(i + 1, 2).setValue(currentName + " (TRANSFERIDO)");
+              updated++;
+            }
+          } else {
+            if (currentName.toUpperCase().includes("TRANSFERIDO")) {
+              let restoredName = currentName.replace(/\s*\(?TRANSFERIDO\)?/gi, "").trim();
+              sheet.getRange(i + 1, 2).setValue(restoredName);
+              updated++;
+            }
+          }
+          break; // AvanÁar para a prÛxima disciplina
+        }
+      }
+    });
+
+    // Limpar as caches
+    clearAllCache();
+
+    return { success: true, updatedSheets: updated };
+  } catch (error) {
+    Logger.log("Erro em markStudentAsTransferred: " + error.message);
+    throw error;
+  }
+}
+

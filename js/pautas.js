@@ -97,7 +97,8 @@ const Pautas = {
           const macs = tData.macs ? Number(tData.macs).toFixed(1) : '—';
           const at = tData.at ? Number(tData.at).toFixed(1) : '—';
           const mt = tData.mt ? Number(tData.mt).toFixed(1) : '—';
-          html += `<tr><td>${s.numero}</td><td>${s.nome}</td><td>${macs}</td><td>${at}</td><td><strong>${mt}</strong></td><td>${tData.comp||'Regular'}</td></tr>`;
+          const nameHtml = s.isTransferido ? `<span style="color:#999;">${s.nome} <b style="font-size:0.8em">(TRANSFERIDO)</b></span>` : s.nome;
+          html += `<tr><td>${s.numero}</td><td>${nameHtml}</td><td>${macs}</td><td>${at}</td><td><strong>${mt}</strong></td><td>${tData.comp||'Regular'}</td></tr>`;
         });
         html += `</tbody></table>`;
       } else if (tipo === 'individual') {
@@ -158,7 +159,8 @@ const Pautas = {
 
         allStudents.forEach(s => {
           let row = `<td style="text-align:center">${s.numero}</td>`;
-          row += `<td style="white-space:nowrap;font-weight:500">${s.nome}</td>`;
+          const nameHtml = s.isTransferido ? `<span style="color:#999;">${s.nome} <b style="font-size:0.8em">(TRANSFERIDO)</b></span>` : s.nome;
+          row += `<td style="white-space:nowrap;font-weight:500">${nameHtml}</td>`;
 
           if (isAnual) {
             discNames.forEach(d => {

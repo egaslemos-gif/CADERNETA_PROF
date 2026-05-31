@@ -246,6 +246,10 @@ const MockData = {
     return { success: true };
   },
 
+  markStudentAsTransferred: function(studentName, isTransferred) {
+    return { success: true, updatedSheets: 1 };
+  },
+
   generateAndSavePautaPDF: () => ({ success: true, pdfUrl: '#', fileName: 'Pauta_Mock.pdf' }),
   generateAndSaveBoletimPDF: () => ({ success: true, pdfUrl: '#', fileName: 'Boletim_Mock.pdf' }),
   listSavedPDFs: () => []
@@ -330,7 +334,7 @@ const API = {
     
     // Para autenticação e escrita, usar POST (dados sensíveis)
     const writeFunctions = ['authenticate', 'authenticateWithGoogle', 'updateGrade', 'updateBehavior', 
-                            'generateAndSavePautaPDF', 'generateAndSaveBoletimPDF', 'clearAllCache'];
+                            'generateAndSavePautaPDF', 'generateAndSaveBoletimPDF', 'clearAllCache', 'markStudentAsTransferred'];
     
     if (writeFunctions.includes(functionName)) {
       return this._fetchPost(functionName, paramMap);
@@ -351,7 +355,8 @@ const API = {
       'updateGrade':              ['sheetName', 'studentRow', 'column', 'value'],
       'updateBehavior':           ['sheetName', 'studentRow', 'trimester', 'value'],
       'generateAndSavePautaPDF':  ['disciplina', 'trimestre'],
-      'generateAndSaveBoletimPDF':['studentName', 'trimestre']
+      'generateAndSaveBoletimPDF':['studentName', 'trimestre'],
+      'markStudentAsTransferred': ['studentName', 'isTransferred']
     };
 
     const paramNames = map[functionName] || [];
@@ -459,7 +464,8 @@ const API = {
   generateBoletimPDF: (s, t) => API.call('generateAndSaveBoletimPDF', s, t),
   listPDFs: () => API.call('listSavedPDFs'),
   updateGrade: (s, num, t, c, v) => API.call('updateGrade', s, num, t, c, v),
-  updateBehavior: (s, num, t, v) => API.call('updateBehavior', s, num, t, v)
+  updateBehavior: (s, num, t, v) => API.call('updateBehavior', s, num, t, v),
+  markStudentAsTransferred: (s, isTransferred) => API.call('markStudentAsTransferred', s, isTransferred)
 };
 
 // Utilities
