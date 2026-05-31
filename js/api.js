@@ -463,8 +463,8 @@ const API = {
   generatePautaPDF: (d, t) => API.call('generateAndSavePautaPDF', d, t),
   generateBoletimPDF: (s, t) => API.call('generateAndSaveBoletimPDF', s, t),
   listPDFs: () => API.call('listSavedPDFs'),
-  updateGrade: (s, num, t, c, v) => API.call('updateGrade', s, num, t, c, v),
-  updateBehavior: (s, num, t, v) => API.call('updateBehavior', s, num, t, v),
+  updateGrade: (s, row, col, v) => API.call('updateGrade', s, row, col, v),
+  updateBehavior: (s, row, t, v) => API.call('updateBehavior', s, row, t, v),
   markStudentAsTransferred: (s, isTransferred) => API.call('markStudentAsTransferred', s, isTransferred)
 };
 
@@ -521,10 +521,10 @@ const Utils = {
   getGradeBadge: (grade) => {
     const val = parseFloat(grade) || 0;
     let cls = val >= 14 ? 'bg-success' : (val >= 9.5 ? 'bg-info text-dark' : 'bg-danger');
-    return `<span class="badge ${cls}">${val.toFixed(1)}</span>`;
+    return `<span class="badge ${cls}">${Math.round(val)}</span>`;
   },
   
-  formatNumber: (n) => parseFloat(n).toFixed(1).replace('.', ','),
+  formatNumber: (n) => Math.round(parseFloat(n)).toString(),
   
   showLoading: () => document.getElementById('loading-overlay').style.display = 'flex',
   hideLoading: () => document.getElementById('loading-overlay').style.display = 'none',

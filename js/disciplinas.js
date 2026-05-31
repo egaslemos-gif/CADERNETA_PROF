@@ -67,8 +67,8 @@ const Disciplinas = {
       const media = validMt.reduce((a,b)=>a+b,0) / (validMt.length || 1);
       
       document.getElementById('disc-detail-media').textContent = Utils.formatNumber(media);
-      document.getElementById('disc-detail-max').textContent = Math.max(...validMt, 0).toFixed(1);
-      document.getElementById('disc-detail-min').textContent = Math.min(...validMt, 20).toFixed(1);
+      document.getElementById('disc-detail-max').textContent = Math.round(Math.max(...validMt, 0));
+      document.getElementById('disc-detail-min').textContent = Math.round(Math.min(...validMt, 20));
 
       // Switch view
       document.getElementById('disciplinas-grid').style.display = 'none';
@@ -102,19 +102,19 @@ const Disciplinas = {
         },
         { 
           data: `trimestres.${tIndex}.acs.0`, 
-          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="0" data-num="${row.numero}" value="${v||''}">` 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="0" data-num="${row.numero}" data-row="${row.rowIndex}" value="${v||''}">` 
         },
         { 
           data: `trimestres.${tIndex}.acs.1`, 
-          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="1" data-num="${row.numero}" value="${v||''}">` 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="1" data-num="${row.numero}" data-row="${row.rowIndex}" value="${v||''}">` 
         },
         { 
           data: `trimestres.${tIndex}.acs.2`, 
-          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="2" data-num="${row.numero}" value="${v||''}">` 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="2" data-num="${row.numero}" data-row="${row.rowIndex}" value="${v||''}">` 
         },
         { 
           data: `trimestres.${tIndex}.acs.3`, 
-          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="3" data-num="${row.numero}" value="${v||''}">` 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="3" data-num="${row.numero}" data-row="${row.rowIndex}" value="${v||''}">` 
         },
         { 
           data: `trimestres.${tIndex}.macs`, 
@@ -122,7 +122,7 @@ const Disciplinas = {
         },
         { 
           data: `trimestres.${tIndex}.at`, 
-          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="at" data-num="${row.numero}" value="${v||''}">` 
+          render: (v, type, row) => `<input type="number" min="0" max="20" class="form-control form-control-sm grade-input" data-col="at" data-num="${row.numero}" data-row="${row.rowIndex}" value="${v||''}">` 
         },
         { 
           data: `trimestres.${tIndex}.mt`, 
@@ -131,7 +131,7 @@ const Disciplinas = {
         { 
           data: `trimestres.${tIndex}.comp`,
           render: (v, type, row) => `
-            <select class="form-select form-select-sm comp-select" data-num="${row.numero}">
+            <select class="form-select form-select-sm comp-select" data-num="${row.numero}" data-row="${row.rowIndex}">
               <option value="Excelente" ${v==='Excelente'?'selected':''}>Excelente</option>
               <option value="Bom" ${v==='Bom'?'selected':''}>Bom</option>
               <option value="Regular" ${v==='Regular'||!v?'selected':''}>Regular</option>
@@ -183,13 +183,20 @@ const Disciplinas = {
               e.preventDefault();
               e.target.blur(); // Remove focus to show completion
               
-              const num = parseInt(e.target.getAttribute('data-num'));
+              const rowIndex = parseInt(e.target.getAttribute('data-row'));
               const col = e.target.getAttribute('data-col');
               const val = parseFloat(e.target.value) || 0;
               
+              const offsets = {
+                1: { "0": 4, "1": 5, "2": 6, "3": 7, "at": 9 },
+                2: { "0": 13, "1": 14, "2": 15, "3": 16, "at": 18 },
+                3: { "0": 22, "1": 23, "2": 24, "3": 25, "at": 27 }
+              };
+              const physCol = offsets[activeTrim][col];
+              
               e.target.classList.add('bg-warning', 'bg-opacity-25');
               try {
-                await API.updateGrade(sheetName, num, activeTrim, col, val);
+                await API.updateGrade(sheetName, rowIndex, physCol, val);
                 e.target.classList.remove('bg-warning', 'bg-opacity-25');
                 e.target.classList.add('bg-success', 'bg-opacity-25');
                 setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
@@ -204,12 +211,12 @@ const Disciplinas = {
 
         compSelects.forEach(select => {
           select.addEventListener('change', async (e) => {
-            const num = parseInt(e.target.getAttribute('data-num'));
+            const rowIndex = parseInt(e.target.getAttribute('data-row'));
             const val = e.target.value;
             
             e.target.classList.add('bg-warning', 'bg-opacity-25');
             try {
-              await API.updateBehavior(sheetName, num, activeTrim, val);
+              await API.updateBehavior(sheetName, rowIndex, activeTrim, val);
               e.target.classList.remove('bg-warning', 'bg-opacity-25');
               e.target.classList.add('bg-success', 'bg-opacity-25');
               setTimeout(() => e.target.classList.remove('bg-success', 'bg-opacity-25'), 1000);
@@ -244,31 +251,33 @@ const Disciplinas = {
       
       Utils.showLoading();
       try {
-        // Here we simulate saving all rows that have been edited.
-        // For the MVP, we will gather all inputs from the current page of datatable.
-        // A full implementation would track "dirty" cells via 'change' event on inputs.
         const gradeInputs = document.querySelectorAll('.grade-input');
         const compInputs = document.querySelectorAll('.comp-select');
         
         let updatePromises = [];
+        const offsets = {
+          1: { "0": 4, "1": 5, "2": 6, "3": 7, "at": 9 },
+          2: { "0": 13, "1": 14, "2": 15, "3": 16, "at": 18 },
+          3: { "0": 22, "1": 23, "2": 24, "3": 25, "at": 27 }
+        };
 
         gradeInputs.forEach(input => {
-          const num = parseInt(input.getAttribute('data-num'));
-          const col = input.getAttribute('data-col'); // 0, 1, 2, 3, at
+          const rowIndex = parseInt(input.getAttribute('data-row'));
+          const col = input.getAttribute('data-col');
           const val = parseFloat(input.value) || 0;
-          updatePromises.push(API.updateGrade(this.currentSheetData.sheetName, num, activeTrim, col, val));
+          const physCol = offsets[activeTrim][col];
+          updatePromises.push(API.updateGrade(this.currentSheetData.sheetName, rowIndex, physCol, val));
         });
 
         compInputs.forEach(select => {
-           const num = parseInt(select.getAttribute('data-num'));
+           const rowIndex = parseInt(select.getAttribute('data-row'));
            const val = select.value;
-           updatePromises.push(API.updateBehavior(this.currentSheetData.sheetName, num, activeTrim, val));
+           updatePromises.push(API.updateBehavior(this.currentSheetData.sheetName, rowIndex, activeTrim, val));
         });
 
         await Promise.all(updatePromises);
         Swal.fire('Guardado', 'Notas sincronizadas com o Google Sheets.', 'success');
         
-        // Refresh local data model
         const students = await API.getStudentsByDiscipline(this.currentSheetData.sheetName);
         this.currentSheetData.students = students;
         
