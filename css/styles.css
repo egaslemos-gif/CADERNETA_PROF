@@ -299,7 +299,7 @@ body {
 .pauta-generator select { padding: 0.6rem; border-radius: var(--radius-sm); background: var(--bg-body); color: var(--text-primary); border: 1px solid var(--border-color); }
 #pautas-list .card { margin-bottom: 1rem; border: 1px solid var(--border-color); box-shadow: none; background: transparent; }
 #pautas-list .card:hover { border-color: var(--primary); }
-.pauta-preview-wrapper { background: #ffffff !important; color: #000000 !important; padding: 2rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+.pauta-preview-wrapper { background: #ffffff !important; color: #000000 !important; padding: 2rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .pauta-preview-wrapper * { color: #000000; border-color: #cccccc !important; }
 
 /* Trimester Tabs */
@@ -317,13 +317,40 @@ body {
   .sidebar.show { left: 0; }
   .sidebar-toggle { display: block; }
   .sidebar-overlay.show { display: block; }
-  .content-header { padding-left: 4rem; }
+  .content-header { padding-left: 4rem; padding-right: 1rem; }
+  .content-body { padding: 1.5rem 1rem; }
 }
 
 @media (max-width: 768px) {
   .login-page { flex-direction: column; }
   .login-left { padding: 2rem; text-align: center; }
   .login-features { display: none; }
+  .login-card { padding: 2rem 1.5rem; }
+  
+  .content-header { padding-left: 4rem; flex-direction: column; align-items: flex-start; gap: 1rem; padding-bottom: 1rem; padding-top: 1rem; }
+  .user-profile { align-self: flex-end; margin-top: -3.5rem; }
+  
+  .filter-bar { flex-direction: column; gap: 0.5rem; padding: 0.75rem; }
+  .filter-bar select, .filter-bar input, .filter-bar button { width: 100%; }
+  
+  .card-body { padding: 1rem; }
+  
+  /* Scrollable Tables on Mobile */
+  .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  
+  .kpi-card { padding: 1rem; margin-bottom: 1rem; }
+  .kpi-icon { width: 40px; height: 40px; font-size: 1.25rem; margin-right: 0.75rem; }
+  .kpi-value { font-size: 1.5rem; }
+  
+  .trimester-tab { flex: 1; text-align: center; font-size: 0.85rem; padding: 0.4rem; }
+  
+  .modal-body { padding: 1rem; }
+}
+
+@media (max-width: 480px) {
+  #page-title { font-size: 1.25rem; }
+  .breadcrumb-area { font-size: 0.75rem; }
+  .fab { width: 48px; height: 48px; bottom: 1.5rem; right: 1.5rem; font-size: 1.25rem; }
 }
 
 /* Print */
@@ -333,3 +360,4 @@ body {
   .card { box-shadow: none; border: 1px solid #ccc; }
   #app-shell { height: auto; }
 }
+
