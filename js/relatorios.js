@@ -415,25 +415,36 @@ const Relatorios = {
       let posM = 0;
       let posHM = 0;
 
-      activeStudents.forEach(s => {
-        let sum = 0;
-        let count = 0;
-        const discNames = Object.keys(s.disciplinas);
-        discNames.forEach(d => {
-          const val = s.disciplinas[d] ? s.disciplinas[d][trimKey] : null;
-          if (val !== null && val !== undefined && val !== '' && !isNaN(val)) {
-            sum += Number(val);
-            count++;
+        activeStudents.forEach(s => {
+          const discNames = Object.keys(s.disciplinas);
+          const ptKey = discNames.find(k => k.toUpperCase().includes('PORTUGU'));
+          const matKey = discNames.find(k => k.toUpperCase().includes('MATEM'));
+          
+          let hasPositivePT = false;
+          let hasPositiveMat = false;
+          
+          if (ptKey && s.disciplinas[ptKey]) {
+            const ptVal = s.disciplinas[ptKey][trimKey];
+            if (ptVal !== null && ptVal !== undefined && ptVal !== '' && !isNaN(ptVal)) {
+              if (Number(ptVal) >= 9.5) hasPositivePT = true;
+            }
+          }
+          
+          if (matKey && s.disciplinas[matKey]) {
+            const matVal = s.disciplinas[matKey][trimKey];
+            if (matVal !== null && matVal !== undefined && matVal !== '' && !isNaN(matVal)) {
+              if (Number(matVal) >= 9.5) hasPositiveMat = true;
+            }
+          }
+          
+          // Opção C: Positiva simultânea a Português E Matemática
+          if (hasPositivePT && hasPositiveMat) {
+            posHM++;
+            if (s.sexo === 'F') {
+              posM++;
+            }
           }
         });
-        const avg = count > 0 ? (sum / count) : 0;
-        if (avg >= 9.5) {
-          posHM++;
-          if (s.sexo === 'F') {
-            posM++;
-          }
-        }
-      });
 
       document.getElementById('ind-pos-m').textContent = posM;
       document.getElementById('ind-pos-hm').textContent = posHM;

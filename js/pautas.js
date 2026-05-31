@@ -98,9 +98,9 @@ const Pautas = {
         html += `<table><thead><tr><th>Nº</th><th>Nome</th><th>MACS</th><th>AT</th><th>MT</th><th>Comportamento</th></tr></thead><tbody>`;
         students.forEach(s => {
           const tData = s.trimestres[parseInt(trim)-1] || {};
-          const macs = tData.macs ? Number(tData.macs).toFixed(1) : '—';
-          const at = tData.at ? Number(tData.at).toFixed(1) : '—';
-          const mt = tData.mt ? Number(tData.mt).toFixed(1) : '—';
+          const macs = tData.macs ? Math.round(Number(tData.macs)) : '—';
+          const at = tData.at ? Math.round(Number(tData.at)) : '—';
+          const mt = tData.mt ? Math.round(Number(tData.mt)) : '—';
           const nameHtml = s.isTransferido ? `<span style="color:#999;">${s.nome} <b style="font-size:0.8em">(TRANSFERIDO)</b></span>` : s.nome;
           html += `<tr><td>${s.numero}</td><td>${nameHtml}</td><td>${macs}</td><td>${at}</td><td><strong>${mt}</strong></td><td>${tData.comp||'Regular'}</td></tr>`;
         });
@@ -114,7 +114,7 @@ const Pautas = {
           html += `<table><thead><tr><th>Disciplina</th><th>Média Final</th><th>Comportamento</th><th>Situação</th></tr></thead><tbody>`;
           Object.keys(student.disciplinas).forEach(d => {
              const data = student.disciplinas[d];
-             const mfd = data.mfd ? Number(data.mfd).toFixed(1) : '—';
+             const mfd = data.mfd ? Math.round(Number(data.mfd)) : '—';
              html += `<tr><td>${d}</td><td><strong>${mfd}</strong></td><td>${data.comp}</td><td>${data.resultado}</td></tr>`;
           });
           html += `</tbody></table>`;
@@ -173,11 +173,11 @@ const Pautas = {
               const mfd = data.mfd || 0;
               vals.forEach(v => {
                 const val = v || 0;
-                const display = val > 0 ? val.toFixed(1) : '—';
+                const display = val > 0 ? Math.round(val) : '—';
                 const clr = val > 0 ? (val >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
                 row += `<td style="text-align:center;color:${clr};padding:4px">${display}</td>`;
               });
-              const mfdDisplay = mfd > 0 ? mfd.toFixed(1) : '—';
+              const mfdDisplay = mfd > 0 ? Math.round(mfd) : '—';
               const mfdClr = mfd > 0 ? (mfd >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
               row += `<td style="text-align:center;font-weight:700;color:${mfdClr};background:#f9f9f9;padding:4px">${mfdDisplay}</td>`;
             });
@@ -185,7 +185,7 @@ const Pautas = {
             const mgClr = mg >= 9.5 ? '#10b981' : '#ef4444';
             const res = s.resultadoGeral || (mg >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)');
             const resClr = res.toUpperCase().includes('REPROVADO') ? '#ef4444' : '#10b981';
-            row += `<td style="text-align:center;font-weight:700;color:${mgClr};background:#d4edda;padding:4px">${mg.toFixed(1)}</td>`;
+            row += `<td style="text-align:center;font-weight:700;color:${mgClr};background:#d4edda;padding:4px">${Math.round(mg)}</td>`;
             row += `<td style="text-align:center;padding:4px">${s.comportamentoGeral}</td>`;
             row += `<td style="text-align:center;font-weight:700;color:${resClr};padding:4px;font-size:0.9em">${res}</td>`;
           } else {
@@ -196,7 +196,7 @@ const Pautas = {
               const tData = data.trimestres && data.trimestres[trimIndex] ? data.trimestres[trimIndex] : {};
               const mt = tData.mt || 0;
               rowMedias.push(mt);
-              const display = mt > 0 ? mt.toFixed(1) : '—';
+              const display = mt > 0 ? Math.round(mt) : '—';
               const clr = mt > 0 ? (mt >= 9.5 ? '#10b981' : '#ef4444') : '#aaa';
               row += `<td style="text-align:center;color:${clr};padding:4px">${display}</td>`;
             });
@@ -207,7 +207,7 @@ const Pautas = {
             const mediaClr = media >= 9.5 ? '#10b981' : '#ef4444';
             const res = media >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)';
             const resClr = res.includes('REPROVADO') ? '#ef4444' : '#10b981';
-            row += `<td style="text-align:center;font-weight:700;color:${mediaClr};background:#d4edda;padding:4px">${media.toFixed(1)}</td>`;
+            row += `<td style="text-align:center;font-weight:700;color:${mediaClr};background:#d4edda;padding:4px">${Math.round(media)}</td>`;
             row += `<td style="text-align:center;padding:4px">${s.comportamentoGeral}</td>`;
             row += `<td style="text-align:center;font-weight:700;color:${resClr};padding:4px;font-size:0.9em">${res}</td>`;
           }
