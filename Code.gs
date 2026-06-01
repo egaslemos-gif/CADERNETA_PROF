@@ -63,7 +63,7 @@ function doGet(e) {
     Logger.log('Erro em doGet: ' + erro.message);
     // Se era uma chamada API, devolver erro JSON
     if (e && e.parameter && e.parameter.action) {
-      return _jsonOutput({ success: false, error: erro.message });
+      return _jsonOutput({ success: false, error: erro.message }, e.parameter.callback);
     }
     return HtmlService.createHtmlOutput(
       '<h1>Erro ao carregar a aplicação</h1><p>' + erro.message + '</p>'
@@ -138,11 +138,11 @@ function _handleApiRequest(action, params) {
   };
 
   if (!actions[action]) {
-    return _jsonOutput({ success: false, error: 'Acção desconhecida: ' + action });
+    return _jsonOutput({ success: false, error: 'Acção desconhecida: ' + action }, params.callback);
   }
 
   const result = actions[action]();
-  return _jsonOutput({ success: true, data: result });
+  return _jsonOutput({ success: true, data: result }, params.callback);
 }
 
 // ---------------------------------------------------------------------------
@@ -172,9 +172,15 @@ function include(filename) {
  * @return {TextOutput}  Resposta com ContentType JSON.
  * @private
  */
-function _jsonOutput(data) {
+function _jsonOutput(data, callback) {
+  const jsonStr = JSON.stringify(data);
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + '(' + jsonStr + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
   return ContentService
-    .createTextOutput(JSON.stringify(data))
+    .createTextOutput(jsonStr)
     .setMimeType(ContentService.MimeType.JSON);
 }
 

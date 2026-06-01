@@ -367,34 +367,41 @@ const API = {
    * GET request à web app.
    */
   async _fetchGet(functionName, params) {
-    const url = new URL(WEBAPP_URL);
-    url.searchParams.set('action', functionName);
-    Object.entries(params).forEach(([k, v]) => {
-      url.searchParams.set(k, v);
-    });
-
-    try {
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        redirect: 'follow'
+    return new Promise((resolve, reject) => {
+      const url = new URL(WEBAPP_URL);
+      url.searchParams.set('action', functionName);
+      Object.entries(params).forEach(([k, v]) => {
+        url.searchParams.set(k, v);
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
+      const callbackName = 'jsonp_cb_' + Math.round(1000000 * Math.random());
+      url.searchParams.set('callback', callbackName);
 
-      const json = await response.json();
+      const script = document.createElement('script');
       
-      if (json.success === false) {
-        throw new Error(json.error || 'Erro desconhecido do servidor');
-      }
+      window[callbackName] = (response) => {
+        delete window[callbackName];
+        document.body.removeChild(script);
+        
+        if (response.success === false) {
+          reject(new Error(response.error || 'Erro desconhecido do servidor'));
+        } else {
+          resolve(response.data);
+        }
+      };
 
-      return json.data;
-    } catch (error) {
-      console.warn(`[API] WebApp GET falhou para ${functionName}:`, error.message);
-      console.log('[API] Fallback para dados mock...');
-      return this._callMock(functionName, ...Object.values(params));
-    }
+      script.src = url.toString();
+      script.onerror = () => {
+        delete window[callbackName];
+        document.body.removeChild(script);
+        
+        console.warn(`[API] WebApp GET falhou para ${functionName}: JSONP bloqueado ou servidor indisponível.`);
+        console.log('[API] Fallback para dados mock...');
+        resolve(this._callMock(functionName, ...Object.values(params)));
+      };
+      
+      document.body.appendChild(script);
+    });
   },
 
   /**
