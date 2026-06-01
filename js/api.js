@@ -91,7 +91,7 @@ const MockData = {
     { n: 45, nome: "MANUELA RESPEITO", p: 15, m: 13, cn: 13, cs: 16, sx: "F" },
     { n: 46, nome: "MARLON", p: 9, m: 15, cn: 9, cs: 9, sx: "M" },
     { n: 47, nome: "MIGUEL", p: 9, m: 11, cn: 10, cs: 12, sx: "M" },
-    { n: 48, nome: "MODESTO", p: 7, m: 14, cn: 7, cs: 10, sx: "M" },
+    { n: 48, nome: "MODESTO", p: 7, m: 14, cn: 7, cs: 10, sx: "M", isTransferido: true },
     { n: 49, nome: "NELITO", p: 7, m: 13, cn: 5, cs: 7, sx: "M" },
     { n: 50, nome: "ORLANDO", p: 13, m: 16, cn: 11, cs: 9, sx: "M" },
     { n: 51, nome: "OTILIA", p: 16, m: 15, cn: 16, cs: 15, sx: "F" },
@@ -117,6 +117,7 @@ const MockData = {
         numero: s.n,
         nome: s.nome,
         sexo: s.sx,
+        isTransferido: s.isTransferido || false,
         trimestres: [
           { acs: [mt-1, mt, mt+1, mt], macs: mt, at: mt, mt: mt, comp: comp },
           { acs: [], macs: 0, at: 0, mt: 0, comp: '' },
@@ -142,6 +143,7 @@ const MockData = {
         numero: s.n,
         nome: s.nome,
         sexo: s.sx,
+        isTransferido: s.isTransferido || false,
         disciplinas: {
           'PORTUGUES': { mt1: p, mt2: 0, mt3: 0, mfd: p, comp: comp, resultado: p >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
           'MATEMATICA': { mt1: m, mt2: 0, mt3: 0, mfd: m, comp: comp, resultado: m >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
@@ -324,23 +326,12 @@ const API = {
     });
   },
 
-  /**
-   * Chamada via fetch() à web app do Apps Script.
-   * Usa GET com query params para leituras, POST para escritas.
-   */
   _callWebApp(functionName, ...args) {
     // Mapear nome da função e argumentos para os parâmetros da API
     const paramMap = this._buildParams(functionName, args);
     
-    // Para autenticação e escrita, usar POST (dados sensíveis)
-    const writeFunctions = ['authenticate', 'authenticateWithGoogle', 'updateGrade', 'updateBehavior', 
-                            'batchUpdate', 'generateAndSavePautaPDF', 'generateAndSaveBoletimPDF', 'clearAllCache', 
-                            'markStudentAsTransferred'];
-    
-    if (writeFunctions.includes(functionName)) {
-      return this._fetchPost(functionName, paramMap);
-    }
-    
+    // Todas as chamadas (incluindo autenticação e escrita) devem usar GET
+    // devido a limitações de CORS com redirects 302 no doPost do Google Apps Script
     return this._fetchGet(functionName, paramMap);
   },
 

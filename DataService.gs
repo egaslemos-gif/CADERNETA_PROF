@@ -169,10 +169,13 @@ function getUsers() {
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
       if (row[0] && row[1]) {
+        const emailVal = String(row[2]).trim();
+        const fallbackEmail = row.find(c => String(c).includes('@')) || emailVal;
+        
         users.push({
           nome: String(row[0]).trim(),
           username: String(row[1]).trim(),
-          email: String(row[2]).trim(),
+          email: String(fallbackEmail).trim(),
           password: String(row[3]).trim(),
           roleStr: String(row[4]).trim()
         });

@@ -21,7 +21,8 @@ const Alunos = {
     document.getElementById('stat-masculino').textContent = activeStudents.filter(s => s.sexo === 'M').length;
     document.getElementById('stat-feminino').textContent = activeStudents.filter(s => s.sexo === 'F').length;
     
-    const media = activeStudents.length > 0 ? activeStudents.reduce((acc, s) => acc + s.mediaGeral, 0) / activeStudents.length : 0;
+    const valid = activeStudents.filter(s => s.mediaGeral > 0);
+    const media = valid.length > 0 ? valid.reduce((acc, s) => acc + s.mediaGeral, 0) / valid.length : 0;
     document.getElementById('stat-media').textContent = Utils.formatNumber(media);
   },
 

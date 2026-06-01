@@ -60,15 +60,16 @@ const Disciplinas = {
       this.currentSheetData = { sheetName, students };
       
       // Update header
+      const activeStudents = students.filter(s => !s.isTransferido);
       document.getElementById('disc-detail-name').textContent = sheetName;
-      document.getElementById('disc-detail-total').textContent = students.length;
+      document.getElementById('disc-detail-total').textContent = activeStudents.length;
       
-      const validMt = students.map(s => s.mtFinal[0]).filter(v => v > 0);
-      const media = validMt.reduce((a,b)=>a+b,0) / (validMt.length || 1);
+      const validMt = activeStudents.map(s => s.mtFinal[0]).filter(v => v > 0);
+      const media = validMt.length > 0 ? validMt.reduce((a,b)=>a+b,0) / validMt.length : 0;
       
       document.getElementById('disc-detail-media').textContent = Utils.formatNumber(media);
-      document.getElementById('disc-detail-max').textContent = Math.round(Math.max(...validMt, 0));
-      document.getElementById('disc-detail-min').textContent = Math.round(Math.min(...validMt, 20));
+      document.getElementById('disc-detail-max').textContent = validMt.length > 0 ? Math.round(Math.max(...validMt)) : 0;
+      document.getElementById('disc-detail-min').textContent = validMt.length > 0 ? Math.round(Math.min(...validMt)) : 0;
 
       // Switch view
       document.getElementById('disciplinas-grid').style.display = 'none';

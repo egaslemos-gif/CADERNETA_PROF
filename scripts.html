@@ -77,7 +77,7 @@ const MockData = {
     { n: 45, nome: "MANUELA RESPEITO", p: 15, m: 13, cn: 13, cs: 16, sx: "F" },
     { n: 46, nome: "MARLON", p: 9, m: 15, cn: 9, cs: 9, sx: "M" },
     { n: 47, nome: "MIGUEL", p: 9, m: 11, cn: 10, cs: 12, sx: "M" },
-    { n: 48, nome: "MODESTO", p: 7, m: 14, cn: 7, cs: 10, sx: "M" },
+    { n: 48, nome: "MODESTO", p: 7, m: 14, cn: 7, cs: 10, sx: "M", isTransferido: true },
     { n: 49, nome: "NELITO", p: 7, m: 13, cn: 5, cs: 7, sx: "M" },
     { n: 50, nome: "ORLANDO", p: 13, m: 16, cn: 11, cs: 9, sx: "M" },
     { n: 51, nome: "OTILIA", p: 16, m: 15, cn: 16, cs: 15, sx: "F" },
@@ -103,6 +103,7 @@ const MockData = {
         numero: s.n,
         nome: s.nome,
         sexo: s.sx,
+        isTransferido: s.isTransferido || false,
         trimestres: [
           { acs: [mt-1, mt, mt+1, mt], macs: mt, at: mt, mt: mt, comp: comp },
           { acs: [], macs: 0, at: 0, mt: 0, comp: '' },
@@ -128,6 +129,7 @@ const MockData = {
         numero: s.n,
         nome: s.nome,
         sexo: s.sx,
+        isTransferido: s.isTransferido || false,
         disciplinas: {
           'PORTUGUES': { mt1: p, mt2: 0, mt3: 0, mfd: p, comp: comp, resultado: p >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
           'MATEMATICA': { mt1: m, mt2: 0, mt3: 0, mfd: m, comp: comp, resultado: m >= 9.5 ? 'APROVADO(A)' : 'REPROVADO(A)' },
@@ -183,7 +185,8 @@ const MockData = {
     { username: 'admin', email: 'admin@gmail.com', password: 'admin2026', nome: 'admin', roleStr: 'Administrador(a)' },
     { username: 'diretor', email: 'dir@gmail.com', password: 'dir2026', nome: 'diretor', roleStr: 'Director(a)' },
     { username: 'professor', email: 'prof@gmail.com', password: 'prof2026', nome: 'professor', roleStr: 'Professor(a)' },
-    { username: 'pramim', email: 'pascoaramim409@gmail.com', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)' }
+    { username: 'pramim', email: 'pascoaramim409@gmail.com', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)' },
+    { username: 'elemos', email: 'egaslemos@gmail.com', password: 'admin2026', nome: 'Egas Lemos', roleStr: 'Professor(a)' }
   ],
   
   _mapRole(roleStr) {
@@ -670,11 +673,13 @@ const Alunos = {
   },
 
   updateStats() {
-    document.getElementById('stat-total').textContent = this.students.length;
-    document.getElementById('stat-masculino').textContent = this.students.filter(s => s.sexo === 'M').length;
-    document.getElementById('stat-feminino').textContent = this.students.filter(s => s.sexo === 'F').length;
+    const activeStudents = this.students.filter(s => !s.isTransferido);
+    document.getElementById('stat-total').textContent = activeStudents.length;
+    document.getElementById('stat-masculino').textContent = activeStudents.filter(s => s.sexo === 'M').length;
+    document.getElementById('stat-feminino').textContent = activeStudents.filter(s => s.sexo === 'F').length;
     
-    const media = this.students.reduce((acc, s) => acc + s.mediaGeral, 0) / this.students.length;
+    const valid = activeStudents.filter(s => s.mediaGeral > 0);
+    const media = valid.length > 0 ? valid.reduce((acc, s) => acc + s.mediaGeral, 0) / valid.length : 0;
     document.getElementById('stat-media').textContent = Utils.formatNumber(media);
   },
 
@@ -878,15 +883,16 @@ const Disciplinas = {
       this.currentSheetData = { sheetName, students };
       
       // Update header
+      const activeStudents = students.filter(s => !s.isTransferido);
       document.getElementById('disc-detail-name').textContent = sheetName;
-      document.getElementById('disc-detail-total').textContent = students.length;
+      document.getElementById('disc-detail-total').textContent = activeStudents.length;
       
-      const validMt = students.map(s => s.mtFinal[0]).filter(v => v > 0);
-      const media = validMt.reduce((a,b)=>a+b,0) / (validMt.length || 1);
+      const validMt = activeStudents.map(s => s.mtFinal[0]).filter(v => v > 0);
+      const media = validMt.length > 0 ? validMt.reduce((a,b)=>a+b,0) / validMt.length : 0;
       
       document.getElementById('disc-detail-media').textContent = Utils.formatNumber(media);
-      document.getElementById('disc-detail-max').textContent = Math.max(...validMt, 0).toFixed(1);
-      document.getElementById('disc-detail-min').textContent = Math.min(...validMt, 20).toFixed(1);
+      document.getElementById('disc-detail-max').textContent = validMt.length > 0 ? Math.max(...validMt).toFixed(1) : '0.0';
+      document.getElementById('disc-detail-min').textContent = validMt.length > 0 ? Math.min(...validMt).toFixed(1) : '0.0';
 
       // Switch view
       document.getElementById('disciplinas-grid').style.display = 'none';
@@ -1281,7 +1287,8 @@ const Pautas = {
 
         allStudents.forEach(s => {
           let row = `<td style="text-align:center">${s.numero}</td>`;
-          row += `<td style="white-space:nowrap;font-weight:500">${s.nome}</td>`;
+          const nameHtml = s.isTransferido ? `<span style="color:#999;">${s.nome} <b style="font-size:0.8em">(TRANSFERIDO)</b></span>` : s.nome;
+          row += `<td style="white-space:nowrap;font-weight:500">${nameHtml}</td>`;
 
           if (isAnual) {
             discNames.forEach(d => {

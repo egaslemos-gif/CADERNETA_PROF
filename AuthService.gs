@@ -67,7 +67,7 @@ function authenticate(username, password) {
         { username: 'diretor', password: 'dir2026', nome: 'diretor', roleStr: 'Director(a)', email: 'dir@gmail.com' },
         { username: 'professor', password: 'prof2026', nome: 'professor', roleStr: 'Professor(a)', email: 'prof@gmail.com' },
         { username: 'pramim', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)', email: 'pascoaramim409@gmail.com' },
-        { username: 'elemos', password: 'admin2026', nome: 'Egas Lemos', roleStr: 'Administrador(a)', email: 'egaslemos@gmail.com' }
+        { username: 'elemos', password: 'admin2026', nome: 'Egas Lemos', roleStr: 'Professor(a)', email: 'egaslemos@gmail.com' }
       ];
       user = testUsers.find(
         u => u.username === normalizedUser && u.password === normalizedPass
@@ -128,7 +128,7 @@ function authenticateWithGoogle(email) {
         { username: 'diretor', password: 'dir2026', nome: 'diretor', roleStr: 'Director(a)', email: 'dir@gmail.com' },
         { username: 'professor', password: 'prof2026', nome: 'professor', roleStr: 'Professor(a)', email: 'prof@gmail.com' },
         { username: 'pramim', password: 'prof2026', nome: 'Pascoa Ramim', roleStr: 'Professor(a)', email: 'pascoaramim409@gmail.com' },
-        { username: 'elemos', password: 'admin2026', nome: 'Egas Lemos', roleStr: 'Administrador(a)', email: 'egaslemos@gmail.com' }
+        { username: 'elemos', password: 'admin2026', nome: 'Egas Lemos', roleStr: 'Professor(a)', email: 'egaslemos@gmail.com' }
       ];
       user = testUsers.find(u => u.email === normalizedEmail);
     }
